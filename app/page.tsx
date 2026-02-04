@@ -1,6 +1,17 @@
+import type { Metadata } from 'next'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import Link from 'next/link'
+
+export const metadata: Metadata = {
+  title: 'Mundial 2026 - Guarda tus recuerdos',
+  description: 'Crea tu álbum digital del Mundial 2026. Guarda y comparte tus mejores momentos.',
+  openGraph: {
+    title: 'Mundial 2026 - Guarda tus recuerdos',
+    description: 'Crea tu álbum digital del Mundial 2026. Guarda y comparte tus mejores momentos.',
+    type: 'website',
+  },
+}
 
 export default function Home() {
   return (
