@@ -6,7 +6,8 @@ import { useRouter, useParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Memory } from '@/types/database'
+import { Textarea } from '@/components/ui/textarea'
+import { Memory, Comment } from '@/types/database'
 
 export default function RecuerdoPage() {
   const [memory, setMemory] = useState<Memory | null>(null)
@@ -14,6 +15,9 @@ export default function RecuerdoPage() {
   const [liked, setLiked] = useState(false)
   const [likesCount, setLikesCount] = useState(0)
   const [currentUser, setCurrentUser] = useState<string | null>(null)
+  const [comments, setComments] = useState<Comment[]>([])
+  const [newComment, setNewComment] = useState('')
+  const [submitting, setSubmitting] = useState(false)
   const router = useRouter()
   const params = useParams()
   const supabase = createClient()
@@ -58,6 +62,20 @@ export default function RecuerdoPage() {
           .single()
         
         setLiked(!!likeData)
+      }
+
+      // Obtener comentarios
+      const { data: commentsData } = await supabase
+        .from('comments')
+        .select(`
+          *,
+          profiles (display_name, email)
+        `)
+        .eq('memory_id', id)
+        .order('created_at', { ascending: false })
+      
+      if (commentsData) {
+        setComments(commentsData)
       }
 
       setLoading(false)
@@ -118,6 +136,46 @@ export default function RecuerdoPage() {
     // Opción WhatsApp directo
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`
     window.open(whatsappUrl, '_blank')
+  }
+
+  const handleSubmitComment = async () => {
+    if (!currentUser) {
+      router.push('/login')
+      return
+    }
+
+    if (!newComment.trim() || !memory) return
+
+    setSubmitting(true)
+    const { data, error } = await supabase
+      .from('comments')
+      .insert({
+        memory_id: memory.id,
+        user_id: currentUser,
+        content: newComment.trim()
+      })
+      .select(`
+        *,
+        profiles (display_name, email)
+      `)
+      .single()
+
+    if (!error && data) {
+      setComments([data, ...comments])
+      setNewComment('')
+    }
+    setSubmitting(false)
+  }
+
+  const handleDeleteComment = async (commentId: string) => {
+    const { error } = await supabase
+      .from('comments')
+      .delete()
+      .eq('id', commentId)
+
+    if (!error) {
+      setComments(comments.filter(c => c.id !== commentId))
+    }
   }
 
   if (loading) {
@@ -209,6 +267,65 @@ export default function RecuerdoPage() {
             <p className="text-xs text-muted-foreground mt-6">
               Creado el {new Date(memory.created_at).toLocaleDateString()}
             </p>
+          </CardContent>
+        </Card>
+
+        {/* Sección de comentarios */}
+        <Card className="mt-6">
+          <CardContent className="p-6">
+            <h2 className="text-xl font-bold mb-4">💬 Comentarios ({comments.length})</h2>
+            
+            {/* Formulario nuevo comentario */}
+            <div className="mb-6">
+              <Textarea
+                placeholder={currentUser ? "Escribe un comentario..." : "Inicia sesión para comentar"}
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                disabled={!currentUser || submitting}
+                className="mb-2"
+              />
+              <Button 
+                onClick={handleSubmitComment}
+                disabled={!newComment.trim() || submitting}
+              >
+                {submitting ? 'Enviando...' : 'Comentar'}
+              </Button>
+            </div>
+
+            {/* Lista de comentarios */}
+            <div className="space-y-4">
+              {comments.length === 0 ? (
+                <p className="text-muted-foreground text-center py-4">
+                  No hay comentarios aún. ¡Sé el primero!
+                </p>
+              ) : (
+                comments.map((comment) => (
+                  <div key={comment.id} className="border-b pb-4 last:border-0">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <p className="font-semibold text-sm">
+                          {comment.profiles?.display_name || 'Usuario'}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(comment.created_at).toLocaleDateString()} a las {new Date(comment.created_at).toLocaleTimeString()}
+                        </p>
+                      </div>
+                      {currentUser === comment.user_id && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteComment(comment.id)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          Eliminar
+                        </Button>
+                      )}
+                    </div>
+                    <p className="text-sm">{comment.content}</p>
+                  </div>
+                ))
+              )}
+            </div>
           </CardContent>
         </Card>
 
