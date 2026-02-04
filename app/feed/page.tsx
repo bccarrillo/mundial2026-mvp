@@ -69,24 +69,23 @@ export default function FeedPage() {
 
   const handleFilterChange = (team: string) => {
     setTeamFilter(team)
-    setMemories([])
-    setPage(0)
-    setHasMore(true)
   }
 
   // Debounce para búsqueda
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (searchInput !== searchQuery) {
-        setSearchQuery(searchInput)
-        setMemories([])
-        setPage(0)
-        setHasMore(true)
-      }
+      setSearchQuery(searchInput)
     }, 800)
 
     return () => clearTimeout(timer)
   }, [searchInput])
+
+  // Resetear cuando cambian filtros
+  useEffect(() => {
+    setMemories([])
+    setPage(0)
+    setHasMore(true)
+  }, [searchQuery, teamFilter])
 
   // Generar key única combinando id y timestamp
   const getUniqueKey = (memory: Memory, index: number) => {
