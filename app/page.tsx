@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import Link from 'next/link'
+import StatsCounter from '@/components/StatsCounter'
 
 export const metadata: Metadata = {
   title: 'Mundial 2026 - Guarda tus recuerdos',
@@ -21,10 +22,11 @@ export default function Home() {
         <h1 className="text-6xl font-bold mb-6">
           ⚽ Mundial 2026
         </h1>
-        <p className="text-2xl text-muted-foreground mb-8">
+        <p className="text-2xl text-muted-foreground mb-4">
           Guarda y comparte tus recuerdos del Mundial
         </p>
-        <div className="flex gap-4 justify-center">
+        <StatsCounter />
+        <div className="flex gap-4 justify-center mt-8">
           <Link href="/register">
             <Button size="lg" className="text-lg px-8">
               Crear cuenta gratis

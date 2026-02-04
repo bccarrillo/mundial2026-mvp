@@ -6,12 +6,13 @@ type Props = {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params
   const supabase = await createClient()
   
   const { data: memory } = await supabase
     .from('memories')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
 
   if (!memory) {
