@@ -1,9 +1,10 @@
 # 📊 Estado del Proyecto - Mundial 2026 MVP
 
-**Última actualización:** 2024 (Día 7+)  
-**Versión:** 1.0 (MVP Completo + Features de Viralidad)  
-**Stack:** Next.js 14, TypeScript, Supabase, Vercel  
-**Presupuesto:** $0 (100% free tier)
+**Última actualización:** 2024 (Día 8)  
+**Versión:** 1.1 (MVP + Viralidad + i18n Completo)  
+**Stack:** Next.js 14, TypeScript, Supabase, Vercel, react-i18next  
+**Presupuesto:** $0 (100% free tier)  
+**Idiomas:** 🇪🇸 Español | 🇺🇸 English | 🇧🇷 Português
 
 ---
 
@@ -16,6 +17,7 @@
 - [x] Protección de rutas (dashboard)
 - [x] Auto-creación de perfil en registro
 - [x] Sistema de referidos (captura `?ref=` en registro)
+- [x] Navbar reactivo a cambios de auth (onAuthStateChange)
 
 ### 📸 CRUD de Recuerdos
 - [x] Crear recuerdo (título, descripción, imagen, equipo, fecha, público/privado)
@@ -73,6 +75,15 @@
 - [x] Componentes shadcn/ui (Button, Card, Input, Textarea, Skeleton)
 - [x] Landing page con features y CTA
 - [x] Mensajes de error/éxito
+
+### 🌍 Internacionalización (i18n)
+- [x] react-i18next configurado
+- [x] 3 idiomas: Español, English, Português
+- [x] Selector de idioma en navbar
+- [x] Persistencia en localStorage
+- [x] 11 páginas traducidas (100% cobertura)
+- [x] Sin hydration errors
+- [x] Traducciones organizadas por sección
 
 ---
 
@@ -176,9 +187,11 @@ app/
 ```
 components/
 ├── ui/                         - shadcn/ui components
-├── Navbar.tsx                  - Navegación global
+├── Navbar.tsx                  - Navegación global + i18n
 ├── StatsCounter.tsx            - Contador landing page
-└── GoogleAnalytics.tsx         - Script GA4
+├── GoogleAnalytics.tsx         - Script GA4
+├── LanguageSelector.tsx        - Selector de idioma (ES/EN/PT)
+└── I18nProvider.tsx            - Provider i18n sin hydration errors
 ```
 
 ### Librerías
@@ -190,7 +203,16 @@ lib/
 ├── utils/
 │   └── file.ts                 - Generación de nombres de archivo
 ├── analytics.ts                - Eventos de GA4
+├── i18n.ts                     - Configuración i18next
 └── utils.ts                    - Utilidades generales
+```
+
+### Traducciones
+```
+messages/
+├── es.json                     - Español (default)
+├── en.json                     - English
+└── pt.json                     - Português
 ```
 
 ### SQL Scripts
@@ -202,6 +224,12 @@ supabase-fix-invitations.sql    - Fix de policies
 supabase-likes.sql              - Tabla likes
 supabase-comments.sql           - Tabla comments
 supabase-comments-view.sql      - Vista comments_with_profiles
+```
+
+### Documentación
+```
+PROJECT-STATUS.md               - Estado completo del proyecto
+I18N-STATUS.md                  - Estado de internacionalización
 ```
 
 ---
@@ -277,6 +305,13 @@ supabase-comments-view.sql      - Vista comments_with_profiles
 
 - Ninguno reportado actualmente
 
+## ✅ BUGS RESUELTOS
+
+- ❌ Hydration error en i18n → ✅ Resuelto con mounted state en I18nProvider
+- ❌ Error PGRST116 en queries → ✅ Resuelto usando .maybeSingle() en lugar de .single()
+- ❌ Pérdida de foco en búsqueda → ✅ Resuelto con búsqueda manual (botón + Enter)
+- ❌ Navbar no actualiza después de login/logout → ✅ Resuelto con onAuthStateChange subscription
+
 ---
 
 ## 📈 MÉTRICAS OBJETIVO
@@ -296,7 +331,15 @@ supabase-comments-view.sql      - Vista comments_with_profiles
 
 ## 🔄 HISTORIAL DE CAMBIOS
 
-### Día 7+ (Hoy)
+### Día 8 (Hoy)
+- ✅ Internacionalización completa (react-i18next)
+- ✅ 3 idiomas: Español, English, Português
+- ✅ 11 páginas traducidas (100% cobertura)
+- ✅ Selector de idioma en navbar
+- ✅ Fix error PGRST116 con .maybeSingle()
+- ✅ Documentación I18N-STATUS.md
+
+### Día 7+
 - ✅ Sistema de likes con tabla en DB
 - ✅ Sistema de comentarios completo
 - ✅ Búsqueda con botón (sin pérdida de foco)
@@ -340,7 +383,87 @@ supabase-comments-view.sql      - Vista comments_with_profiles
 
 ## 🎯 PRÓXIMOS PASOS RECOMENDADOS
 
-1. Implementar tracking de Analytics (10 min)
+1. **Implementar tracking de eventos GA4** (10 min)
+   - Agregar eventos en acciones clave
+   - Medir conversión y engagement
+
+2. **Mejorar UX de búsqueda** (10 min)
+   - Botón "Limpiar búsqueda"
+   - Indicador "Buscando..."
+
+3. **Perfiles de usuario** (20 min)
+   - Ver recuerdos de otros usuarios
+   - Estadísticas públicas
+
+4. **Sistema de notificaciones** (30 min)
+   - Comentarios en recuerdos
+   - Invitaciones aceptadas
+
+---
+
+## 📝 NOTAS TÉCNICAS
+
+### Decisiones de Arquitectura
+
+**i18n: react-i18next vs next-intl**
+- ✅ Elegido: react-i18next
+- Razón: Cambios incrementales, sin reestructurar rutas, menor riesgo
+- URLs no cambian por idioma (mismo /feed para todos)
+- Detección desde localStorage con fallback a 'es'
+
+**Búsqueda: Automática vs Manual**
+- ✅ Elegido: Manual (botón + Enter)
+- Razón: Búsqueda automática causaba pérdida de foco
+- Mejor UX con control explícito del usuario
+
+**Likes: Campo vs Tabla**
+- ✅ Elegido: Tabla likes con relación user_id + memory_id
+- Razón: Control real por usuario, toggle like/unlike
+- Campo `likes` en memories deprecado
+
+**Queries Supabase**
+- Usar `.maybeSingle()` cuando el resultado puede ser null
+- Usar `.single()` solo cuando se garantiza un resultado
+- Evita errores PGRST116
+
+---
+
+## 🌟 FEATURES DESTACADAS
+
+### Sistema de Viralidad
+- Link único de invitación por usuario
+- Tracking automático de referidos
+- Recompensas por hitos (3/10/50 amigos)
+- Compartir en WhatsApp con un clic
+- Open Graph para previews atractivos
+
+### Experiencia Multiidioma
+- 3 idiomas sin cambiar URLs
+- Selector visual en navbar
+- Persistencia de preferencia
+- Traducciones completas y naturales
+
+### Interacción Social
+- Likes con control por usuario
+- Comentarios con autor y timestamp
+- Eliminar comentarios propios
+- Contadores en tiempo real
+
+---
+
+## 📊 COBERTURA ACTUAL
+
+- **Páginas:** 11/11 (100%)
+- **Traducciones:** 3 idiomas (100%)
+- **Features MVP:** 100% completadas
+- **PWA:** ✅ Android + iOS
+- **Analytics:** ✅ Configurado (pendiente eventos)
+- **Viralidad:** ✅ Sistema completo
+- **RLS Policies:** ✅ Todas las tablas
+
+---
+
+**🎉 Estado: MVP COMPLETO Y LISTO PARA PRODUCCIÓN**ementar tracking de Analytics (10 min)
 2. Mejorar UX de búsqueda (10 min)
 3. Crear perfil de usuario (20 min)
 4. Sistema de notificaciones (30 min)

@@ -20,6 +20,12 @@ export default function Navbar() {
       setUser(user)
     }
     getUser()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
   }, [supabase])
 
   const handleLogout = async () => {
