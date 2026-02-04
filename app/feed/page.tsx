@@ -97,7 +97,7 @@ export default function FeedPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 p-8">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold mb-4">⚽ Recuerdos del Mundial</h1>
+        <h1 className="text-4xl font-bold mb-4">⚽ Recuerdos del Mundial 2026</h1>
         
         <div className="mb-6 flex gap-2 flex-wrap">
           <Button 
