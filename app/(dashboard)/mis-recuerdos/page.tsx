@@ -105,9 +105,14 @@ export default function MisRecuerdosPage() {
                   {memory.team && (
                     <p className="text-sm mb-2">⚽ {memory.team}</p>
                   )}
-                  <p className="text-xs text-muted-foreground mb-3">
-                    {new Date(memory.created_at).toLocaleDateString()}
-                  </p>
+                  <div className="flex justify-between items-center mb-3">
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(memory.created_at).toLocaleDateString()}
+                    </p>
+                    <span className="text-xs px-2 py-1 rounded-full bg-gray-100">
+                      {memory.is_public ? '🌍 Público' : '🔒 Privado'}
+                    </span>
+                  </div>
                   <div className="flex gap-2">
                     <Button
                       size="sm"

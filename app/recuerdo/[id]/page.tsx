@@ -19,7 +19,10 @@ export default function RecuerdoPage() {
     const fetchMemory = async () => {
       const { data, error } = await supabase
         .from('memories')
-        .select('*')
+        .select(`
+          *,
+          profiles (display_name, email)
+        `)
         .eq('id', params.id)
         .single()
 
@@ -107,6 +110,12 @@ export default function RecuerdoPage() {
             {memory.match_date && (
               <p className="text-sm text-muted-foreground mb-4">
                 📅 {new Date(memory.match_date).toLocaleDateString()}
+              </p>
+            )}
+
+            {memory.profiles && (
+              <p className="text-sm text-muted-foreground mb-4">
+                👤 Por: <span className="font-semibold">{memory.profiles.display_name}</span>
               </p>
             )}
 

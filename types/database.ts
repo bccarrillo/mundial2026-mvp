@@ -10,6 +10,15 @@ export interface Memory {
   likes: number
   created_at: string
   updated_at: string
+  profiles?: Profile
+}
+
+export interface Profile {
+  id: string
+  email: string
+  display_name: string
+  created_at: string
+  updated_at: string
 }
 
 export interface User {

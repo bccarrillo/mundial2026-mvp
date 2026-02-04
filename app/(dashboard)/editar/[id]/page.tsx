@@ -16,6 +16,7 @@ export default function EditarRecuerdoPage() {
   const [description, setDescription] = useState('')
   const [team, setTeam] = useState('')
   const [matchDate, setMatchDate] = useState('')
+  const [isPublic, setIsPublic] = useState(true)
   const [image, setImage] = useState<File | null>(null)
   const [currentImageUrl, setCurrentImageUrl] = useState('')
   const [preview, setPreview] = useState<string>('')
@@ -38,6 +39,7 @@ export default function EditarRecuerdoPage() {
         setDescription(data.description || '')
         setTeam(data.team || '')
         setMatchDate(data.match_date || '')
+        setIsPublic(data.is_public)
         setCurrentImageUrl(data.image_url)
         setPreview(data.image_url)
       }
@@ -107,6 +109,7 @@ export default function EditarRecuerdoPage() {
           team,
           match_date: matchDate || null,
           image_url: imageUrl,
+          is_public: isPublic,
           updated_at: new Date().toISOString()
         })
         .eq('id', params.id)
@@ -194,6 +197,19 @@ export default function EditarRecuerdoPage() {
                   value={matchDate}
                   onChange={(e) => setMatchDate(e.target.value)}
                 />
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="isPublic"
+                  checked={isPublic}
+                  onChange={(e) => setIsPublic(e.target.checked)}
+                  className="w-4 h-4"
+                />
+                <Label htmlFor="isPublic" className="cursor-pointer">
+                  🌍 Hacer público (aparecerá en el feed)
+                </Label>
               </div>
 
               {error && <p className="text-sm text-red-500">{error}</p>}

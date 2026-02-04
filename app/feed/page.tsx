@@ -17,7 +17,10 @@ export default function FeedPage() {
     const fetchMemories = async () => {
       const { data, error } = await supabase
         .from('memories')
-        .select('*')
+        .select(`
+          *,
+          profiles (display_name, email)
+        `)
         .eq('is_public', true)
         .order('created_at', { ascending: false })
         .limit(50)
@@ -81,6 +84,11 @@ export default function FeedPage() {
                     </p>
                     <p className="text-sm">❤️ {memory.likes}</p>
                   </div>
+                  {memory.profiles && (
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Por: {memory.profiles.display_name}
+                    </p>
+                  )}
                 </CardContent>
               </Card>
             ))}

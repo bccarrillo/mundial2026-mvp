@@ -16,6 +16,7 @@ export default function CrearRecuerdoPage() {
   const [description, setDescription] = useState('')
   const [team, setTeam] = useState('')
   const [matchDate, setMatchDate] = useState('')
+  const [isPublic, setIsPublic] = useState(true)
   const [image, setImage] = useState<File | null>(null)
   const [preview, setPreview] = useState<string>('')
   const [loading, setLoading] = useState(false)
@@ -81,7 +82,7 @@ export default function CrearRecuerdoPage() {
           team,
           match_date: matchDate || null,
           image_url: publicUrl,
-          is_public: true
+          is_public: isPublic
         })
 
       if (insertError) throw insertError
@@ -168,6 +169,19 @@ export default function CrearRecuerdoPage() {
                   value={matchDate}
                   onChange={(e) => setMatchDate(e.target.value)}
                 />
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="isPublic"
+                  checked={isPublic}
+                  onChange={(e) => setIsPublic(e.target.checked)}
+                  className="w-4 h-4"
+                />
+                <Label htmlFor="isPublic" className="cursor-pointer">
+                  🌍 Hacer público (aparecerá en el feed)
+                </Label>
               </div>
 
               {error && <p className="text-sm text-red-500">{error}</p>}
