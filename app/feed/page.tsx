@@ -180,7 +180,6 @@ export default function FeedPage() {
                     <p className="text-xs text-muted-foreground">
                       {new Date(memory.created_at).toLocaleDateString()}
                     </p>
-                    <p className="text-sm">❤️ {memory.likes}</p>
                   </div>
                   {memory.profiles && (
                     <p className="text-xs text-muted-foreground mt-2">

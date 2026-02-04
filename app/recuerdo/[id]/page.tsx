@@ -12,6 +12,8 @@ export default function RecuerdoPage() {
   const [memory, setMemory] = useState<Memory | null>(null)
   const [loading, setLoading] = useState(true)
   const [liked, setLiked] = useState(false)
+  const [likesCount, setLikesCount] = useState(0)
+  const [currentUser, setCurrentUser] = useState<string | null>(null)
   const router = useRouter()
   const params = useParams()
   const supabase = createClient()
@@ -19,6 +21,12 @@ export default function RecuerdoPage() {
   useEffect(() => {
     const fetchMemory = async () => {
       const id = params.id as string
+      
+      // Obtener usuario actual
+      const { data: { user } } = await supabase.auth.getUser()
+      setCurrentUser(user?.id || null)
+
+      // Obtener recuerdo
       const { data, error } = await supabase
         .from('memories')
         .select(`
@@ -31,6 +39,27 @@ export default function RecuerdoPage() {
       if (!error && data) {
         setMemory(data)
       }
+
+      // Contar likes totales
+      const { count } = await supabase
+        .from('likes')
+        .select('*', { count: 'exact', head: true })
+        .eq('memory_id', id)
+      
+      setLikesCount(count || 0)
+
+      // Verificar si el usuario ya dio like
+      if (user) {
+        const { data: likeData } = await supabase
+          .from('likes')
+          .select('id')
+          .eq('memory_id', id)
+          .eq('user_id', user.id)
+          .single()
+        
+        setLiked(!!likeData)
+      }
+
       setLoading(false)
     }
 
@@ -38,16 +67,33 @@ export default function RecuerdoPage() {
   }, [params.id, supabase])
 
   const handleLike = async () => {
-    if (!memory || liked) return
+    if (!memory || !currentUser) {
+      router.push('/login')
+      return
+    }
 
-    const { error } = await supabase
-      .from('memories')
-      .update({ likes: memory.likes + 1 })
-      .eq('id', memory.id)
+    if (liked) {
+      // Quitar like
+      const { error } = await supabase
+        .from('likes')
+        .delete()
+        .eq('memory_id', memory.id)
+        .eq('user_id', currentUser)
 
-    if (!error) {
-      setMemory({ ...memory, likes: memory.likes + 1 })
-      setLiked(true)
+      if (!error) {
+        setLiked(false)
+        setLikesCount(prev => prev - 1)
+      }
+    } else {
+      // Dar like
+      const { error } = await supabase
+        .from('likes')
+        .insert({ memory_id: memory.id, user_id: currentUser })
+
+      if (!error) {
+        setLiked(true)
+        setLikesCount(prev => prev + 1)
+      }
     }
   }
 
@@ -148,10 +194,9 @@ export default function RecuerdoPage() {
             <div className="flex gap-2 mt-6">
               <Button
                 onClick={handleLike}
-                disabled={liked}
                 variant={liked ? 'secondary' : 'default'}
               >
-                ❤️ {memory.likes} {liked ? '(Te gusta)' : 'Me gusta'}
+                {liked ? '❤️' : '🤍'} {likesCount} {liked ? 'Te gusta' : 'Me gusta'}
               </Button>
               <Button onClick={handleShare} variant="outline" className="flex-1">
                 <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
