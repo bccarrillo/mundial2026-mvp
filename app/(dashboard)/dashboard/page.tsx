@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export default function DashboardPage() {
   const [user, setUser] = useState<any>(null)
@@ -32,8 +33,22 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>Cargando...</p>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 p-8">
+        <div className="max-w-4xl mx-auto">
+          <Skeleton className="h-12 w-48 mb-8" />
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-32" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-4 w-full mb-4" />
+              <div className="space-y-2">
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     )
   }

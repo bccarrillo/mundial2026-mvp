@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter, useParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Memory } from '@/types/database'
 
 export default function RecuerdoPage() {
@@ -65,8 +66,23 @@ export default function RecuerdoPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>Cargando...</p>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 p-8">
+        <div className="max-w-3xl mx-auto">
+          <Skeleton className="h-10 w-32 mb-4" />
+          <Card>
+            <Skeleton className="w-full h-96 rounded-t-lg" />
+            <CardContent className="p-6">
+              <Skeleton className="h-8 w-3/4 mb-4" />
+              <Skeleton className="h-4 w-full mb-2" />
+              <Skeleton className="h-4 w-full mb-2" />
+              <Skeleton className="h-4 w-2/3 mb-4" />
+              <div className="flex gap-2">
+                <Skeleton className="h-10 w-32" />
+                <Skeleton className="h-10 w-32" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     )
   }
