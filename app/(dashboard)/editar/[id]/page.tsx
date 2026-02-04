@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -11,23 +11,45 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import imageCompression from 'browser-image-compression'
 import { generateFileName } from '@/lib/utils/file'
 
-export default function CrearRecuerdoPage() {
+export default function EditarRecuerdoPage() {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [team, setTeam] = useState('')
   const [matchDate, setMatchDate] = useState('')
   const [image, setImage] = useState<File | null>(null)
+  const [currentImageUrl, setCurrentImageUrl] = useState('')
   const [preview, setPreview] = useState<string>('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
+  const params = useParams()
   const supabase = createClient()
+
+  useEffect(() => {
+    const fetchMemory = async () => {
+      const { data, error } = await supabase
+        .from('memories')
+        .select('*')
+        .eq('id', params.id)
+        .single()
+
+      if (!error && data) {
+        setTitle(data.title)
+        setDescription(data.description || '')
+        setTeam(data.team || '')
+        setMatchDate(data.match_date || '')
+        setCurrentImageUrl(data.image_url)
+        setPreview(data.image_url)
+      }
+    }
+
+    fetchMemory()
+  }, [params.id, supabase])
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
-    // Comprimir imagen
     const options = {
       maxSizeMB: 1,
       maxWidthOrHeight: 1920,
@@ -45,46 +67,51 @@ export default function CrearRecuerdoPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!image) {
-      setError('Debes seleccionar una imagen')
-      return
-    }
-
     setLoading(true)
     setError('')
 
     try {
-      // Obtener usuario
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('No autenticado')
 
-      // Subir imagen
-      const fileName = generateFileName(user.id, image.name)
-      const { error: uploadError } = await supabase.storage
-        .from('memories')
-        .upload(fileName, image)
+      let imageUrl = currentImageUrl
 
-      if (uploadError) throw uploadError
+      // Si hay nueva imagen, subirla
+      if (image) {
+        const fileName = generateFileName(user.id, image.name)
+        const { error: uploadError } = await supabase.storage
+          .from('memories')
+          .upload(fileName, image)
 
-      // Obtener URL pública
-      const { data: { publicUrl } } = supabase.storage
-        .from('memories')
-        .getPublicUrl(fileName)
+        if (uploadError) throw uploadError
 
-      // Crear recuerdo
-      const { error: insertError } = await supabase
+        const { data: { publicUrl } } = supabase.storage
+          .from('memories')
+          .getPublicUrl(fileName)
+
+        imageUrl = publicUrl
+
+        // Eliminar imagen anterior
+        const oldFileName = currentImageUrl.split('/').pop()
+        if (oldFileName) {
+          await supabase.storage.from('memories').remove([oldFileName])
+        }
+      }
+
+      // Actualizar recuerdo
+      const { error: updateError } = await supabase
         .from('memories')
-        .insert({
-          user_id: user.id,
+        .update({
           title,
           description,
           team,
           match_date: matchDate || null,
-          image_url: publicUrl,
-          is_public: true
+          image_url: imageUrl,
+          updated_at: new Date().toISOString()
         })
+        .eq('id', params.id)
 
-      if (insertError) throw insertError
+      if (updateError) throw updateError
 
       router.push('/mis-recuerdos')
     } catch (err: any) {
@@ -98,7 +125,7 @@ export default function CrearRecuerdoPage() {
       <div className="max-w-2xl mx-auto">
         <Button
           variant="outline"
-          onClick={() => router.push('/dashboard')}
+          onClick={() => router.push('/mis-recuerdos')}
           className="mb-4"
         >
           ← Volver
@@ -106,18 +133,17 @@ export default function CrearRecuerdoPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">📸 Crear Recuerdo</CardTitle>
+            <CardTitle className="text-2xl">✏️ Editar Recuerdo</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <Label htmlFor="image">Imagen *</Label>
+                <Label htmlFor="image">Imagen</Label>
                 <Input
                   id="image"
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
-                  required
                 />
                 {preview && (
                   <img
@@ -126,6 +152,9 @@ export default function CrearRecuerdoPage() {
                     className="mt-2 w-full h-48 object-cover rounded"
                   />
                 )}
+                <p className="text-xs text-muted-foreground mt-1">
+                  Deja vacío para mantener la imagen actual
+                </p>
               </div>
 
               <div>
@@ -134,7 +163,6 @@ export default function CrearRecuerdoPage() {
                   id="title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Ej: Gol de Colombia vs Brasil"
                   required
                 />
               </div>
@@ -145,7 +173,6 @@ export default function CrearRecuerdoPage() {
                   id="description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Cuenta tu historia..."
                   rows={4}
                 />
               </div>
@@ -156,7 +183,6 @@ export default function CrearRecuerdoPage() {
                   id="team"
                   value={team}
                   onChange={(e) => setTeam(e.target.value)}
-                  placeholder="Ej: Colombia"
                 />
               </div>
 
@@ -173,7 +199,7 @@ export default function CrearRecuerdoPage() {
               {error && <p className="text-sm text-red-500">{error}</p>}
 
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? 'Creando...' : 'Crear Recuerdo'}
+                {loading ? 'Guardando...' : 'Guardar Cambios'}
               </Button>
             </form>
           </CardContent>

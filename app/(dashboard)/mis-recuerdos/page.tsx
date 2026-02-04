@@ -14,27 +14,47 @@ export default function MisRecuerdosPage() {
   const supabase = createClient()
 
   useEffect(() => {
-    const fetchMemories = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        router.push('/login')
-        return
-      }
-
-      const { data, error } = await supabase
-        .from('memories')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-
-      if (!error && data) {
-        setMemories(data)
-      }
-      setLoading(false)
-    }
-
     fetchMemories()
   }, [router, supabase])
+
+  const fetchMemories = async () => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      router.push('/login')
+      return
+    }
+
+    const { data, error } = await supabase
+      .from('memories')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+
+    if (!error && data) {
+      setMemories(data)
+    }
+    setLoading(false)
+  }
+
+  const handleDelete = async (id: string, imageUrl: string) => {
+    if (!confirm('¿Estás seguro de eliminar este recuerdo?')) return
+
+    // Eliminar imagen del storage
+    const fileName = imageUrl.split('/').pop()
+    if (fileName) {
+      await supabase.storage.from('memories').remove([fileName])
+    }
+
+    // Eliminar recuerdo de la DB
+    const { error } = await supabase
+      .from('memories')
+      .delete()
+      .eq('id', id)
+
+    if (!error) {
+      setMemories(memories.filter(m => m.id !== id))
+    }
+  }
 
   if (loading) {
     return (
@@ -73,25 +93,44 @@ export default function MisRecuerdosPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {memories.map((memory) => (
-              <Card key={memory.id} className="overflow-hidden cursor-pointer hover:shadow-lg transition">
+              <Card key={memory.id} className="overflow-hidden">
                 <img
                   src={memory.image_url}
                   alt={memory.title}
-                  className="w-full h-48 object-cover"
+                  className="w-full h-48 object-cover cursor-pointer"
+                  onClick={() => router.push(`/recuerdo/${memory.id}`)}
                 />
                 <CardContent className="p-4">
                   <h3 className="font-bold text-lg mb-2">{memory.title}</h3>
                   {memory.description && (
-                    <p className="text-sm text-muted-foreground line-clamp-2">
+                    <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
                       {memory.description}
                     </p>
                   )}
                   {memory.team && (
-                    <p className="text-sm mt-2">⚽ {memory.team}</p>
+                    <p className="text-sm mb-2">⚽ {memory.team}</p>
                   )}
-                  <p className="text-xs text-muted-foreground mt-2">
+                  <p className="text-xs text-muted-foreground mb-3">
                     {new Date(memory.created_at).toLocaleDateString()}
                   </p>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="flex-1"
+                      onClick={() => router.push(`/editar/${memory.id}`)}
+                    >
+                      ✏️ Editar
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      className="flex-1"
+                      onClick={() => handleDelete(memory.id, memory.image_url)}
+                    >
+                      🗑️ Eliminar
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}
