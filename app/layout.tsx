@@ -18,12 +18,15 @@ export const metadata: Metadata = {
   title: "Mundial 2026 - Guarda tus recuerdos",
   description: "Crea tu álbum digital del Mundial 2026",
   manifest: '/manifest.json',
-  themeColor: '#3b82f6',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
     title: 'Mundial 2026'
   },
+};
+
+export const viewport = {
+  themeColor: '#3b82f6',
 };
 
 export default function RootLayout({
