@@ -42,12 +42,7 @@ export default function FeedPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 p-8">
       <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold">⚽ Recuerdos del Mundial</h1>
-          <Button onClick={() => router.push('/dashboard')}>
-            Mi Dashboard
-          </Button>
-        </div>
+        <h1 className="text-4xl font-bold mb-8">⚽ Recuerdos del Mundial</h1>
 
         {memories.length === 0 ? (
           <Card>

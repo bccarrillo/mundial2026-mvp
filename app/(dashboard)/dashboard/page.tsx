@@ -41,12 +41,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 p-8">
       <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold">⚽ Dashboard</h1>
-          <Button variant="outline" onClick={handleLogout}>
-            Cerrar Sesión
-          </Button>
-        </div>
+        <h1 className="text-4xl font-bold mb-8">⚽ Dashboard</h1>
 
         <Card>
           <CardHeader>

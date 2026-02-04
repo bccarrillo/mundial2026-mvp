@@ -69,14 +69,9 @@ export default function MisRecuerdosPage() {
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold">📸 Mis Recuerdos</h1>
-          <div className="space-x-2">
-            <Button variant="outline" onClick={() => router.push('/dashboard')}>
-              Dashboard
-            </Button>
-            <Button onClick={() => router.push('/crear')}>
-              + Crear Recuerdo
-            </Button>
-          </div>
+          <Button onClick={() => router.push('/crear')}>
+            + Crear Recuerdo
+          </Button>
         </div>
 
         {memories.length === 0 ? (
