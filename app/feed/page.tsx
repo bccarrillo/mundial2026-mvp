@@ -21,8 +21,7 @@ export default function FeedPage() {
   const [searchInput, setSearchInput] = useState('')
   const router = useRouter()
   const supabase = createClient()
-  const observer = useRef<IntersectionObserver | null>(null)
-  const inputRef = useRef<HTMLInputElement>(null) // Fixed TypeScript error
+  const observer = useRef<IntersectionObserver | null>(null) // Fixed TypeScript error
 
   const lastMemoryRef = useCallback((node: HTMLDivElement) => {
     if (loading) return
@@ -70,27 +69,23 @@ export default function FeedPage() {
 
   const handleFilterChange = (team: string) => {
     setTeamFilter(team)
-  }
-
-  // Debounce para búsqueda
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setSearchQuery(searchInput)
-    }, 800)
-
-    return () => clearTimeout(timer)
-  }, [searchInput])
-
-  // Resetear cuando cambian filtros
-  useEffect(() => {
     setMemories([])
     setPage(0)
     setHasMore(true)
-    // Mantener foco en el input
-    if (inputRef.current && document.activeElement === inputRef.current) {
-      setTimeout(() => inputRef.current?.focus(), 0)
+  }
+
+  const handleSearch = () => {
+    setSearchQuery(searchInput)
+    setMemories([])
+    setPage(0)
+    setHasMore(true)
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch()
     }
-  }, [searchQuery, teamFilter])
+  }
 
   // Generar key única combinando id y timestamp
   const getUniqueKey = (memory: Memory, index: number) => {
@@ -125,15 +120,18 @@ export default function FeedPage() {
         <h1 className="text-4xl font-bold mb-4">⚽ Recuerdos del Mundial 2026</h1>
         
         {/* Buscador */}
-        <div className="mb-4">
+        <div className="mb-4 flex gap-2 max-w-md">
           <Input
-            ref={inputRef}
             type="text"
             placeholder="🔍 Buscar por título o descripción..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            className="max-w-md bg-white border-2"
+            onKeyPress={handleKeyPress}
+            className="bg-white border-2"
           />
+          <Button onClick={handleSearch}>
+            Buscar
+          </Button>
         </div>
         
         {/* Filtros por equipo */}
