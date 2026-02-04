@@ -29,3 +29,12 @@ CREATE POLICY "Users can delete their own comments"
 CREATE INDEX idx_comments_memory_id ON comments(memory_id);
 CREATE INDEX idx_comments_user_id ON comments(user_id);
 CREATE INDEX idx_comments_created_at ON comments(created_at DESC);
+
+-- Crear vista para facilitar joins con profiles
+CREATE OR REPLACE VIEW comments_with_profiles AS
+SELECT 
+  c.*,
+  p.display_name,
+  p.email
+FROM comments c
+LEFT JOIN profiles p ON c.user_id = p.id;

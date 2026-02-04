@@ -67,15 +67,25 @@ export default function RecuerdoPage() {
       // Obtener comentarios
       const { data: commentsData } = await supabase
         .from('comments')
-        .select(`
-          *,
-          profiles (display_name, email)
-        `)
+        .select('*')
         .eq('memory_id', id)
         .order('created_at', { ascending: false })
       
       if (commentsData) {
-        setComments(commentsData)
+        // Obtener profiles manualmente
+        const userIds = [...new Set(commentsData.map(c => c.user_id))]
+        const { data: profilesData } = await supabase
+          .from('profiles')
+          .select('*')
+          .in('id', userIds)
+        
+        const profilesMap = new Map(profilesData?.map(p => [p.id, p]) || [])
+        const commentsWithProfiles = commentsData.map(c => ({
+          ...c,
+          profiles: profilesMap.get(c.user_id)
+        }))
+        
+        setComments(commentsWithProfiles)
       }
 
       setLoading(false)
@@ -154,14 +164,18 @@ export default function RecuerdoPage() {
         user_id: currentUser,
         content: newComment.trim()
       })
-      .select(`
-        *,
-        profiles (display_name, email)
-      `)
+      .select('*')
       .single()
 
     if (!error && data) {
-      setComments([data, ...comments])
+      // Obtener profile del usuario
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', currentUser)
+        .single()
+      
+      setComments([{ ...data, profiles: profile }, ...comments])
       setNewComment('')
     }
     setSubmitting(false)
