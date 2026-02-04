@@ -4,13 +4,14 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import LanguageSelector from './LanguageSelector'
 
 export default function Navbar() {
   const [user, setUser] = useState<any>(null)
   const router = useRouter()
+  const pathname = usePathname()
   const supabase = createClient()
   const { t } = useTranslation()
 
@@ -34,42 +35,58 @@ export default function Navbar() {
     router.push('/')
   }
 
+  const isActive = (path: string) => pathname === path
+
   return (
     <nav className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <Link href="/" className="text-2xl font-bold">
-          ⚽ Mundial 2026
-        </Link>
-        
-        <div className="flex gap-2 items-center">
-          <LanguageSelector />
-          
-          <Link href="/feed">
-            <Button variant="ghost">{t('nav.feed')}</Button>
+      <div className="container mx-auto px-4 py-3">
+        <div className="flex justify-between items-center">
+          <Link href="/" className="text-xl md:text-2xl font-bold">
+            ⚽ Mundial 2026
           </Link>
           
-          {user ? (
-            <>
-              <Link href="/dashboard">
-                <Button variant="ghost">{t('nav.dashboard')}</Button>
-              </Link>
-              <Link href="/crear">
-                <Button>+ {t('nav.create')}</Button>
-              </Link>
-              <Button variant="outline" onClick={handleLogout}>
-                {t('nav.logout')}
+          <div className="flex gap-1 md:gap-2 items-center flex-wrap">
+            <LanguageSelector />
+            
+            <Link href="/feed">
+              <Button 
+                variant={isActive('/feed') ? 'default' : 'ghost'} 
+                size="sm"
+                className="text-xs md:text-sm"
+              >
+                {t('nav.feed')}
               </Button>
-            </>
-          ) : (
-            <>
-              <Link href="/login">
-                <Button variant="ghost">{t('nav.login')}</Button>
-              </Link>
-              <Link href="/register">
-                <Button>{t('nav.register')}</Button>
-              </Link>
-            </>
-          )}
+            </Link>
+            
+            {user ? (
+              <>
+                <Link href="/dashboard">
+                  <Button 
+                    variant={isActive('/dashboard') ? 'default' : 'ghost'} 
+                    size="sm"
+                    className="text-xs md:text-sm"
+                  >
+                    {t('nav.dashboard')}
+                  </Button>
+                </Link>
+                <Link href="/crear">
+                  <Button size="sm" className="text-xs md:text-sm">+ {t('nav.create')}</Button>
+                </Link>
+                <Button variant="outline" size="sm" onClick={handleLogout} className="text-xs md:text-sm">
+                  {t('nav.logout')}
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button variant="ghost" size="sm" className="text-xs md:text-sm">{t('nav.login')}</Button>
+                </Link>
+                <Link href="/register">
+                  <Button size="sm" className="text-xs md:text-sm">{t('nav.register')}</Button>
+                </Link>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </nav>

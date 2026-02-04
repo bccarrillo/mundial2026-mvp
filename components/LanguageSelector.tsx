@@ -11,29 +11,25 @@ export default function LanguageSelector() {
     localStorage.setItem('language', lng)
   }
 
+  const flags: Record<string, string> = {
+    es: '🇪🇸',
+    en: '🇺🇸',
+    pt: '🇧🇷'
+  }
+
   return (
     <div className="flex gap-1">
-      <Button
-        variant={i18n.language === 'es' ? 'default' : 'ghost'}
-        size="sm"
-        onClick={() => changeLanguage('es')}
-      >
-        ES
-      </Button>
-      <Button
-        variant={i18n.language === 'en' ? 'default' : 'ghost'}
-        size="sm"
-        onClick={() => changeLanguage('en')}
-      >
-        EN
-      </Button>
-      <Button
-        variant={i18n.language === 'pt' ? 'default' : 'ghost'}
-        size="sm"
-        onClick={() => changeLanguage('pt')}
-      >
-        PT
-      </Button>
+      {(['es', 'en', 'pt'] as const).map((lng) => (
+        <Button
+          key={lng}
+          variant={i18n.language === lng ? 'secondary' : 'ghost'}
+          size="sm"
+          onClick={() => changeLanguage(lng)}
+          className="px-2"
+        >
+          {flags[lng]}
+        </Button>
+      ))}
     </div>
   )
 }
