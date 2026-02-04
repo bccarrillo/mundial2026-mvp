@@ -83,7 +83,7 @@ export default function FeedPage() {
         setPage(0)
         setHasMore(true)
       }
-    }, 500)
+    }, 800)
 
     return () => clearTimeout(timer)
   }, [searchInput])
@@ -127,7 +127,7 @@ export default function FeedPage() {
             placeholder="🔍 Buscar por título o descripción..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            className="max-w-md"
+            className="max-w-md bg-white border-2"
           />
         </div>
         
