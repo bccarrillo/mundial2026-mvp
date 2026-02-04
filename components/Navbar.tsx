@@ -70,7 +70,7 @@ export default function Navbar() {
                   </Button>
                 </Link>
                 <Link href="/crear">
-                  <Button size="sm" className="text-xs md:text-sm">+ {t('nav.create')}</Button>
+                  <Button size="sm" className="text-xs md:text-sm bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold">+ {t('nav.create')}</Button>
                 </Link>
                 <Button variant="outline" size="sm" onClick={handleLogout} className="text-xs md:text-sm">
                   {t('nav.logout')}
