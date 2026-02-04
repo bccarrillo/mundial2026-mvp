@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Input } from '@/components/ui/input'
 import { Memory } from '@/types/database'
 
 const PAGE_SIZE = 12
@@ -16,6 +17,7 @@ export default function FeedPage() {
   const [hasMore, setHasMore] = useState(true)
   const [page, setPage] = useState(0)
   const [teamFilter, setTeamFilter] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
   const router = useRouter()
   const supabase = createClient()
   const observer = useRef<IntersectionObserver | null>(null) // Fixed TypeScript error
@@ -46,6 +48,10 @@ export default function FeedPage() {
         query = query.ilike('team', `%${teamFilter}%`)
       }
 
+      if (searchQuery) {
+        query = query.or(`title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`)
+      }
+
       const { data, error } = await query
         .order('created_at', { ascending: false })
         .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1)
@@ -58,10 +64,17 @@ export default function FeedPage() {
     }
 
     fetchMemories()
-  }, [page, teamFilter, supabase])
+  }, [page, teamFilter, searchQuery, supabase])
 
   const handleFilterChange = (team: string) => {
     setTeamFilter(team)
+    setMemories([])
+    setPage(0)
+    setHasMore(true)
+  }
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query)
     setMemories([])
     setPage(0)
     setHasMore(true)
@@ -99,6 +112,18 @@ export default function FeedPage() {
       <div className="max-w-6xl mx-auto">
         <h1 className="text-4xl font-bold mb-4">⚽ Recuerdos del Mundial 2026</h1>
         
+        {/* Buscador */}
+        <div className="mb-4">
+          <Input
+            type="text"
+            placeholder="🔍 Buscar por título o descripción..."
+            value={searchQuery}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            className="max-w-md"
+          />
+        </div>
+        
+        {/* Filtros por equipo */}
         <div className="mb-6 flex gap-2 flex-wrap">
           <Button 
             variant={teamFilter === '' ? 'default' : 'outline'}
