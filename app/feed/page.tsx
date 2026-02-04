@@ -18,6 +18,7 @@ export default function FeedPage() {
   const [page, setPage] = useState(0)
   const [teamFilter, setTeamFilter] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
+  const [searchInput, setSearchInput] = useState('')
   const router = useRouter()
   const supabase = createClient()
   const observer = useRef<IntersectionObserver | null>(null) // Fixed TypeScript error
@@ -73,12 +74,19 @@ export default function FeedPage() {
     setHasMore(true)
   }
 
-  const handleSearchChange = (query: string) => {
-    setSearchQuery(query)
-    setMemories([])
-    setPage(0)
-    setHasMore(true)
-  }
+  // Debounce para búsqueda
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchInput !== searchQuery) {
+        setSearchQuery(searchInput)
+        setMemories([])
+        setPage(0)
+        setHasMore(true)
+      }
+    }, 500)
+
+    return () => clearTimeout(timer)
+  }, [searchInput])
 
   // Generar key única combinando id y timestamp
   const getUniqueKey = (memory: Memory, index: number) => {
@@ -117,8 +125,8 @@ export default function FeedPage() {
           <Input
             type="text"
             placeholder="🔍 Buscar por título o descripción..."
-            value={searchQuery}
-            onChange={(e) => handleSearchChange(e.target.value)}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
             className="max-w-md"
           />
         </div>
