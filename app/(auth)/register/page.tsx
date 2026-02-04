@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -15,14 +15,16 @@ export default function RegisterPage() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
   const supabase = createClient()
+  const referrerId = searchParams.get('ref')
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
 
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
     })
@@ -31,6 +33,18 @@ export default function RegisterPage() {
       setError(error.message)
       setLoading(false)
     } else {
+      // Si hay referido, crear invitación
+      if (referrerId && data.user) {
+        await supabase
+          .from('invitations')
+          .insert({
+            inviter_id: referrerId,
+            invitee_email: email,
+            invitee_id: data.user.id,
+            status: 'accepted'
+          })
+      }
+      
       setSuccess(true)
       setTimeout(() => router.push('/dashboard'), 2000)
     }

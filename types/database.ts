@@ -21,6 +21,16 @@ export interface Profile {
   updated_at: string
 }
 
+export interface Invitation {
+  id: string
+  inviter_id: string
+  invitee_email: string | null
+  invitee_id: string | null
+  status: 'pending' | 'accepted'
+  reward_claimed: boolean
+  created_at: string
+}
+
 export interface User {
   id: string
   email: string

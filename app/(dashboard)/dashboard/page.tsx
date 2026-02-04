@@ -73,6 +73,9 @@ export default function DashboardPage() {
               <Button onClick={() => router.push('/mis-recuerdos')} variant="outline" className="w-full">
                 Ver Mis Recuerdos
               </Button>
+              <Button onClick={() => router.push('/invitar')} variant="outline" className="w-full">
+                🎁 Invitar Amigos
+              </Button>
             </div>
           </CardContent>
         </Card>
