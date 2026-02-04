@@ -18,7 +18,7 @@ export default function FeedPage() {
   const [teamFilter, setTeamFilter] = useState('')
   const router = useRouter()
   const supabase = createClient()
-  const observer = useRef<IntersectionObserver | null>(null)
+  const observer = useRef<IntersectionObserver | null>(null) // Fixed TypeScript error
 
   const lastMemoryRef = useCallback((node: HTMLDivElement) => {
     if (loading) return
