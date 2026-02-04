@@ -7,12 +7,14 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Memory } from '@/types/database'
+import { useTranslation } from 'react-i18next'
 
 export default function MisRecuerdosPage() {
   const [memories, setMemories] = useState<Memory[]>([])
   const [loading, setLoading] = useState(true)
   const router = useRouter()
   const supabase = createClient()
+  const { t } = useTranslation()
 
   useEffect(() => {
     fetchMemories()
@@ -38,7 +40,7 @@ export default function MisRecuerdosPage() {
   }
 
   const handleDelete = async (id: string, imageUrl: string) => {
-    if (!confirm('¿Estás seguro de eliminar este recuerdo?')) return
+    if (!confirm(t('myMemories.confirmDelete'))) return
 
     // Eliminar imagen del storage
     const fileName = imageUrl.split('/').pop()
@@ -83,9 +85,9 @@ export default function MisRecuerdosPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 p-8">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold">📸 Mis Recuerdos</h1>
+          <h1 className="text-4xl font-bold">📸 {t('myMemories.title')}</h1>
           <Button onClick={() => router.push('/crear')}>
-            + Crear Recuerdo
+            + {t('nav.create')}
           </Button>
         </div>
 
@@ -93,10 +95,10 @@ export default function MisRecuerdosPage() {
           <Card>
             <CardContent className="py-12 text-center">
               <p className="text-muted-foreground mb-4">
-                Aún no tienes recuerdos
+                {t('myMemories.noMemories')}
               </p>
               <Button onClick={() => router.push('/crear')}>
-                Crear tu primer recuerdo
+                {t('dashboard.createMemory')}
               </Button>
             </CardContent>
           </Card>
@@ -125,7 +127,7 @@ export default function MisRecuerdosPage() {
                       {new Date(memory.created_at).toLocaleDateString()}
                     </p>
                     <span className="text-xs px-2 py-1 rounded-full bg-gray-100">
-                      {memory.is_public ? '🌍 Público' : '🔒 Privado'}
+                      {memory.is_public ? `🌍 ${t('myMemories.public')}` : `🔒 ${t('myMemories.private')}`}
                     </span>
                   </div>
                   <div className="flex gap-2">
@@ -135,7 +137,7 @@ export default function MisRecuerdosPage() {
                       className="flex-1"
                       onClick={() => router.push(`/editar/${memory.id}`)}
                     >
-                      ✏️ Editar
+                      ✏️ {t('myMemories.edit')}
                     </Button>
                     <Button
                       size="sm"
@@ -143,7 +145,7 @@ export default function MisRecuerdosPage() {
                       className="flex-1"
                       onClick={() => handleDelete(memory.id, memory.image_url)}
                     >
-                      🗑️ Eliminar
+                      🗑️ {t('myMemories.delete')}
                     </Button>
                   </div>
                 </CardContent>

@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Input } from '@/components/ui/input'
 import { Memory } from '@/types/database'
+import { useTranslation } from 'react-i18next'
 
 const PAGE_SIZE = 12
 
@@ -21,7 +22,8 @@ export default function FeedPage() {
   const [searchInput, setSearchInput] = useState('')
   const router = useRouter()
   const supabase = createClient()
-  const observer = useRef<IntersectionObserver | null>(null) // Fixed TypeScript error
+  const observer = useRef<IntersectionObserver | null>(null)
+  const { t } = useTranslation() // Fixed TypeScript error
 
   const lastMemoryRef = useCallback((node: HTMLDivElement) => {
     if (loading) return
@@ -117,20 +119,20 @@ export default function FeedPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 p-8">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold mb-4">⚽ Recuerdos del Mundial 2026</h1>
+        <h1 className="text-4xl font-bold mb-4">⚽ {t('feed.title')}</h1>
         
         {/* Buscador */}
         <div className="mb-4 flex gap-2 max-w-md">
           <Input
             type="text"
-            placeholder="🔍 Buscar por título o descripción..."
+            placeholder={t('feed.searchPlaceholder')}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyPress={handleKeyPress}
             className="bg-white border-2"
           />
           <Button onClick={handleSearch}>
-            Buscar
+            {t('feed.searchButton')}
           </Button>
         </div>
         
@@ -140,7 +142,7 @@ export default function FeedPage() {
             variant={teamFilter === '' ? 'default' : 'outline'}
             onClick={() => handleFilterChange('')}
           >
-            Todos
+            {t('feed.filterAll')}
           </Button>
           <Button 
             variant={teamFilter === 'Colombia' ? 'default' : 'outline'}
@@ -184,7 +186,7 @@ export default function FeedPage() {
           <Card>
             <CardContent className="py-12 text-center">
               <p className="text-muted-foreground">
-                Aún no hay recuerdos públicos
+                {t('feed.noMemories')}
               </p>
             </CardContent>
           </Card>
@@ -229,12 +231,12 @@ export default function FeedPage() {
         )}
         {loading && (
           <div className="text-center py-8">
-            <p className="text-muted-foreground">Cargando más recuerdos...</p>
+            <p className="text-muted-foreground">{t('feed.loadingMore')}</p>
           </div>
         )}
         {!hasMore && memories.length > 0 && (
           <div className="text-center py-8">
-            <p className="text-muted-foreground">No hay más recuerdos</p>
+            <p className="text-muted-foreground">{t('feed.noMore')}</p>
           </div>
         )}
       </div>

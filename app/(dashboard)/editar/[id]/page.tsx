@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import imageCompression from 'browser-image-compression'
 import { generateFileName } from '@/lib/utils/file'
+import { useTranslation } from 'react-i18next'
 
 export default function EditarRecuerdoPage() {
   const [title, setTitle] = useState('')
@@ -25,6 +26,7 @@ export default function EditarRecuerdoPage() {
   const router = useRouter()
   const params = useParams()
   const supabase = createClient()
+  const { t } = useTranslation()
 
   useEffect(() => {
     const fetchMemory = async () => {
@@ -131,17 +133,17 @@ export default function EditarRecuerdoPage() {
           onClick={() => router.push('/mis-recuerdos')}
           className="mb-4"
         >
-          ← Volver
+          ← {t('common.back')}
         </Button>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">✏️ Editar Recuerdo</CardTitle>
+            <CardTitle className="text-2xl">✏️ {t('create.editTitle')}</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <Label htmlFor="image">Imagen</Label>
+                <Label htmlFor="image">{t('create.imageLabel')}</Label>
                 <Input
                   id="image"
                   type="file"
@@ -156,12 +158,12 @@ export default function EditarRecuerdoPage() {
                   />
                 )}
                 <p className="text-xs text-muted-foreground mt-1">
-                  Deja vacío para mantener la imagen actual
+                  {t('create.changeImage')}
                 </p>
               </div>
 
               <div>
-                <Label htmlFor="title">Título *</Label>
+                <Label htmlFor="title">{t('create.titleLabel')} *</Label>
                 <Input
                   id="title"
                   value={title}
@@ -171,7 +173,7 @@ export default function EditarRecuerdoPage() {
               </div>
 
               <div>
-                <Label htmlFor="description">Descripción</Label>
+                <Label htmlFor="description">{t('create.descriptionLabel')}</Label>
                 <Textarea
                   id="description"
                   value={description}
@@ -181,7 +183,7 @@ export default function EditarRecuerdoPage() {
               </div>
 
               <div>
-                <Label htmlFor="team">Equipo</Label>
+                <Label htmlFor="team">{t('create.teamLabel')}</Label>
                 <Input
                   id="team"
                   value={team}
@@ -190,7 +192,7 @@ export default function EditarRecuerdoPage() {
               </div>
 
               <div>
-                <Label htmlFor="matchDate">Fecha del partido</Label>
+                <Label htmlFor="matchDate">{t('create.dateLabel')}</Label>
                 <Input
                   id="matchDate"
                   type="date"
@@ -208,14 +210,14 @@ export default function EditarRecuerdoPage() {
                   className="w-4 h-4"
                 />
                 <Label htmlFor="isPublic" className="cursor-pointer">
-                  🌍 Hacer público (aparecerá en el feed)
+                  🌍 {t('create.publicLabel')} ({t('create.publicDesc')})
                 </Label>
               </div>
 
               {error && <p className="text-sm text-red-500">{error}</p>}
 
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? 'Guardando...' : 'Guardar Cambios'}
+                {loading ? t('create.saving') : t('create.updateButton')}
               </Button>
             </form>
           </CardContent>

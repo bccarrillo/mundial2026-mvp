@@ -5,11 +5,14 @@ import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useTranslation } from 'react-i18next'
+import LanguageSelector from './LanguageSelector'
 
 export default function Navbar() {
   const [user, setUser] = useState<any>(null)
   const router = useRouter()
   const supabase = createClient()
+  const { t } = useTranslation()
 
   useEffect(() => {
     const getUser = async () => {
@@ -33,29 +36,31 @@ export default function Navbar() {
         </Link>
         
         <div className="flex gap-2 items-center">
+          <LanguageSelector />
+          
           <Link href="/feed">
-            <Button variant="ghost">Feed</Button>
+            <Button variant="ghost">{t('nav.feed')}</Button>
           </Link>
           
           {user ? (
             <>
               <Link href="/dashboard">
-                <Button variant="ghost">Dashboard</Button>
+                <Button variant="ghost">{t('nav.dashboard')}</Button>
               </Link>
               <Link href="/crear">
-                <Button>+ Crear</Button>
+                <Button>+ {t('nav.create')}</Button>
               </Link>
               <Button variant="outline" onClick={handleLogout}>
-                Salir
+                {t('nav.logout')}
               </Button>
             </>
           ) : (
             <>
               <Link href="/login">
-                <Button variant="ghost">Iniciar Sesión</Button>
+                <Button variant="ghost">{t('nav.login')}</Button>
               </Link>
               <Link href="/register">
-                <Button>Registrarse</Button>
+                <Button>{t('nav.register')}</Button>
               </Link>
             </>
           )}

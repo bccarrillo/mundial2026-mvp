@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import imageCompression from 'browser-image-compression'
 import { generateFileName } from '@/lib/utils/file'
+import { useTranslation } from 'react-i18next'
 
 export default function CrearRecuerdoPage() {
   const [title, setTitle] = useState('')
@@ -23,6 +24,7 @@ export default function CrearRecuerdoPage() {
   const [error, setError] = useState('')
   const router = useRouter()
   const supabase = createClient()
+  const { t } = useTranslation()
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -47,7 +49,7 @@ export default function CrearRecuerdoPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!image) {
-      setError('Debes seleccionar una imagen')
+      setError(t('create.imageRequired'))
       return
     }
 
@@ -102,17 +104,17 @@ export default function CrearRecuerdoPage() {
           onClick={() => router.push('/dashboard')}
           className="mb-4"
         >
-          ← Volver
+          ← {t('common.back')}
         </Button>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">📸 Crear Recuerdo</CardTitle>
+            <CardTitle className="text-2xl">📸 {t('create.title')}</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <Label htmlFor="image">Imagen *</Label>
+                <Label htmlFor="image">{t('create.imageLabel')} *</Label>
                 <Input
                   id="image"
                   type="file"
@@ -130,39 +132,39 @@ export default function CrearRecuerdoPage() {
               </div>
 
               <div>
-                <Label htmlFor="title">Título *</Label>
+                <Label htmlFor="title">{t('create.titleLabel')} *</Label>
                 <Input
                   id="title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Ej: Gol de Colombia vs Brasil"
+                  placeholder={t('create.titlePlaceholder')}
                   required
                 />
               </div>
 
               <div>
-                <Label htmlFor="description">Descripción</Label>
+                <Label htmlFor="description">{t('create.descriptionLabel')}</Label>
                 <Textarea
                   id="description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Cuenta tu historia..."
+                  placeholder={t('create.descriptionPlaceholder')}
                   rows={4}
                 />
               </div>
 
               <div>
-                <Label htmlFor="team">Equipo</Label>
+                <Label htmlFor="team">{t('create.teamLabel')}</Label>
                 <Input
                   id="team"
                   value={team}
                   onChange={(e) => setTeam(e.target.value)}
-                  placeholder="Ej: Colombia"
+                  placeholder={t('create.teamPlaceholder')}
                 />
               </div>
 
               <div>
-                <Label htmlFor="matchDate">Fecha del partido</Label>
+                <Label htmlFor="matchDate">{t('create.dateLabel')}</Label>
                 <Input
                   id="matchDate"
                   type="date"
@@ -180,14 +182,14 @@ export default function CrearRecuerdoPage() {
                   className="w-4 h-4"
                 />
                 <Label htmlFor="isPublic" className="cursor-pointer">
-                  🌍 Hacer público (aparecerá en el feed)
+                  🌍 {t('create.publicLabel')} ({t('create.publicDesc')})
                 </Label>
               </div>
 
               {error && <p className="text-sm text-red-500">{error}</p>}
 
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? 'Creando...' : 'Crear Recuerdo'}
+                {loading ? t('create.saving') : t('create.saveButton')}
               </Button>
             </form>
           </CardContent>

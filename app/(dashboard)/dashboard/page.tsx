@@ -6,12 +6,14 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useTranslation } from 'react-i18next'
 
 export default function DashboardPage() {
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
   const supabase = createClient()
+  const { t } = useTranslation()
 
   useEffect(() => {
     const getUser = async () => {
@@ -56,11 +58,11 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 p-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold mb-8">⚽ Dashboard</h1>
+        <h1 className="text-4xl font-bold mb-8">⚽ {t('dashboard.title')}</h1>
 
         <Card>
           <CardHeader>
-            <CardTitle>Bienvenido</CardTitle>
+            <CardTitle>{t('dashboard.welcome')}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground mb-4">
@@ -68,13 +70,13 @@ export default function DashboardPage() {
             </p>
             <div className="space-y-2">
               <Button onClick={() => router.push('/crear')} className="w-full">
-                📸 Crear Recuerdo
+                📸 {t('dashboard.createMemory')}
               </Button>
               <Button onClick={() => router.push('/mis-recuerdos')} variant="outline" className="w-full">
-                Ver Mis Recuerdos
+                {t('dashboard.viewMemories')}
               </Button>
               <Button onClick={() => router.push('/invitar')} variant="outline" className="w-full">
-                🎁 Invitar Amigos
+                🎁 {t('dashboard.inviteFriends')}
               </Button>
             </div>
           </CardContent>
