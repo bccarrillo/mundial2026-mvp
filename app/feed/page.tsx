@@ -21,7 +21,8 @@ export default function FeedPage() {
   const [searchInput, setSearchInput] = useState('')
   const router = useRouter()
   const supabase = createClient()
-  const observer = useRef<IntersectionObserver | null>(null) // Fixed TypeScript error
+  const observer = useRef<IntersectionObserver | null>(null)
+  const inputRef = useRef<HTMLInputElement>(null) // Fixed TypeScript error
 
   const lastMemoryRef = useCallback((node: HTMLDivElement) => {
     if (loading) return
@@ -85,6 +86,10 @@ export default function FeedPage() {
     setMemories([])
     setPage(0)
     setHasMore(true)
+    // Mantener foco en el input
+    if (inputRef.current && document.activeElement === inputRef.current) {
+      setTimeout(() => inputRef.current?.focus(), 0)
+    }
   }, [searchQuery, teamFilter])
 
   // Generar key única combinando id y timestamp
@@ -122,6 +127,7 @@ export default function FeedPage() {
         {/* Buscador */}
         <div className="mb-4">
           <Input
+            ref={inputRef}
             type="text"
             placeholder="🔍 Buscar por título o descripción..."
             value={searchInput}
