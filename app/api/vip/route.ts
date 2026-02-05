@@ -113,7 +113,19 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Verificar pago en Stripe
+    // Si estamos en modo demo, simular confirmación exitosa
+    if (isDemoMode) {
+      return NextResponse.json({
+        success: true,
+        message: 'Demo payment confirmed',
+        demo: true
+      })
+    }
+
+    // MODO PRODUCCIÓN: Verificar pago en Stripe
+    const Stripe = require('stripe')
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+    
     const paymentIntent = await stripe.paymentIntents.retrieve(payment_intent_id)
     
     if (paymentIntent.status !== 'succeeded') {
@@ -125,13 +137,21 @@ export async function PUT(request: NextRequest) {
     }
 
     // Crear membresía VIP
-    const membership = await createVIPMembership(
-      user.id,
-      payment_intent_id,
-      paymentIntent.amount / 100 // Convertir de centavos a dólares
-    )
+    const { data: membership, error: insertError } = await supabase
+      .from('vip_memberships')
+      .insert({
+        user_id: user.id,
+        payment_intent_id,
+        amount_paid: paymentIntent.amount / 100,
+        currency: 'USD',
+        is_active: true,
+        expires_at: null
+      })
+      .select()
+      .single()
 
-    if (!membership) {
+    if (insertError) {
+      console.error('Error creating VIP membership:', insertError)
       return NextResponse.json({ error: 'Failed to create VIP membership' }, { status: 500 })
     }
 
