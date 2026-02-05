@@ -1,7 +1,7 @@
 # 📊 Estado del Proyecto - Mundial 2026 MVP
 
-**Última actualización:** 2024 (Día 8)  
-**Versión:** 1.2 (MVP + Viralidad + i18n + Analytics + UX)  
+**Última actualización:** 2024 (Día 9)  
+**Versión:** 1.3 (MVP + Viralidad + i18n + Analytics + UX + PayPal)  
 **Stack:** Next.js 14, TypeScript, Supabase, Vercel, react-i18next  
 **Presupuesto:** $0 (100% free tier)  
 **Idiomas:** 🇪🇸 Español | 🇺🇸 English | 🇧🇷 Português
@@ -57,6 +57,14 @@
 - [x] Contador de usuarios totales en landing page
 - [x] Botón compartir invitación en WhatsApp
 
+### 💰 Monetización
+- [x] Página "Apoyar" completa con PayPal
+- [x] Botón donación PayPal funcional
+- [x] Diseño profesional con razones para donar
+- [x] Beneficios para supporters
+- [x] Alternativas de apoyo (compartir/invitar)
+- [x] Integrado con sistema i18n
+
 ### 📱 PWA
 - [x] manifest.json configurado
 - [x] Iconos 192x192 y 512x512
@@ -90,7 +98,7 @@
 - [x] 3 idiomas: Español, English, Português
 - [x] Selector de idioma en navbar
 - [x] Persistencia en localStorage
-- [x] 11 páginas traducidas (100% cobertura)
+- [x] 12 páginas traducidas (100% cobertura)
 - [x] Sin hydration errors
 - [x] Traducciones organizadas por sección
 
