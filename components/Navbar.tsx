@@ -7,24 +7,33 @@ import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import LanguageSelector from './LanguageSelector'
+import VIPBadge from './VIPBadge'
+import VIPPurchaseModal from './VIPPurchaseModalDemo'
 import { getUserPoints, getLevelInfo } from '@/lib/points'
+import { isUserVIPClient } from '@/lib/vip-client'
 
 export default function Navbar() {
   const [user, setUser] = useState<any>(null)
   const [userPoints, setUserPoints] = useState<any>(null)
+  const [isVIP, setIsVIP] = useState(false)
+  const [showVIPModal, setShowVIPModal] = useState(false)
   const [refreshTrigger, setRefreshTrigger] = useState(0)
   const router = useRouter()
   const pathname = usePathname()
   const supabase = createClient()
   const { t } = useTranslation()
 
-  // Función para recargar puntos
-  const refreshPoints = async (userId: string) => {
+  // Función para recargar puntos y estado VIP
+  const refreshUserData = async (userId: string) => {
     try {
-      const points = await getUserPoints(userId)
+      const [points, vipStatus] = await Promise.all([
+        getUserPoints(userId),
+        isUserVIPClient(userId)
+      ])
       setUserPoints(points)
+      setIsVIP(vipStatus)
     } catch (err) {
-      console.error('Error refreshing points:', err)
+      console.error('Error refreshing user data:', err)
     }
   }
 
@@ -33,9 +42,9 @@ export default function Navbar() {
       const { data: { user } } = await supabase.auth.getUser()
       setUser(user)
       
-      // Cargar puntos de forma asíncrona sin bloquear
+      // Cargar puntos y estado VIP de forma asíncrona sin bloquear
       if (user) {
-        refreshPoints(user.id)
+        refreshUserData(user.id)
       }
     }
     getUser()
@@ -44,9 +53,10 @@ export default function Navbar() {
       setUser(session?.user ?? null)
       
       if (session?.user) {
-        refreshPoints(session.user.id)
+        refreshUserData(session.user.id)
       } else {
         setUserPoints(null)
+        setIsVIP(false)
       }
     })
 
@@ -58,16 +68,16 @@ export default function Navbar() {
     if (!user) return
     
     const interval = setInterval(() => {
-      refreshPoints(user.id)
+      refreshUserData(user.id)
     }, 30000) // 30 segundos
 
     return () => clearInterval(interval)
   }, [user])
 
-  // Recargar puntos cuando cambia la ruta (navegación)
+  // Recargar datos cuando cambia la ruta (navegación)
   useEffect(() => {
     if (user) {
-      refreshPoints(user.id)
+      refreshUserData(user.id)
     }
   }, [pathname, user])
 
@@ -103,21 +113,40 @@ export default function Navbar() {
             {user ? (
               <>
                 {userPoints && (
-                  <Link href="/puntos">
-                    <Button 
-                      variant={isActive('/puntos') ? 'default' : 'outline'} 
-                      size="default"
-                      className="text-sm h-9 px-3 bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-semibold"
-                      onClick={() => {
-                        // Forzar refresh de puntos al hacer clic
-                        if (user) {
-                          getUserPoints(user.id).then(points => setUserPoints(points))
-                        }
-                      }}
-                    >
-                      {getLevelInfo(userPoints.level).emoji} {userPoints.points}
-                    </Button>
-                  </Link>
+                  <div className="flex items-center gap-2">
+                    <Link href="/puntos">
+                      <Button 
+                        variant={isActive('/puntos') ? 'default' : 'outline'} 
+                        size="default"
+                        className="text-sm h-9 px-3 bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-semibold"
+                        onClick={() => {
+                          // Forzar refresh de datos al hacer clic
+                          if (user) {
+                            refreshUserData(user.id)
+                          }
+                        }}
+                      >
+                        {getLevelInfo(userPoints.level).emoji} {userPoints.points}
+                      </Button>
+                    </Link>
+                    {isVIP && (
+                      <Link href="/vip">
+                        <VIPBadge isVIP={true} size="sm" />
+                      </Link>
+                    )}
+                    {!isVIP && <VIPBadge isVIP={false} size="sm" />}
+                  </div>
+                )}
+                
+                {/* Botón VIP si no es VIP */}
+                {user && !isVIP && (
+                  <Button 
+                    onClick={() => setShowVIPModal(true)}
+                    size="default"
+                    className="text-sm h-9 px-3 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-semibold"
+                  >
+                    ⭐ Hazte VIP
+                  </Button>
                 )}
                 <Link href="/dashboard">
                   <Button 
@@ -162,6 +191,18 @@ export default function Navbar() {
           </div>
         </div>
       </div>
+      
+      {/* Modal de compra VIP */}
+      <VIPPurchaseModal 
+        isOpen={showVIPModal}
+        onClose={() => setShowVIPModal(false)}
+        onSuccess={() => {
+          setShowVIPModal(false)
+          if (user) {
+            refreshUserData(user.id)
+          }
+        }}
+      />
     </nav>
   )
 }
