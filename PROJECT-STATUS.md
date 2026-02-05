@@ -70,7 +70,13 @@
 
 ### 🎨 UI/UX
 - [x] Navbar con navegación condicional (auth state)
+- [x] Navbar responsive optimizado (botones size=default, 36px altura)
+- [x] Indicador visual de página activa en navbar
+- [x] Selector de idioma compacto con banderas (🇪🇸 🇺🇸 🇧🇷)
+- [x] Botón "Crear" destacado con gradiente verde
 - [x] Diseño responsive (mobile-first)
+- [x] Espaciado vertical mejorado en wrap de navbar (gap-y-2)
+- [x] Botones de compartir responsive en página de recuerdo
 - [x] Gradientes azul/verde (tema Mundial)
 - [x] Componentes shadcn/ui (Button, Card, Input, Textarea, Skeleton)
 - [x] Landing page con features y CTA
@@ -305,12 +311,43 @@ I18N-STATUS.md                  - Estado de internacionalización
 
 - Ninguno reportado actualmente
 
+---
+
+## 📐 ESPECIFICACIONES TÉCNICAS
+
+### Dimensiones UI
+
+**Navbar:**
+- Altura botones: 36px (h-9)
+- Padding horizontal: 12px (px-3)
+- Texto: text-sm (14px)
+- Gap horizontal: 6px móvil (gap-1.5), 8px desktop (gap-2)
+- Gap vertical wrap: 8px (gap-y-2)
+
+**Selector de idioma:**
+- Botones: size="sm" con banderas emoji
+- Padding: px-2
+- Variant activo: "secondary" (gris claro)
+
+**Botón Crear:**
+- Gradiente: from-green-500 to-emerald-600
+- Hover: from-green-600 to-emerald-700
+- Font: semibold
+
+**Página Recuerdo:**
+- Botones: Stack vertical en móvil (flex-col), horizontal en desktop (sm:flex-row)
+- Ancho: w-full en móvil, w-auto/flex-1 en desktopdo actualmente
+
 ## ✅ BUGS RESUELTOS
 
 - ❌ Hydration error en i18n → ✅ Resuelto con mounted state en I18nProvider
 - ❌ Error PGRST116 en queries → ✅ Resuelto usando .maybeSingle() en lugar de .single()
 - ❌ Pérdida de foco en búsqueda → ✅ Resuelto con búsqueda manual (botón + Enter)
 - ❌ Navbar no actualiza después de login/logout → ✅ Resuelto con onAuthStateChange subscription
+- ❌ Botones navbar muy pequeños en móvil → ✅ Aumentados de 32px a 36px (size="default")
+- ❌ Selector idioma ocupa mucho espacio → ✅ Cambiado a banderas compactas
+- ❌ Botón compartir se desborda en móvil → ✅ Stack vertical con flex-col en pantallas pequeñas
+- ❌ Falta espacio vertical en wrap navbar → ✅ Agregado gap-y-2 (8px vertical)
 
 ---
 
@@ -331,7 +368,16 @@ I18N-STATUS.md                  - Estado de internacionalización
 
 ## 🔄 HISTORIAL DE CAMBIOS
 
-### Día 8 (Hoy)
+### Día 8 (Hoy) - Mejoras UI/UX
+- ✅ Navbar responsive mejorado (botones más grandes: 32px → 36px)
+- ✅ Indicador visual de página activa (Feed/Dashboard)
+- ✅ Selector de idioma con banderas en lugar de texto
+- ✅ Botón "Crear" con gradiente verde destacado
+- ✅ Espaciado vertical en wrap de navbar (gap-y-2)
+- ✅ Botones responsive en página de recuerdo (stack vertical en móvil)
+- ✅ Color gris claro para idioma activo (variant="secondary")
+
+### Día 8 - i18n Completo
 - ✅ Internacionalización completa (react-i18next)
 - ✅ 3 idiomas: Español, English, Português
 - ✅ 11 páginas traducidas (100% cobertura)

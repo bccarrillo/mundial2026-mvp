@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useTranslation } from 'react-i18next'
+import { events } from '@/lib/analytics'
 
 function RegisterForm() {
   const [email, setEmail] = useState('')
@@ -35,6 +36,9 @@ function RegisterForm() {
       setError(error.message)
       setLoading(false)
     } else {
+      // Tracking: Usuario registrado
+      events.signUp('email')
+      
       // Si hay referido, crear invitación
       if (referrerId && data.user) {
         await supabase
@@ -45,6 +49,9 @@ function RegisterForm() {
             invitee_id: data.user.id,
             status: 'accepted'
           })
+        
+        // Tracking: Invitación aceptada
+        events.acceptInvite(referrerId)
       }
       
       setSuccess(true)

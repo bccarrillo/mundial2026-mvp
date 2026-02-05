@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Input } from '@/components/ui/input'
 import { Memory } from '@/types/database'
 import { useTranslation } from 'react-i18next'
+import { events } from '@/lib/analytics'
 
 const PAGE_SIZE = 12
 
@@ -20,6 +21,8 @@ export default function FeedPage() {
   const [teamFilter, setTeamFilter] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
   const [searchInput, setSearchInput] = useState('')
+  const [isSearching, setIsSearching] = useState(false)
+  const [clickedMemoryId, setClickedMemoryId] = useState<string | null>(null)
   const router = useRouter()
   const supabase = createClient()
   const observer = useRef<IntersectionObserver | null>(null)
@@ -37,6 +40,9 @@ export default function FeedPage() {
   }, [loading, hasMore])
 
   useEffect(() => {
+    // Tracking: Ver feed
+    events.viewFeed()
+    
     const fetchMemories = async () => {
       setLoading(true)
       let query = supabase
@@ -64,6 +70,7 @@ export default function FeedPage() {
         setHasMore(data.length === PAGE_SIZE)
       }
       setLoading(false)
+      setIsSearching(false)
     }
 
     fetchMemories()
@@ -76,8 +83,33 @@ export default function FeedPage() {
     setHasMore(true)
   }
 
-  const handleSearch = () => {
-    setSearchQuery(searchInput)
+  const handleSearch = async () => {
+    if (isSearching) return // Prevenir múltiples búsquedas
+    
+    setIsSearching(true)
+    
+    // Si es la misma búsqueda, solo resetear resultados
+    if (searchQuery === searchInput) {
+      setMemories([])
+      setPage(0)
+      setHasMore(true)
+      // Delay mínimo para mostrar el indicador
+      await new Promise(resolve => setTimeout(resolve, 300))
+      // Forzar nueva búsqueda cambiando el estado
+      setPage(prev => prev + 1)
+    } else {
+      setSearchQuery(searchInput)
+      setMemories([])
+      setPage(0)
+      setHasMore(true)
+      // Delay mínimo para mostrar el indicador
+      await new Promise(resolve => setTimeout(resolve, 300))
+    }
+  }
+
+  const handleClearSearch = () => {
+    setSearchInput('')
+    setSearchQuery('')
     setMemories([])
     setPage(0)
     setHasMore(true)
@@ -87,6 +119,11 @@ export default function FeedPage() {
     if (e.key === 'Enter') {
       handleSearch()
     }
+  }
+
+  const handleMemoryClick = (memoryId: string) => {
+    setClickedMemoryId(memoryId)
+    router.push(`/recuerdo/${memoryId}`)
   }
 
   // Generar key única combinando id y timestamp
@@ -131,9 +168,14 @@ export default function FeedPage() {
             onKeyPress={handleKeyPress}
             className="bg-white border-2"
           />
-          <Button onClick={handleSearch}>
-            {t('feed.searchButton')}
+          <Button onClick={handleSearch} disabled={isSearching}>
+            {isSearching ? t('feed.searching') : t('feed.searchButton')}
           </Button>
+          {(searchQuery || searchInput) && (
+            <Button variant="outline" onClick={handleClearSearch}>
+              {t('feed.clearSearch')}
+            </Button>
+          )}
         </div>
         
         {/* Filtros por equipo */}
@@ -196,14 +238,23 @@ export default function FeedPage() {
               <Card 
                 key={getUniqueKey(memory, index)}
                 ref={index === memories.length - 1 ? lastMemoryRef : null}
-                className="overflow-hidden cursor-pointer hover:shadow-lg transition"
-                onClick={() => router.push(`/recuerdo/${memory.id}`)}
+                className={`overflow-hidden cursor-pointer transition-all duration-200 relative ${
+                  clickedMemoryId === memory.id 
+                    ? 'opacity-30 scale-95 pointer-events-none' 
+                    : 'hover:shadow-lg hover:scale-105'
+                }`}
+                onClick={() => handleMemoryClick(memory.id)}
               >
                 <img
                   src={memory.image_url}
                   alt={memory.title}
                   className="w-full h-48 object-cover"
                 />
+                {clickedMemoryId === memory.id && (
+                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                    <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                )}
                 <CardContent className="p-4">
                   <h3 className="font-bold text-lg mb-2">{memory.title}</h3>
                   {memory.description && (

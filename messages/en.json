@@ -29,6 +29,8 @@
     "title": "World Cup 2026 Memories",
     "searchPlaceholder": "Search by title or description...",
     "searchButton": "Search",
+    "clearSearch": "Clear",
+    "searching": "Searching...",
     "filterAll": "All",
     "noMemories": "No public memories yet",
     "loadingMore": "Loading more memories...",

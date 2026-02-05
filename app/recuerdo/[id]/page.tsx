@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
 import { Memory, Comment } from '@/types/database'
 import { useTranslation } from 'react-i18next'
+import { events } from '@/lib/analytics'
 
 export default function RecuerdoPage() {
   const [memory, setMemory] = useState<Memory | null>(null)
@@ -27,6 +28,9 @@ export default function RecuerdoPage() {
   useEffect(() => {
     const fetchMemory = async () => {
       const id = params.id as string
+      
+      // Tracking: Ver recuerdo
+      events.viewMemory(id)
       
       // Obtener usuario actual
       const { data: { user } } = await supabase.auth.getUser()
@@ -123,11 +127,18 @@ export default function RecuerdoPage() {
       if (!error) {
         setLiked(true)
         setLikesCount(prev => prev + 1)
+        // Tracking: Like dado
+        events.likeMemory(memory.id)
       }
     }
   }
 
   const handleShare = async () => {
+    if (!memory) return
+    
+    // Tracking: Compartir recuerdo
+    events.shareMemory(memory.id)
+    
     const url = window.location.href
     const text = `📸 Mira este recuerdo del Mundial: ${memory?.title}\n\n👉 Crea el tuyo gratis en:`
     

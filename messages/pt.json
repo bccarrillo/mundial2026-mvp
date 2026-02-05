@@ -29,6 +29,8 @@
     "title": "Memórias da Copa 2026",
     "searchPlaceholder": "Buscar por título ou descrição...",
     "searchButton": "Buscar",
+    "clearSearch": "Limpar",
+    "searching": "Buscando...",
     "filterAll": "Todos",
     "noMemories": "Ainda não há memórias públicas",
     "loadingMore": "Carregando mais memórias...",

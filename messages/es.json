@@ -29,6 +29,8 @@
     "title": "Recuerdos del Mundial 2026",
     "searchPlaceholder": "Buscar por título o descripción...",
     "searchButton": "Buscar",
+    "clearSearch": "Limpiar",
+    "searching": "Buscando...",
     "filterAll": "Todos",
     "noMemories": "Aún no hay recuerdos públicos",
     "loadingMore": "Cargando más recuerdos...",

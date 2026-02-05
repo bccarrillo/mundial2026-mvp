@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Invitation } from '@/types/database'
 import { useTranslation } from 'react-i18next'
+import { events } from '@/lib/analytics'
 
 export default function InvitarPage() {
   const [user, setUser] = useState<any>(null)
@@ -51,6 +52,9 @@ export default function InvitarPage() {
   }
 
   const handleWhatsApp = () => {
+    // Tracking: Compartir invitación
+    events.shareInvite()
+    
     const text = `🎉 ¡Únete a Mundial 2026!\n\nGuarda y comparte tus recuerdos del Mundial.\n\n👉 Regístrate gratis:`
     const url = `https://wa.me/?text=${encodeURIComponent(text + '\n' + inviteLink)}`
     window.open(url, '_blank')

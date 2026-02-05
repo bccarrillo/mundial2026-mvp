@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import imageCompression from 'browser-image-compression'
 import { generateFileName } from '@/lib/utils/file'
 import { useTranslation } from 'react-i18next'
+import { events } from '@/lib/analytics'
 
 export default function CrearRecuerdoPage() {
   const [title, setTitle] = useState('')
@@ -88,6 +89,9 @@ export default function CrearRecuerdoPage() {
         })
 
       if (insertError) throw insertError
+
+      // Tracking: Recuerdo creado
+      events.createMemory()
 
       router.push('/mis-recuerdos')
     } catch (err: any) {
