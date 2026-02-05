@@ -45,14 +45,14 @@ export default function Navbar() {
             ⚽ Mundial 2026
           </Link>
           
-          <div className="flex gap-1 md:gap-2 items-center flex-wrap">
+          <div className="flex gap-1.5 md:gap-2 items-center flex-wrap gap-y-2">
             <LanguageSelector />
             
             <Link href="/feed">
               <Button 
                 variant={isActive('/feed') ? 'default' : 'ghost'} 
-                size="sm"
-                className="text-xs md:text-sm"
+                size="default"
+                className="text-sm h-9 px-3"
               >
                 {t('nav.feed')}
               </Button>
@@ -63,26 +63,26 @@ export default function Navbar() {
                 <Link href="/dashboard">
                   <Button 
                     variant={isActive('/dashboard') ? 'default' : 'ghost'} 
-                    size="sm"
-                    className="text-xs md:text-sm"
+                    size="default"
+                    className="text-sm h-9 px-3"
                   >
                     {t('nav.dashboard')}
                   </Button>
                 </Link>
                 <Link href="/crear">
-                  <Button size="sm" className="text-xs md:text-sm bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold">+ {t('nav.create')}</Button>
+                  <Button size="default" className="text-sm h-9 px-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold">+ {t('nav.create')}</Button>
                 </Link>
-                <Button variant="outline" size="sm" onClick={handleLogout} className="text-xs md:text-sm">
+                <Button variant="outline" size="default" onClick={handleLogout} className="text-sm h-9 px-3">
                   {t('nav.logout')}
                 </Button>
               </>
             ) : (
               <>
                 <Link href="/login">
-                  <Button variant="ghost" size="sm" className="text-xs md:text-sm">{t('nav.login')}</Button>
+                  <Button variant="ghost" size="default" className="text-sm h-9 px-3">{t('nav.login')}</Button>
                 </Link>
                 <Link href="/register">
-                  <Button size="sm" className="text-xs md:text-sm">{t('nav.register')}</Button>
+                  <Button size="default" className="text-sm h-9 px-3">{t('nav.register')}</Button>
                 </Link>
               </>
             )}
