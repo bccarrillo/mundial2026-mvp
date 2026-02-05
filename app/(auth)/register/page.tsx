@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useTranslation } from 'react-i18next'
 import { events } from '@/lib/analytics'
+import { addPoints } from '@/lib/points'
 
 function RegisterForm() {
   const [email, setEmail] = useState('')
@@ -49,6 +50,9 @@ function RegisterForm() {
             invitee_id: data.user.id,
             status: 'accepted'
           })
+        
+        // Agregar puntos al invitador por invitación exitosa
+        await addPoints(referrerId, 'invite', data.user.id)
         
         // Tracking: Invitación aceptada
         events.acceptInvite(referrerId)

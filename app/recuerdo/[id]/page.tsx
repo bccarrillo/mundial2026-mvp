@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Memory, Comment } from '@/types/database'
 import { useTranslation } from 'react-i18next'
 import { events } from '@/lib/analytics'
+import { addPoints } from '@/lib/points'
 
 export default function RecuerdoPage() {
   const [memory, setMemory] = useState<Memory | null>(null)
@@ -117,6 +118,11 @@ export default function RecuerdoPage() {
       if (!error) {
         setLiked(false)
         setLikesCount(prev => prev - 1)
+        
+        // OPCIONAL: Quitar puntos cuando se quita el like
+        // if (currentUser !== memory.user_id) {
+        //   await addPoints(memory.user_id, 'lose_like', memory.id)
+        // }
       }
     } else {
       // Dar like
@@ -127,6 +133,43 @@ export default function RecuerdoPage() {
       if (!error) {
         setLiked(true)
         setLikesCount(prev => prev + 1)
+        
+        // Solo agregar puntos si NO es el autor del recuerdo
+        if (currentUser !== memory.user_id) {
+          // Verificar si este usuario YA dio like antes a este recuerdo
+          // (buscando en historial de transacciones con metadata específica)
+          const transactionKey = `${currentUser}-${memory.id}-like`
+          
+          const { data: existingTransaction } = await supabase
+            .from('point_transactions')
+            .select('id')
+            .eq('user_id', memory.user_id)           // Quien recibe los puntos (autor)
+            .eq('action', 'receive_like')
+            .eq('reference_id', memory.id)           // El recuerdo
+            .textSearch('action', `receive_like`)    // Buscar solo likes
+            .limit(1)
+            .maybeSingle()
+          
+          // Contar cuántos likes ha recibido este recuerdo
+          const { count: likeTransactions } = await supabase
+            .from('point_transactions')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', memory.user_id)
+            .eq('action', 'receive_like')
+            .eq('reference_id', memory.id)
+          
+          // Contar cuántos likes reales tiene el recuerdo
+          const { count: actualLikes } = await supabase
+            .from('likes')
+            .select('*', { count: 'exact', head: true })
+            .eq('memory_id', memory.id)
+          
+          // Solo dar puntos si hay menos transacciones que likes reales
+          if ((likeTransactions || 0) < (actualLikes || 0)) {
+            await addPoints(memory.user_id, 'receive_like', memory.id)
+          }
+        }
+        
         // Tracking: Like dado
         events.likeMemory(memory.id)
       }
@@ -135,6 +178,11 @@ export default function RecuerdoPage() {
 
   const handleShare = async () => {
     if (!memory) return
+    
+    // Agregar puntos por compartir (solo si es el autor del recuerdo)
+    if (currentUser === memory.user_id) {
+      await addPoints(currentUser, 'share', memory.id)
+    }
     
     // Tracking: Compartir recuerdo
     events.shareMemory(memory.id)
@@ -181,6 +229,9 @@ export default function RecuerdoPage() {
       .single()
 
     if (!error && data) {
+      // Agregar puntos por comentar
+      await addPoints(currentUser, 'comment', data.id)
+      
       // Obtener profile del usuario
       const { data: profile } = await supabase
         .from('profiles')

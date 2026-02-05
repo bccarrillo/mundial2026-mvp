@@ -7,27 +7,69 @@ import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import LanguageSelector from './LanguageSelector'
+import { getUserPoints, getLevelInfo } from '@/lib/points'
 
 export default function Navbar() {
   const [user, setUser] = useState<any>(null)
+  const [userPoints, setUserPoints] = useState<any>(null)
+  const [refreshTrigger, setRefreshTrigger] = useState(0)
   const router = useRouter()
   const pathname = usePathname()
   const supabase = createClient()
   const { t } = useTranslation()
 
+  // Función para recargar puntos
+  const refreshPoints = async (userId: string) => {
+    try {
+      const points = await getUserPoints(userId)
+      setUserPoints(points)
+    } catch (err) {
+      console.error('Error refreshing points:', err)
+    }
+  }
+
   useEffect(() => {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       setUser(user)
+      
+      // Cargar puntos de forma asíncrona sin bloquear
+      if (user) {
+        refreshPoints(user.id)
+      }
     }
     getUser()
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user ?? null)
+      
+      if (session?.user) {
+        refreshPoints(session.user.id)
+      } else {
+        setUserPoints(null)
+      }
     })
 
     return () => subscription.unsubscribe()
-  }, [supabase])
+  }, [supabase, refreshTrigger])
+
+  // Recargar puntos cada 30 segundos
+  useEffect(() => {
+    if (!user) return
+    
+    const interval = setInterval(() => {
+      refreshPoints(user.id)
+    }, 30000) // 30 segundos
+
+    return () => clearInterval(interval)
+  }, [user])
+
+  // Recargar puntos cuando cambia la ruta (navegación)
+  useEffect(() => {
+    if (user) {
+      refreshPoints(user.id)
+    }
+  }, [pathname, user])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -60,6 +102,23 @@ export default function Navbar() {
             
             {user ? (
               <>
+                {userPoints && (
+                  <Link href="/puntos">
+                    <Button 
+                      variant={isActive('/puntos') ? 'default' : 'outline'} 
+                      size="default"
+                      className="text-sm h-9 px-3 bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white font-semibold"
+                      onClick={() => {
+                        // Forzar refresh de puntos al hacer clic
+                        if (user) {
+                          getUserPoints(user.id).then(points => setUserPoints(points))
+                        }
+                      }}
+                    >
+                      {getLevelInfo(userPoints.level).emoji} {userPoints.points}
+                    </Button>
+                  </Link>
+                )}
                 <Link href="/dashboard">
                   <Button 
                     variant={isActive('/dashboard') ? 'default' : 'ghost'} 

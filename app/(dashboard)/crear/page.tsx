@@ -12,6 +12,7 @@ import imageCompression from 'browser-image-compression'
 import { generateFileName } from '@/lib/utils/file'
 import { useTranslation } from 'react-i18next'
 import { events } from '@/lib/analytics'
+import { addPoints } from '@/lib/points'
 
 export default function CrearRecuerdoPage() {
   const [title, setTitle] = useState('')
@@ -76,7 +77,7 @@ export default function CrearRecuerdoPage() {
         .getPublicUrl(fileName)
 
       // Crear recuerdo
-      const { error: insertError } = await supabase
+      const { data: newMemory, error: insertError } = await supabase
         .from('memories')
         .insert({
           user_id: user.id,
@@ -87,8 +88,13 @@ export default function CrearRecuerdoPage() {
           image_url: publicUrl,
           is_public: isPublic
         })
+        .select()
+        .single()
 
       if (insertError) throw insertError
+
+      // Agregar puntos por crear recuerdo
+      await addPoints(user.id, 'create_memory', newMemory.id)
 
       // Tracking: Recuerdo creado
       events.createMemory()
