@@ -1,7 +1,7 @@
 # 📊 Estado del Proyecto - Mundial 2026 MVP
 
 **Última actualización:** 2024 (Día 8)  
-**Versión:** 1.1 (MVP + Viralidad + i18n Completo)  
+**Versión:** 1.2 (MVP + Viralidad + i18n + Analytics + UX)  
 **Stack:** Next.js 14, TypeScript, Supabase, Vercel, react-i18next  
 **Presupuesto:** $0 (100% free tier)  
 **Idiomas:** 🇪🇸 Español | 🇺🇸 English | 🇧🇷 Português
@@ -32,6 +32,9 @@
 - [x] Infinite scroll (12 items por página)
 - [x] Filtros por equipo (Colombia, México, Argentina, Brasil, USA, Canadá)
 - [x] Búsqueda por título/descripción (con botón + Enter)
+- [x] Botón "Limpiar" búsqueda (aparece cuando hay búsqueda activa)
+- [x] Indicador "Buscando..." con feedback visual
+- [x] Preloader en cards al hacer clic (spinner + opacity)
 - [x] Skeleton loading states
 - [x] Muestra autor de cada recuerdo
 
@@ -66,7 +69,7 @@
 - [x] Google Analytics 4 integrado
 - [x] Script de tracking en layout
 - [x] Funciones de eventos predefinidas en `lib/analytics.ts`
-- [ ] **PENDIENTE:** Agregar llamadas a eventos (signUp, createMemory, shareMemory, etc.)
+- [x] Eventos implementados: signUp, createMemory, shareMemory, likeMemory, shareInvite, viewFeed, viewMemory, acceptInvite
 
 ### 🎨 UI/UX
 - [x] Navbar con navegación condicional (auth state)
@@ -529,3 +532,46 @@ I18N-STATUS.md                  - Estado de internacionalización
 ---
 
 **🎉 MVP COMPLETADO - LISTO PARA USUARIOS REALES**
+
+---
+
+## 🚀 LO QUE FALTA DE LA APP
+
+### 🎯 **Para lanzamiento inmediato:**
+**NADA CRÍTICO** - La app está 100% funcional y lista para usuarios reales.
+
+### 📈 **Para crecimiento (post-lanzamiento):**
+
+1. **Configurar Google Analytics** (5 min)
+   - Crear cuenta GA4 y obtener ID
+   - Agregar `NEXT_PUBLIC_GA_ID` a Vercel
+   - Empezar a medir métricas reales
+
+2. **Perfiles de usuario** (20 min)
+   - Página `/usuario/[id]` con recuerdos públicos
+   - Stats: total recuerdos, likes recibidos
+   - Mejora descubrimiento y engagement
+
+3. **Sistema de notificaciones** (30 min)
+   - Alertas de comentarios y invitaciones aceptadas
+   - Aumenta retención significativamente
+
+### 🔧 **Nice to have:**
+- Editar comentarios propios (15 min)
+- Paginación en "Mis recuerdos" (10 min)
+
+---
+
+## 🎯 **RECOMENDACIÓN:**
+
+**LANZAR YA** con la configuración de Google Analytics. Las demás features pueden agregarse basándose en feedback real de usuarios.
+
+**La app tiene todo lo necesario para:**
+- ✅ Registrar y retener usuarios
+- ✅ Crear y compartir contenido
+- ✅ Generar viralidad orgánica
+- ✅ Funcionar en 3 idiomas
+- ✅ Instalarse como PWA
+- ✅ Medir todas las métricas clave
+
+**Estado: MVP COMPLETO Y LISTO PARA PRODUCCIÓN** 🎉
