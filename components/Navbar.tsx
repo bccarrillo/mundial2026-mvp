@@ -131,6 +131,15 @@ export default function Navbar() {
                 <Link href="/crear">
                   <Button size="default" className="text-sm h-9 px-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold">+ {t('nav.create')}</Button>
                 </Link>
+                <Link href="/rankings">
+                  <Button 
+                    variant={isActive('/rankings') ? 'default' : 'outline'} 
+                    size="default" 
+                    className="text-sm h-9 px-3"
+                  >
+                    🏆 Rankings
+                  </Button>
+                </Link>
                 <Link href="/apoyar">
                   <Button variant="outline" size="default" className="text-sm h-9 px-3">
                     💝 {t('nav.support')}
