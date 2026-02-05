@@ -5,6 +5,7 @@
     "myMemories": "Minhas Memórias",
     "dashboard": "Painel",
     "invite": "Convidar",
+    "support": "Apoiar",
     "login": "Entrar",
     "register": "Cadastrar",
     "logout": "Sair"
@@ -128,5 +129,34 @@
     "delete": "Excluir",
     "edit": "Editar",
     "back": "Voltar"
+  },
+  "support": {
+    "title": "Apoie o Projeto",
+    "subtitle": "Ajude-nos a manter a Copa 2026 gratuita para todos os fãs de futebol",
+    "mainTitle": "Mantenha vivo o sonho da Copa",
+    "mainDescription": "Seu apoio nos ajuda a manter os servidores funcionando, desenvolver novos recursos e tornar esta experiência incrível para todos.",
+    "donateButton": "Doar com PayPal",
+    "securePayment": "Pagamento 100% seguro com PayPal",
+    "reason1Title": "100% Grátis para Usuários",
+    "reason1Description": "Mantemos o app completamente gratuito para todos os fãs da Copa.",
+    "reason2Title": "Servidores Confiáveis",
+    "reason2Description": "Garantimos que suas memórias estejam seguras e acessíveis durante toda a Copa.",
+    "reason3Title": "Novos Recursos",
+    "reason3Description": "Desenvolvemos constantemente novos recursos para melhorar sua experiência.",
+    "reason4Title": "Comunidade Global",
+    "reason4Description": "Conectamos fãs de todo o mundo em uma única plataforma.",
+    "benefitsTitle": "Benefícios para Apoiadores",
+    "benefit1Title": "Badge Especial",
+    "benefit1Description": "Insígnia única de 'Apoiador' no seu perfil",
+    "benefit2Title": "Acesso Antecipado",
+    "benefit2Description": "Teste novos recursos antes de todos",
+    "benefit3Title": "Reconhecimento",
+    "benefit3Description": "Apareça em nossa página de agradecimentos",
+    "alternativeTitle": "Outras formas de apoiar",
+    "alternativeDescription": "Se não pode doar, também pode nos ajudar destas maneiras:",
+    "inviteFriends": "Convidar Amigos",
+    "shareApp": "Compartilhar App",
+    "footerMessage": "Cada doação, independente do valor, faz uma grande diferença para manter este projeto vivo.",
+    "footerThanks": "Obrigado por fazer parte da comunidade Copa 2026! ⚽❤️"
   }
 }

@@ -5,6 +5,7 @@
     "myMemories": "Mis Recuerdos",
     "dashboard": "Dashboard",
     "invite": "Invitar",
+    "support": "Apoyar",
     "login": "Iniciar sesión",
     "register": "Registrarse",
     "logout": "Cerrar sesión"
@@ -128,5 +129,34 @@
     "delete": "Eliminar",
     "edit": "Editar",
     "back": "Volver"
+  },
+  "support": {
+    "title": "Apoya el Proyecto",
+    "subtitle": "Ayúdanos a mantener Mundial 2026 gratis para todos los fanáticos del fútbol",
+    "mainTitle": "Mantén vivo el sueño del Mundial",
+    "mainDescription": "Tu apoyo nos ayuda a mantener los servidores funcionando, desarrollar nuevas características y hacer que esta experiencia sea increíble para todos.",
+    "donateButton": "Donar con PayPal",
+    "securePayment": "Pago 100% seguro con PayPal",
+    "reason1Title": "100% Gratis para Usuarios",
+    "reason1Description": "Mantenemos la app completamente gratuita para todos los fanáticos del Mundial.",
+    "reason2Title": "Servidores Confiables",
+    "reason2Description": "Garantizamos que tu recuerdos estén seguros y accesibles durante todo el Mundial.",
+    "reason3Title": "Nuevas Características",
+    "reason3Description": "Desarrollamos constantemente nuevas funciones para mejorar tu experiencia.",
+    "reason4Title": "Comunidad Global",
+    "reason4Description": "Conectamos fanáticos de todo el mundo en una sola plataforma.",
+    "benefitsTitle": "Beneficios para Supporters",
+    "benefit1Title": "Badge Especial",
+    "benefit1Description": "Insignia única de 'Supporter' en tu perfil",
+    "benefit2Title": "Acceso Temprano",
+    "benefit2Description": "Prueba nuevas características antes que nadie",
+    "benefit3Title": "Reconocimiento",
+    "benefit3Description": "Apareces en nuestra página de agradecimientos",
+    "alternativeTitle": "Otras formas de apoyar",
+    "alternativeDescription": "Si no puedes donar, también puedes ayudarnos de estas maneras:",
+    "inviteFriends": "Invitar Amigos",
+    "shareApp": "Compartir App",
+    "footerMessage": "Cada donación, sin importar el monto, hace una gran diferencia para mantener este proyecto vivo.",
+    "footerThanks": "¡Gracias por ser parte de la comunidad Mundial 2026! ⚽❤️"
   }
 }

@@ -5,6 +5,7 @@
     "myMemories": "My Memories",
     "dashboard": "Dashboard",
     "invite": "Invite",
+    "support": "Support",
     "login": "Login",
     "register": "Sign up",
     "logout": "Logout"
@@ -128,5 +129,34 @@
     "delete": "Delete",
     "edit": "Edit",
     "back": "Back"
+  },
+  "support": {
+    "title": "Support the Project",
+    "subtitle": "Help us keep World Cup 2026 free for all football fans",
+    "mainTitle": "Keep the World Cup dream alive",
+    "mainDescription": "Your support helps us keep servers running, develop new features and make this experience amazing for everyone.",
+    "donateButton": "Donate with PayPal",
+    "securePayment": "100% secure payment with PayPal",
+    "reason1Title": "100% Free for Users",
+    "reason1Description": "We keep the app completely free for all World Cup fans.",
+    "reason2Title": "Reliable Servers",
+    "reason2Description": "We guarantee your memories are safe and accessible throughout the World Cup.",
+    "reason3Title": "New Features",
+    "reason3Description": "We constantly develop new features to improve your experience.",
+    "reason4Title": "Global Community",
+    "reason4Description": "We connect fans from around the world on one platform.",
+    "benefitsTitle": "Supporter Benefits",
+    "benefit1Title": "Special Badge",
+    "benefit1Description": "Unique 'Supporter' badge on your profile",
+    "benefit2Title": "Early Access",
+    "benefit2Description": "Try new features before anyone else",
+    "benefit3Title": "Recognition",
+    "benefit3Description": "Appear on our thank you page",
+    "alternativeTitle": "Other ways to support",
+    "alternativeDescription": "If you can't donate, you can also help us in these ways:",
+    "inviteFriends": "Invite Friends",
+    "shareApp": "Share App",
+    "footerMessage": "Every donation, no matter the amount, makes a big difference in keeping this project alive.",
+    "footerThanks": "Thank you for being part of the World Cup 2026 community! ⚽❤️"
   }
 }
