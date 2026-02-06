@@ -1,6 +1,20 @@
 import { createClient } from '@/lib/supabase/server'
 import { isUserVIP } from '@/lib/vip'
 
+// Configuración Crossmint
+const CROSSMINT_CONFIG = {
+  projectId: process.env.CROSSMINT_PROJECT_ID!,
+  clientSecret: process.env.CROSSMINT_CLIENT_SECRET!,
+  collectionId: process.env.CROSSMINT_COLLECTION_ID || 'default',
+  environment: process.env.CROSSMINT_ENVIRONMENT || 'staging',
+  baseUrl: process.env.CROSSMINT_ENVIRONMENT === 'production' 
+    ? 'https://api.crossmint.com' 
+    : 'https://staging.crossmint.com'
+}
+
+// Configuración NFT
+const NFT_MODE = process.env.NFT_MODE || 'demo' // 'demo' | 'production'
+
 export interface NFTCertificate {
   id: string
   memory_id: string
@@ -66,12 +80,60 @@ export async function memoryHasNFT(memoryId: string): Promise<boolean> {
   return data || false
 }
 
-// Crear certificado NFT
+// Crear NFT real con Crossmint
+async function mintNFTWithCrossmint(nftData: {
+  userEmail: string
+  title: string
+  description: string
+  imageUrl: string
+  userLevel: number
+  price: number
+  createdAt: string
+}) {
+  const response = await fetch(`${CROSSMINT_CONFIG.baseUrl}/api/2022-06-09/collections/${CROSSMINT_CONFIG.collectionId}/nfts`, {
+    method: 'POST',
+    headers: {
+      'X-CLIENT-SECRET': CROSSMINT_CONFIG.clientSecret,
+      'X-PROJECT-ID': CROSSMINT_CONFIG.projectId,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      recipient: `email:${nftData.userEmail}:polygon`,
+      metadata: {
+        name: `Mundial 2026 - ${nftData.title}`,
+        description: nftData.description,
+        image: nftData.imageUrl,
+        attributes: [
+          { trait_type: "Event", value: "Mundial 2026" },
+          { trait_type: "User Level", value: nftData.userLevel },
+          { trait_type: "Price Paid", value: `$${nftData.price}` },
+          { trait_type: "Certification Date", value: nftData.createdAt }
+        ]
+      }
+    })
+  })
+
+  if (!response.ok) {
+    const errorText = await response.text()
+    console.error('Crossmint API Error:', {
+      status: response.status,
+      statusText: response.statusText,
+      body: errorText
+    })
+    throw new Error(`Crossmint API error: ${response.status} - ${errorText}`)
+  }
+
+  return response.json()
+}
+
+// Crear certificado NFT (modo demo o producción)
 export async function createNFTCertificate(
   memoryId: string,
   userId: string,
+  userEmail: string,
   paymentIntentId: string,
-  amountPaid: number
+  amountPaid: number,
+  mode: 'demo' | 'production' = NFT_MODE as 'demo' | 'production'
 ): Promise<NFTCertificate | null> {
   const supabase = await createClient()
   
@@ -92,8 +154,45 @@ export async function createNFTCertificate(
   if (!memory) {
     throw new Error('Memory not found or not owned by user')
   }
+
+  let blockchainId = null
+  let transactionHash = null
+  let status: 'pending' | 'minting' | 'completed' | 'failed' = 'pending'
+
+  // Si es modo producción, crear NFT real
+  if (mode === 'production') {
+    try {
+      console.log('Creating NFT with Crossmint...', {
+        userEmail,
+        title: memory.title,
+        price: amountPaid
+      })
+      
+      const crossmintResult = await mintNFTWithCrossmint({
+        userEmail,
+        title: memory.title,
+        description: `Certificado conmemorativo del Mundial 2026`,
+        imageUrl: memory.image_url,
+        userLevel: 1, // TODO: obtener nivel real del usuario
+        price: amountPaid,
+        createdAt: new Date().toISOString()
+      })
+      
+      console.log('Crossmint result:', crossmintResult)
+      
+      blockchainId = crossmintResult.id
+      transactionHash = crossmintResult.onChain?.txHash
+      status = 'minting'
+    } catch (error) {
+      console.error('Crossmint error:', error)
+      status = 'failed'
+    }
+  } else {
+    // Modo demo - simular éxito
+    status = 'completed'
+  }
   
-  // Crear certificado NFT
+  // Crear certificado NFT en base de datos
   const { data: certificate, error } = await supabase
     .from('nft_certificates')
     .insert({
@@ -102,9 +201,11 @@ export async function createNFTCertificate(
       payment_intent_id: paymentIntentId,
       amount_paid: amountPaid,
       currency: 'USD',
-      status: 'pending',
+      status,
       blockchain: 'polygon',
-      is_eligible_for_auction: true
+      is_eligible_for_auction: true,
+      token_id: blockchainId,
+      mint_transaction_hash: transactionHash
     })
     .select()
     .single()

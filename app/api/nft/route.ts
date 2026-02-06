@@ -3,12 +3,20 @@ import { createClient } from '@/lib/supabase/server'
 import { calculateNFTPrice, createNFTCertificate, memoryHasNFT } from '@/lib/nft'
 import { getUserPoints } from '@/lib/points'
 
-// Verificar si estamos en modo demo (sin Crossmint configurado)
-const isDemoMode = !process.env.CROSSMINT_API_KEY
+// Verificar si estamos en modo demo
+const isDemoMode = !process.env.CROSSMINT_PROJECT_ID
 
 export async function POST(request: NextRequest) {
   try {
-    const { memory_id } = await request.json()
+    // Debug: verificar variables de entorno
+    console.log('Environment variables check:', {
+      NFT_MODE: process.env.NFT_MODE,
+      CROSSMINT_PROJECT_ID: process.env.CROSSMINT_PROJECT_ID ? 'SET' : 'NOT SET',
+      CROSSMINT_CLIENT_SECRET: process.env.CROSSMINT_CLIENT_SECRET ? 'SET' : 'NOT SET',
+      CROSSMINT_ENVIRONMENT: process.env.CROSSMINT_ENVIRONMENT
+    })
+    
+    const { memory_id, mode = 'demo' } = await request.json()
     
     if (!memory_id) {
       return NextResponse.json({ error: 'Memory ID required' }, { status: 400 })
@@ -43,13 +51,21 @@ export async function POST(request: NextRequest) {
     const userPoints = await getUserPoints(user.id)
     const price = await calculateNFTPrice(user.id, userPoints?.level || 1)
 
+    // Determinar modo de operación - usar directamente NFT_MODE
+    const operationMode = process.env.NFT_MODE === 'production' ? 'production' : 'demo'
+    
+    console.log('Operation mode:', operationMode, 'NFT_MODE:', process.env.NFT_MODE)
+
     // MODO DEMO: Crear NFT directamente sin pago
-    if (isDemoMode) {
+    if (operationMode === 'demo') {
+      console.log('Running in DEMO mode')
       const certificate = await createNFTCertificate(
         memory_id,
         user.id,
+        user.email || '',
         `demo_nft_${Date.now()}`,
-        price
+        price,
+        'demo'
       )
 
       if (!certificate) {
@@ -80,14 +96,45 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // MODO PRODUCCIÓN: Crear Payment Intent
-    // TODO: Integrar con Crossmint cuando esté disponible
-    return NextResponse.json({
-      success: false,
-      error: 'NFT minting not available yet',
-      price,
-      demo: false
-    })
+    // MODO PRODUCCIÓN: Crear NFT real con Crossmint
+    console.log('Running in PRODUCTION mode - calling Crossmint')
+    try {
+      const certificate = await createNFTCertificate(
+        memory_id,
+        user.id,
+        user.email || '',
+        `crossmint_${Date.now()}`,
+        price,
+        'production'
+      )
+
+      if (!certificate) {
+        return NextResponse.json({ error: 'Failed to create NFT certificate' }, { status: 500 })
+      }
+
+      return NextResponse.json({
+        success: true,
+        certificate,
+        price,
+        message: certificate.status === 'minting' 
+          ? 'NFT being created on blockchain. You\'ll receive email confirmation.' 
+          : 'NFT creation failed. Please try again.',
+        demo: false,
+        debug: {
+          status: certificate.status,
+          blockchainId: certificate.token_id,
+          transactionHash: certificate.mint_transaction_hash
+        }
+      })
+    } catch (error) {
+      console.error('Production NFT error:', error)
+      return NextResponse.json({
+        success: false,
+        error: 'Failed to create NFT on blockchain',
+        price,
+        demo: false
+      })
+    }
 
   } catch (error) {
     console.error('Error creating NFT:', error)

@@ -36,7 +36,10 @@ export default function NFTCertificationModal({
       const response = await fetch('/api/nft', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ memory_id: memoryId })
+        body: JSON.stringify({ 
+          memory_id: memoryId,
+          mode: 'demo' // Cambiar a 'production' cuando esté listo
+        })
       })
       
       const data = await response.json()
