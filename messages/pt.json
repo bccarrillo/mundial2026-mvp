@@ -226,5 +226,26 @@
     "viewStats": "Ver Estatísticas",
     "vipRankings": "Rankings VIP",
     "thankYou": "Obrigado por fazer parte do clube VIP da Copa 2026"
+  },
+  "points": {
+    "title": "Meus Pontos",
+    "loading": "Carregando pontos...",
+    "loadError": "Erro ao carregar pontos",
+    "progressTitle": "Progresso para o próximo nível",
+    "pointsToNext": "pontos para",
+    "maxLevelReached": "Nível máximo alcançado!",
+    "howToEarnTitle": "Como ganhar pontos",
+    "recentHistoryTitle": "Histórico recente",
+    "noActivity": "Ainda não há atividade. Crie sua primeira memória para ganhar pontos!",
+    "actions": {
+      "create_memory": "Criar memória",
+      "receive_like": "Receber curtida",
+      "comment": "Comentar",
+      "share": "Compartilhar",
+      "invite": "Convidar amigo"
+    },
+    "createMemoryButton": "Criar Memória",
+    "viewRankingsButton": "Ver Rankings",
+    "points": "pontos"
   }
 }

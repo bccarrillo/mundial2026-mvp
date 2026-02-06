@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
@@ -21,6 +22,7 @@ interface PointTransaction {
 }
 
 export default function PuntosPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const [userPoints, setUserPoints] = useState<UserPoints | null>(null)
   const [history, setHistory] = useState<PointTransaction[]>([])
@@ -55,14 +57,7 @@ export default function PuntosPage() {
   }
 
   const getActionText = (action: string) => {
-    const actions: Record<string, string> = {
-      create_memory: 'Crear recuerdo',
-      receive_like: 'Recibir like',
-      comment: 'Comentar',
-      share: 'Compartir',
-      invite: 'Invitar amigo'
-    }
-    return actions[action] || action
+    return t(`points.actions.${action}`) || action
   }
 
   const formatDate = (dateString: string) => {
@@ -79,7 +74,7 @@ export default function PuntosPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p>Cargando puntos...</p>
+          <p>{t('points.loading')}</p>
         </div>
       </div>
     )
@@ -88,7 +83,7 @@ export default function PuntosPage() {
   if (!userPoints) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p>Error al cargar puntos</p>
+        <p>{t('points.loadError')}</p>
       </div>
     )
   }
@@ -109,7 +104,7 @@ export default function PuntosPage() {
 
         {/* Header con puntos y nivel */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2">🎮 Mis Puntos</h1>
+          <h1 className="text-4xl font-bold mb-2">🎮 {t('points.title')}</h1>
           <div className="text-6xl font-bold text-blue-600 mb-2">
             {userPoints.points.toLocaleString()}
           </div>
@@ -122,7 +117,7 @@ export default function PuntosPage() {
         <Card className="mb-6">
           <CardHeader>
             <CardTitle className="text-center">
-              Progreso al siguiente nivel
+              {t('points.progressTitle')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -139,8 +134,8 @@ export default function PuntosPage() {
               </div>
               <div className="text-center text-sm text-muted-foreground">
                 {progress.pointsToNext > 0 
-                  ? `${progress.pointsToNext} puntos para ${progress.nextLevelName}`
-                  : '¡Nivel máximo alcanzado!'
+                  ? `${progress.pointsToNext} ${t('points.pointsToNext')} ${progress.nextLevelName}`
+                  : t('points.maxLevelReached')
                 }
               </div>
             </div>
@@ -150,28 +145,28 @@ export default function PuntosPage() {
         {/* Cómo ganar puntos */}
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>🎯 Cómo ganar puntos</CardTitle>
+            <CardTitle>🎯 {t('points.howToEarnTitle')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
-                <span>📸 Crear recuerdo</span>
+                <span>📸 {t('points.actions.create_memory')}</span>
                 <span className="font-bold text-blue-600">+{POINT_VALUES.create_memory}</span>
               </div>
               <div className="flex justify-between items-center p-3 bg-red-50 rounded-lg">
-                <span>❤️ Recibir like</span>
+                <span>❤️ {t('points.actions.receive_like')}</span>
                 <span className="font-bold text-red-600">+{POINT_VALUES.receive_like}</span>
               </div>
               <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
-                <span>💬 Comentar</span>
+                <span>💬 {t('points.actions.comment')}</span>
                 <span className="font-bold text-green-600">+{POINT_VALUES.comment}</span>
               </div>
               <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
-                <span>📱 Compartir</span>
+                <span>📱 {t('points.actions.share')}</span>
                 <span className="font-bold text-purple-600">+{POINT_VALUES.share}</span>
               </div>
               <div className="flex justify-between items-center p-3 bg-yellow-50 rounded-lg md:col-span-2">
-                <span>👥 Invitar amigo</span>
+                <span>👥 {t('points.actions.invite')}</span>
                 <span className="font-bold text-yellow-600">+{POINT_VALUES.invite}</span>
               </div>
             </div>
@@ -181,12 +176,12 @@ export default function PuntosPage() {
         {/* Historial de puntos */}
         <Card>
           <CardHeader>
-            <CardTitle>📊 Historial reciente</CardTitle>
+            <CardTitle>📊 {t('points.recentHistoryTitle')}</CardTitle>
           </CardHeader>
           <CardContent>
             {history.length === 0 ? (
               <p className="text-center text-muted-foreground py-8">
-                Aún no tienes actividad. ¡Crea tu primer recuerdo para ganar puntos!
+                {t('points.noActivity')}
               </p>
             ) : (
               <div className="space-y-3">
@@ -221,13 +216,13 @@ export default function PuntosPage() {
             onClick={() => router.push('/crear')}
             className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
           >
-            📸 Crear Recuerdo (+{POINT_VALUES.create_memory} puntos)
+            📸 {t('points.createMemoryButton')} (+{POINT_VALUES.create_memory} {t('points.points')})
           </Button>
           <Button 
             variant="outline"
             onClick={() => router.push('/rankings')}
           >
-            🏆 Ver Rankings
+            🏆 {t('points.viewRankingsButton')}
           </Button>
         </div>
       </div>

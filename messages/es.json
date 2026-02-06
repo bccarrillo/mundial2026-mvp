@@ -226,5 +226,26 @@
     "viewStats": "Ver Estadísticas",
     "vipRankings": "Rankings VIP",
     "thankYou": "Gracias por ser parte del club VIP del Mundial 2026"
+  },
+  "points": {
+    "title": "Mis Puntos",
+    "loading": "Cargando puntos...",
+    "loadError": "Error al cargar puntos",
+    "progressTitle": "Progreso al siguiente nivel",
+    "pointsToNext": "puntos para",
+    "maxLevelReached": "¡Nivel máximo alcanzado!",
+    "howToEarnTitle": "Cómo ganar puntos",
+    "recentHistoryTitle": "Historial reciente",
+    "noActivity": "Aún no tienes actividad. ¡Crea tu primer recuerdo para ganar puntos!",
+    "actions": {
+      "create_memory": "Crear recuerdo",
+      "receive_like": "Recibir like",
+      "comment": "Comentar",
+      "share": "Compartir",
+      "invite": "Invitar amigo"
+    },
+    "createMemoryButton": "Crear Recuerdo",
+    "viewRankingsButton": "Ver Rankings",
+    "points": "puntos"
   }
 }
