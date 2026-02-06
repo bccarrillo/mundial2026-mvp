@@ -51,17 +51,24 @@ export function getVIPBenefits(isVIP: boolean): VIPBenefits {
 
 // Calcular precio NFT con descuento VIP
 export function calculateNFTPrice(userLevel: number, isVIP: boolean): number {
-  let basePrice = 3 // Precio por defecto
+  const pricingMode = process.env.NEXT_PUBLIC_NFT_PRICING_MODE || process.env.NFT_PRICING_MODE || 'production'
   
-  // Descuentos por nivel (respetando mínimo $0.75 de Crossmint)
-  if (userLevel >= 5) basePrice = 0.75     // Mínimo para Leyendas
-  else if (userLevel >= 4) basePrice = 1.5 // $1.50 para Campeones
-  else if (userLevel >= 3) basePrice = 2.25 // $2.25 para Estrellas
-  
-  // Descuento VIP adicional (10%) pero respetando mínimo $0.75
-  if (isVIP && basePrice > 0.75) {
-    basePrice = Math.max(0.75, basePrice * 0.9) // Mínimo $0.75
+  if (pricingMode === 'test') {
+    // MODO TEST - Precio fijo $0.70 para todos
+    return 0.70
+  } else {
+    // MODO PRODUCCIÓN - Cálculos completos por nivel y VIP
+    let basePrice = 3 // Precio por defecto
+    
+    if (userLevel >= 5) basePrice = 0.75     // Mínimo Crossmint para Leyendas
+    else if (userLevel >= 4) basePrice = 1.5 // $1.50 para Campeones
+    else if (userLevel >= 3) basePrice = 2.25 // $2.25 para Estrellas
+    
+    // Descuento VIP adicional (10%) pero respetando mínimo $0.75
+    if (isVIP && basePrice > 0.75) {
+      basePrice = Math.max(0.75, basePrice * 0.9)
+    }
+    
+    return Math.round(basePrice * 100) / 100
   }
-  
-  return Math.round(basePrice * 100) / 100 // Redondear a 2 decimales
 }

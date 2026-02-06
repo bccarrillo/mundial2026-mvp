@@ -35,20 +35,26 @@ export default function NFTCertificationModal({
     setError(null)
 
     try {
-      const response = await fetch('/api/nft', {
+      const response = await fetch('/api/nft/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          memory_id: memoryId,
-          mode: 'production'
+          memory_id: memoryId
         })
       })
       
       const data = await response.json()
 
       if (data.success) {
-        onSuccess()
-        onClose()
+        if (data.mode === 'test') {
+          // Modo test - NFT creado directamente
+          onSuccess()
+          onClose()
+        } else {
+          // Modo producción - abrir checkout
+          window.open(data.checkoutUrl, '_blank')
+          onClose()
+        }
       } else {
         setError(data.error || t('nft.errorCertifying'))
       }
@@ -149,6 +155,23 @@ export default function NFTCertificationModal({
               <li>• {t('nft.productionMode')}</li>
             </ul>
           </div>
+
+          {/* Warning modo test */}
+          {(process.env.NEXT_PUBLIC_NFT_PRICING_MODE === 'test' || process.env.NFT_PAYMENT_MODE === 'test') && (
+            <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded mb-4">
+              <div className="flex items-center">
+                <span className="text-lg mr-2">⚠️</span>
+                <div>
+                  <strong>MODO TEST ACTIVO</strong>
+                  <div className="text-sm">
+                    {process.env.NEXT_PUBLIC_NFT_PRICING_MODE === 'test' && 'Precios: $0.70 fijo'}
+                    {process.env.NEXT_PUBLIC_NFT_PRICING_MODE === 'test' && process.env.NFT_PAYMENT_MODE === 'test' && ' | '}
+                    {process.env.NFT_PAYMENT_MODE === 'test' && 'Pago: Sin tarjeta'}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {error && (
             <div className="text-red-600 text-sm text-center mb-4">

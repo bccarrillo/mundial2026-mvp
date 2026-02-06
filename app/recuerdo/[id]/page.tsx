@@ -56,6 +56,12 @@ export default function RecuerdoPage() {
         
         // Calcular precio NFT
         const price = calculateNFTPrice(Number(points?.level) || 1, vipStatus)
+        console.log('🔍 NFT Price calculation:', {
+          level: Number(points?.level) || 1,
+          isVIP: vipStatus,
+          pricingMode: process.env.NEXT_PUBLIC_NFT_PRICING_MODE,
+          calculatedPrice: price
+        })
         setNFTPrice(price)
         
         // Verificar si el recuerdo ya tiene NFT
