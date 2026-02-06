@@ -96,7 +96,9 @@ export async function POST(request: NextRequest) {
           'x-api-key': process.env.CROSSMINT_API_KEY!
         },
         body: JSON.stringify({
-          recipient: `email:${user.email || ''}`,
+          recipient: {
+            email: user.email || ''
+          },
           quantity: 1,
           metadata: {
             name: `Mundial 2026 - ${memory.title}`,
