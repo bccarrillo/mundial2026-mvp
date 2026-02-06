@@ -101,6 +101,7 @@ export async function POST(request: NextRequest) {
           },
           quantity: 1,
           payment: {
+            method: 'fiat',
             currency: 'usd',
             amount: price.toFixed(2)
           },
