@@ -89,11 +89,16 @@ export async function POST(request: NextRequest) {
       console.log('📦 Collection ID:', process.env.CROSSMINT_COLLECTION_ID)
       
       // MODO PRODUCCIÓN - Crear Crossmint Checkout real
-      const checkoutResponse = await fetch('https://api.crossmint.com/api/2022-06-09/checkout/sessions', {
+      const controller = new AbortController()
+      setTimeout(() => controller.abort(), 15000) // 15 segundos timeout
+      
+      const checkoutResponse = await fetch('https://www.crossmint.com/api/2022-06-09/checkout/sessions', {
         method: 'POST',
+        signal: controller.signal,
         headers: {
           'X-API-KEY': process.env.CROSSMINT_API_KEY!,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'User-Agent': 'Mozilla/5.0 (compatible; Vercel-Function)'
         },
         body: JSON.stringify({
           payment: {
