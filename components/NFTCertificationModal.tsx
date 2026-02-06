@@ -30,21 +30,31 @@ export default function NFTCertificationModal({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const handleCrossmintPayment = () => {
-    // Crear URL de checkout de Crossmint
-    const checkoutUrl = `https://www.crossmint.com/checkout?` + new URLSearchParams({
-      clientId: process.env.NEXT_PUBLIC_CROSSMINT_PROJECT_ID || '',
-      mintTo: 'bcarrillo@instepca.com', // Tu email
-      listingId: process.env.NEXT_PUBLIC_CROSSMINT_COLLECTION_ID || '',
-      price: price.toFixed(2),
-      currency: 'USD'
-    })
+  const handleCrossmintPayment = async () => {
+    setLoading(true)
+    setError(null)
     
-    // Abrir en nueva ventana
-    window.open(checkoutUrl, '_blank', 'width=500,height=700')
-    
-    // Cerrar modal
-    onClose()
+    try {
+      const res = await fetch("/api/crossmint/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: "bcarrillo@instepca.com",
+        }),
+      })
+
+      const data = await res.json()
+
+      if (data?.checkoutUrl) {
+        window.location.href = data.checkoutUrl
+      } else {
+        setError(data.error || 'Error creando checkout')
+      }
+    } catch (err) {
+      setError('Error de conexión')
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (!isOpen) return null
@@ -162,9 +172,10 @@ export default function NFTCertificationModal({
 
           <Button 
             onClick={handleCrossmintPayment}
+            disabled={loading}
             className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
           >
-            💳 {t('nft.certifyButton')} ${price.toFixed(2)} USD
+            {loading ? 'Creando checkout...' : `💳 ${t('nft.certifyButton')} $${price.toFixed(2)} USD`}
           </Button>
 
           <div className="text-xs text-gray-500 text-center mt-3">
