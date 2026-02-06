@@ -30,40 +30,21 @@ export default function NFTCertificationModal({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const handleCertify = async () => {
-    setLoading(true)
-    setError(null)
-
-    try {
-      const response = await fetch('/api/nft/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          memory_id: memoryId
-        })
-      })
-      
-      const data = await response.json()
-
-      if (data.success) {
-        if (data.mode === 'test') {
-          // Modo test - NFT creado directamente
-          onSuccess()
-          onClose()
-        } else {
-          // Modo producción - orden creada, mostrar éxito
-          onSuccess()
-          onClose()
-        }
-      } else {
-        setError(data.error || t('nft.errorCertifying'))
-      }
-
-    } catch (err) {
-      setError(t('nft.errorGeneral'))
-    } finally {
-      setLoading(false)
-    }
+  const handleCrossmintPayment = () => {
+    // Crear URL de checkout de Crossmint
+    const checkoutUrl = `https://www.crossmint.com/checkout?` + new URLSearchParams({
+      clientId: process.env.NEXT_PUBLIC_CROSSMINT_PROJECT_ID || '',
+      mintTo: 'bcarrillo@instepca.com', // Tu email
+      listingId: process.env.NEXT_PUBLIC_CROSSMINT_COLLECTION_ID || '',
+      price: price.toFixed(2),
+      currency: 'USD'
+    })
+    
+    // Abrir en nueva ventana
+    window.open(checkoutUrl, '_blank', 'width=500,height=700')
+    
+    // Cerrar modal
+    onClose()
   }
 
   if (!isOpen) return null
@@ -180,11 +161,10 @@ export default function NFTCertificationModal({
           )}
 
           <Button 
-            onClick={handleCertify}
-            disabled={loading}
+            onClick={handleCrossmintPayment}
             className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
           >
-            {loading ? t('nft.certifying') : `🎫 ${t('nft.certifyButton')} $${price.toFixed(2)}`}
+            💳 {t('nft.certifyButton')} ${price.toFixed(2)} USD
           </Button>
 
           <div className="text-xs text-gray-500 text-center mt-3">
