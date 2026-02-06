@@ -181,22 +181,30 @@ export default function NFTCertificationModal({
             </Button>
           ) : (
             <CrossmintProvider apiKey={process.env.NEXT_PUBLIC_CROSSMINT_CLIENT_API_KEY!}>
-              <CrossmintHostedCheckout
-                lineItems={{
-                  collectionLocator: `crossmint:${process.env.NEXT_PUBLIC_CROSSMINT_COLLECTION_ID}`,
-                  callData: {
-                    totalPrice: price.toFixed(2),
-                    quantity: 1,
-                  },
-                }}
-                payment={{
-                  crypto: { enabled: true },
-                  fiat: { enabled: true },
-                }}
-                recipient={{
-                  email: "bcarrillo@instepca.com"
-                }}
-              />
+              <div className="w-full">
+                <CrossmintHostedCheckout
+                  lineItems={{
+                    collectionLocator: `crossmint:${process.env.NEXT_PUBLIC_CROSSMINT_COLLECTION_ID}`,
+                    callData: {
+                      totalPrice: price.toFixed(2),
+                      quantity: 1,
+                    },
+                  }}
+                  payment={{
+                    crypto: { enabled: true },
+                    fiat: { enabled: true },
+                  }}
+                  recipient={{
+                    email: "bcarrillo@instepca.com"
+                  }}
+                  onEvent={(event) => {
+                    if (event.type === 'payment:process.succeeded') {
+                      onSuccess()
+                      onClose()
+                    }
+                  }}
+                />
+              </div>
             </CrossmintProvider>
           )}
 
