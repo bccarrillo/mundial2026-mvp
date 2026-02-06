@@ -198,5 +198,33 @@
       "blockchainError": "Failed to create NFT on blockchain",
       "fetchNFTsError": "Failed to fetch NFTs"
     }
+  },
+  "vip": {
+    "title": "Exclusive VIP Zone",
+    "subtitle": "Welcome to your premium World Cup 2026 area",
+    "memberSince": "Member since",
+    "nftDiscount": "NFT Discount",
+    "exclusiveFunctions": "Exclusive functions",
+    "fullAccess": "Full access",
+    "benefitsTitle": "Your VIP Benefits",
+    "activeNow": "Active Now",
+    "comingSoon": "Coming Soon",
+    "exclusiveBadge": "Exclusive VIP Badge",
+    "exclusiveBadgeDesc": "Visible throughout the app",
+    "nftDiscountBenefit": "10% NFT Discount",
+    "nftDiscountDesc": "Automatic savings on certifications",
+    "advancedStats": "Advanced Statistics",
+    "advancedStatsDesc": "Premium dashboard available",
+    "specialFilters": "Special Filters",
+    "specialFiltersDesc": "Exclusive effects for photos",
+    "exclusiveChat": "Exclusive VIP Chat",
+    "exclusiveChatDesc": "Private room for VIP members",
+    "earlyAccess": "Early Access",
+    "earlyAccessDesc": "New features before anyone else",
+    "vipActions": "VIP Actions",
+    "createVipMemory": "Create VIP Memory",
+    "viewStats": "View Statistics",
+    "vipRankings": "VIP Rankings",
+    "thankYou": "Thank you for being part of the World Cup 2026 VIP club"
   }
 }

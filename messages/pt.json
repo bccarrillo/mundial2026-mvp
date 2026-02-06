@@ -198,5 +198,33 @@
       "blockchainError": "Erro ao criar NFT na blockchain",
       "fetchNFTsError": "Erro ao buscar NFTs"
     }
+  },
+  "vip": {
+    "title": "Zona VIP Exclusiva",
+    "subtitle": "Bem-vindo à sua área premium da Copa 2026",
+    "memberSince": "Membro desde",
+    "nftDiscount": "Desconto NFT",
+    "exclusiveFunctions": "Funções exclusivas",
+    "fullAccess": "Acesso completo",
+    "benefitsTitle": "Seus Benefícios VIP",
+    "activeNow": "Ativo Agora",
+    "comingSoon": "Em Breve",
+    "exclusiveBadge": "Badge VIP Exclusivo",
+    "exclusiveBadgeDesc": "Visível em todo o app",
+    "nftDiscountBenefit": "10% Desconto em NFTs",
+    "nftDiscountDesc": "Economia automática em certificações",
+    "advancedStats": "Estatísticas Avançadas",
+    "advancedStatsDesc": "Dashboard premium disponível",
+    "specialFilters": "Filtros Especiais",
+    "specialFiltersDesc": "Efeitos exclusivos para fotos",
+    "exclusiveChat": "Chat VIP Exclusivo",
+    "exclusiveChatDesc": "Sala privada para membros VIP",
+    "earlyAccess": "Acesso Antecipado",
+    "earlyAccessDesc": "Novos recursos antes de todos",
+    "vipActions": "Ações VIP",
+    "createVipMemory": "Criar Memória VIP",
+    "viewStats": "Ver Estatísticas",
+    "vipRankings": "Rankings VIP",
+    "thankYou": "Obrigado por fazer parte do clube VIP da Copa 2026"
   }
 }
