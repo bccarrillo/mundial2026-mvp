@@ -89,12 +89,12 @@ export async function POST(request: NextRequest) {
       console.log('📦 Collection ID:', process.env.CROSSMINT_COLLECTION_ID)
       
       // MODO PRODUCCIÓN - Crear Crossmint Checkout Widget URL
-      const checkoutUrl = `https://www.crossmint.com/checkout?` + new URLSearchParams({
-        clientId: process.env.CROSSMINT_PROJECT_ID!,
-        mintTo: user.email || '',
-        listingId: process.env.CROSSMINT_COLLECTION_ID!,
-        successCallbackURL: `https://tu-app.vercel.app/nft/success?memory_id=${memory_id}`,
-        failureCallbackURL: `https://tu-app.vercel.app/nft/failure?memory_id=${memory_id}`
+      const checkoutUrl = `https://www.crossmint.com/embed/checkout?` + new URLSearchParams({
+        'client-id': process.env.CROSSMINT_PROJECT_ID!,
+        'mint-to': user.email || '',
+        'collection-id': process.env.CROSSMINT_COLLECTION_ID!,
+        'success-callback-url': `https://tu-app.vercel.app/nft/success?memory_id=${memory_id}`,
+        'failure-callback-url': `https://tu-app.vercel.app/nft/failure?memory_id=${memory_id}`
       })
       
       console.log('✅ Crossmint checkout URL created:', checkoutUrl)
