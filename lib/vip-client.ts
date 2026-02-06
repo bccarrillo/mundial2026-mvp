@@ -53,14 +53,14 @@ export function getVIPBenefits(isVIP: boolean): VIPBenefits {
 export function calculateNFTPrice(userLevel: number, isVIP: boolean): number {
   let basePrice = 3 // Precio por defecto
   
-  // Descuentos por nivel
-  if (userLevel >= 5) basePrice = 0
-  else if (userLevel >= 4) basePrice = 1
-  else if (userLevel >= 3) basePrice = 2
+  // Descuentos por nivel (respetando mínimo $0.75 de Crossmint)
+  if (userLevel >= 5) basePrice = 0.75     // Mínimo para Leyendas
+  else if (userLevel >= 4) basePrice = 1.5 // $1.50 para Campeones
+  else if (userLevel >= 3) basePrice = 2.25 // $2.25 para Estrellas
   
-  // Descuento VIP adicional (10%)
-  if (isVIP && basePrice > 0) {
-    basePrice = Math.max(0.1, basePrice * 0.9) // Mínimo $0.10
+  // Descuento VIP adicional (10%) pero respetando mínimo $0.75
+  if (isVIP && basePrice > 0.75) {
+    basePrice = Math.max(0.75, basePrice * 0.9) // Mínimo $0.75
   }
   
   return Math.round(basePrice * 100) / 100 // Redondear a 2 decimales

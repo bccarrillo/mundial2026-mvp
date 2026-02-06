@@ -57,14 +57,14 @@ export async function calculateNFTPrice(userId: string, userLevel: number): Prom
   let basePrice = 3 // Precio por defecto para usuarios nuevos
   
   // Descuentos por nivel
-  if (userLevel >= 5) basePrice = 0      // Gratis para Leyendas
-  else if (userLevel >= 4) basePrice = 1 // $1 para Campeones
-  else if (userLevel >= 3) basePrice = 2 // $2 para Estrellas
+  if (userLevel >= 5) basePrice = 0.75     // Mínimo Crossmint para Leyendas
+  else if (userLevel >= 4) basePrice = 1.5 // $1.50 para Campeones
+  else if (userLevel >= 3) basePrice = 2.25 // $2.25 para Estrellas
   
-  // Descuento VIP adicional (10%)
+  // Descuento VIP adicional (10%) pero respetando mínimo $0.75
   const vipStatus = await isUserVIP(userId)
-  if (vipStatus && basePrice > 0) {
-    basePrice = Math.max(0.1, basePrice * 0.9) // Mínimo $0.10
+  if (vipStatus && basePrice > 0.75) {
+    basePrice = Math.max(0.75, basePrice * 0.9) // Mínimo $0.75
   }
   
   return Math.round(basePrice * 100) / 100 // Redondear a 2 decimales
