@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
       // MODO PRODUCCIÓN - Crear Crossmint Checkout Widget URL
       const checkoutUrl = `https://www.crossmint.com/checkout?` + new URLSearchParams({
         clientId: process.env.CROSSMINT_PROJECT_ID!,
-        mintTo: user.email,
+        mintTo: user.email || '',
         listingId: process.env.CROSSMINT_COLLECTION_ID!,
         successCallbackURL: `https://tu-app.vercel.app/nft/success?memory_id=${memory_id}`,
         failureCallbackURL: `https://tu-app.vercel.app/nft/failure?memory_id=${memory_id}`
