@@ -88,20 +88,46 @@ export async function POST(request: NextRequest) {
       console.log('🔑 API Key exists:', !!process.env.CROSSMINT_API_KEY)
       console.log('📦 Collection ID:', process.env.CROSSMINT_COLLECTION_ID)
       
-      // MODO PRODUCCIÓN - Crear Crossmint Checkout Widget URL
-      const checkoutUrl = `https://www.crossmint.com/embed/checkout?` + new URLSearchParams({
-        'client-id': process.env.CROSSMINT_PROJECT_ID!,
-        'mint-to': user.email || '',
-        'collection-id': process.env.CROSSMINT_COLLECTION_ID!,
-        'success-callback-url': `https://tu-app.vercel.app/nft/success?memory_id=${memory_id}`,
-        'failure-callback-url': `https://tu-app.vercel.app/nft/failure?memory_id=${memory_id}`
+      // MODO PRODUCCIÓN - Crear Crossmint Order con API moderna
+      const checkoutResponse = await fetch('https://www.crossmint.com/api/2022-06-09/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.CROSSMINT_API_KEY!
+        },
+        body: JSON.stringify({
+          recipient: `email:${user.email || ''}`,
+          quantity: 1,
+          metadata: {
+            name: `Mundial 2026 - ${memory.title}`,
+            description: 'Certificado conmemorativo del Mundial 2026',
+            image: memory.image_url,
+            attributes: [
+              { trait_type: "Event", value: "Mundial 2026" },
+              { trait_type: "User Level", value: userPoints?.level || 1 },
+              { trait_type: "Price Paid", value: `$${price}` }
+            ]
+          }
+        })
       })
-      
-      console.log('✅ Crossmint checkout URL created:', checkoutUrl)
+
+      console.log('📡 Crossmint response status:', checkoutResponse.status)
+
+      if (!checkoutResponse.ok) {
+        const errorText = await checkoutResponse.text()
+        console.error('❌ Crossmint Order Error:', errorText)
+        return NextResponse.json({ 
+          error: 'Error creando orden de Crossmint',
+          details: errorText
+        }, { status: 500 })
+      }
+
+      const orderData = await checkoutResponse.json()
+      console.log('✅ Crossmint order created:', orderData)
       
       return NextResponse.json({
         success: true,
-        checkoutUrl: checkoutUrl,
+        orderData: orderData,
         price,
         mode: 'production'
       })

@@ -51,8 +51,8 @@ export default function NFTCertificationModal({
           onSuccess()
           onClose()
         } else {
-          // Modo producción - abrir checkout
-          window.open(data.checkoutUrl, '_blank')
+          // Modo producción - orden creada, mostrar éxito
+          onSuccess()
           onClose()
         }
       } else {
