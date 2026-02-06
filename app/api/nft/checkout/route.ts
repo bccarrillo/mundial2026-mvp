@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
       const controller = new AbortController()
       setTimeout(() => controller.abort(), 15000) // 15 segundos timeout
       
-      const checkoutResponse = await fetch('https://www.crossmint.com/api/2022-06-09/checkout/sessions', {
+      const checkoutResponse = await fetch('https://www.crossmint.com/api/v1-alpha2/checkout/sessions', {
         method: 'POST',
         signal: controller.signal,
         headers: {
