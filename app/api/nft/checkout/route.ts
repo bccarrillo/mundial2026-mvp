@@ -89,31 +89,33 @@ export async function POST(request: NextRequest) {
       console.log('📦 Collection ID:', process.env.CROSSMINT_COLLECTION_ID)
       
       // MODO PRODUCCIÓN - Crear Crossmint Checkout real
-      const controller = new AbortController()
-      setTimeout(() => controller.abort(), 15000) // 15 segundos timeout
-      
-      const checkoutResponse = await fetch('https://api.crossmint.com/api/v1-alpha1/minting/payment', {
+      const checkoutResponse = await fetch('https://www.crossmint.com/api/2022-06-09/orders', {
         method: 'POST',
-        signal: controller.signal,
         headers: {
           'X-API-KEY': process.env.CROSSMINT_API_KEY!,
-          'Content-Type': 'application/json',
-          'User-Agent': 'Mozilla/5.0 (compatible; Vercel-Function)'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          type: 'evm-mint-to-email',
-          currency: 'USD',
-          price: price.toFixed(2),
-          recipient: user.email,
-          metadata: {
-            name: `Mundial 2026 - ${memory.title}`,
-            description: 'Certificado conmemorativo del Mundial 2026',
-            image: memory.image_url,
-            attributes: [
-              { trait_type: "Event", value: "Mundial 2026" },
-              { trait_type: "User Level", value: userPoints?.level || 1 },
-              { trait_type: "Price Paid", value: `$${price}` }
-            ]
+          lineItems: [{
+            collectionLocator: `crossmint:${process.env.CROSSMINT_COLLECTION_ID}`,
+            callData: {
+              metadata: {
+                name: `Mundial 2026 - ${memory.title}`,
+                description: 'Certificado conmemorativo del Mundial 2026',
+                image: memory.image_url,
+                attributes: [
+                  { trait_type: "Event", value: "Mundial 2026" },
+                  { trait_type: "User Level", value: userPoints?.level || 1 },
+                  { trait_type: "Price Paid", value: `$${price}` }
+                ]
+              },
+              to: user.email
+            }
+          }],
+          payment: {
+            method: 'fiat',
+            currency: 'usd',
+            amount: price.toFixed(2)
           },
           successCallbackURL: `https://tu-app.vercel.app/nft/success?memory_id=${memory_id}`,
           failureCallbackURL: `https://tu-app.vercel.app/nft/failure?memory_id=${memory_id}`
