@@ -139,7 +139,7 @@ export async function createNFTCertificate(
   // Verificar que el recuerdo no tenga NFT ya
   const hasNFT = await memoryHasNFT(memoryId)
   if (hasNFT) {
-    throw new Error('Memory already has NFT certificate')
+    throw new Error('Este recuerdo ya tiene certificado NFT')
   }
   
   // Verificar que el usuario es dueño del recuerdo
@@ -151,7 +151,7 @@ export async function createNFTCertificate(
     .single()
   
   if (!memory) {
-    throw new Error('Memory not found or not owned by user')
+    throw new Error('Recuerdo no encontrado o no te pertenece')
   }
 
   let blockchainId = null

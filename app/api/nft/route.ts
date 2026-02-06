@@ -20,14 +20,14 @@ export async function POST(request: NextRequest) {
     const { memory_id, mode = 'demo' } = await request.json()
     
     if (!memory_id) {
-      return NextResponse.json({ error: 'Memory ID required' }, { status: 400 })
+      return NextResponse.json({ error: 'ID de recuerdo requerido' }, { status: 400 })
     }
 
     const supabase = await createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 
     // Verificar que el recuerdo existe y pertenece al usuario
@@ -39,13 +39,13 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (memoryError || !memory) {
-      return NextResponse.json({ error: 'Memory not found or not owned by user' }, { status: 404 })
+      return NextResponse.json({ error: 'Recuerdo no encontrado o no te pertenece' }, { status: 404 })
     }
 
     // Verificar que no tenga NFT ya
     const hasNFT = await memoryHasNFT(memory_id)
     if (hasNFT) {
-      return NextResponse.json({ error: 'Memory already has NFT certificate' }, { status: 400 })
+      return NextResponse.json({ error: 'Este recuerdo ya tiene certificado NFT' }, { status: 400 })
     }
 
     // Obtener puntos del usuario para calcular precio
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
       )
 
       if (!certificate) {
-        return NextResponse.json({ error: 'Failed to create NFT certificate' }, { status: 500 })
+        return NextResponse.json({ error: 'Error al crear certificado NFT' }, { status: 500 })
       }
 
       // Simular mint exitoso
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
         success: true,
         certificate,
         price,
-        message: '¡Recuerdo certificado como NFT! (Modo Demo)',
+        message: '¡Recuerdo certificado como NFT exitosamente!',
         demo: true
       })
     }
@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
       )
 
       if (!certificate) {
-        return NextResponse.json({ error: 'Failed to create NFT certificate' }, { status: 500 })
+        return NextResponse.json({ error: 'Error al crear certificado NFT' }, { status: 500 })
       }
 
       return NextResponse.json({
@@ -119,8 +119,8 @@ export async function POST(request: NextRequest) {
         certificate,
         price,
         message: certificate.status === 'minting' 
-          ? 'NFT being created on blockchain. You\'ll receive email confirmation.' 
-          : 'NFT creation failed. Please try again.',
+          ? 'NFT siendo creado en blockchain. Recibirás confirmación por email.' 
+          : 'Error al crear NFT. Por favor intenta de nuevo.',
         demo: false,
         debug: {
           status: certificate.status,
@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
       console.error('Production NFT error:', error)
       return NextResponse.json({
         success: false,
-        error: 'Failed to create NFT on blockchain',
+        error: 'Error al crear NFT en blockchain',
         price,
         demo: false
       })
@@ -141,7 +141,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error creating NFT:', error)
     return NextResponse.json(
-      { error: 'Failed to create NFT certificate' },
+      { error: 'Error al crear certificado NFT' },
       { status: 500 }
     )
   }
@@ -154,7 +154,7 @@ export async function GET(request: NextRequest) {
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     
     if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 
     const { data: certificates, error } = await supabase
@@ -168,7 +168,7 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('Error fetching NFTs:', error)
-      return NextResponse.json({ error: 'Failed to fetch NFTs' }, { status: 500 })
+      return NextResponse.json({ error: 'Error al obtener NFTs' }, { status: 500 })
     }
 
     return NextResponse.json({
@@ -179,7 +179,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Error in NFT GET:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch NFTs' },
+      { error: 'Error al obtener NFTs' },
       { status: 500 }
     )
   }

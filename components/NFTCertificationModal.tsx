@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { X, Award, Shield, Zap } from 'lucide-react'
 
@@ -25,6 +26,7 @@ export default function NFTCertificationModal({
   userLevel,
   isVIP
 }: NFTCertificationModalProps) {
+  const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -38,7 +40,7 @@ export default function NFTCertificationModal({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           memory_id: memoryId,
-          mode: 'demo' // Cambiar a 'production' cuando esté listo
+          mode: 'production'
         })
       })
       
@@ -48,11 +50,11 @@ export default function NFTCertificationModal({
         onSuccess()
         onClose()
       } else {
-        setError(data.error || 'Failed to certify memory')
+        setError(data.error || t('nft.errorCertifying'))
       }
 
     } catch (err) {
-      setError('Something went wrong. Please try again.')
+      setError(t('nft.errorGeneral'))
     } finally {
       setLoading(false)
     }
@@ -68,7 +70,7 @@ export default function NFTCertificationModal({
       <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold">🎫 Certificar como NFT</h2>
+            <h2 className="text-xl font-bold">🎫 {t('nft.modalTitle')}</h2>
             <button 
               onClick={onClose}
               className="text-gray-500 hover:text-gray-700"
@@ -81,35 +83,35 @@ export default function NFTCertificationModal({
           <div className="bg-blue-50 p-4 rounded-lg mb-6">
             <h3 className="font-semibold text-blue-800 mb-2">📸 {memoryTitle}</h3>
             <p className="text-sm text-blue-600">
-              Este recuerdo será certificado como NFT permanente en blockchain Polygon
+              {t('nft.description')}
             </p>
           </div>
 
           {/* Beneficios de certificación */}
           <div className="space-y-4 mb-6">
-            <h3 className="font-semibold mb-3">✨ ¿Qué obtienes?</h3>
+            <h3 className="font-semibold mb-3">✨ {t('nft.benefitsTitle')}</h3>
             
             <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
               <Shield className="text-green-600" size={20} />
               <div>
-                <div className="font-semibold text-green-800">Certificado Permanente</div>
-                <div className="text-sm text-green-600">Registro inmutable en blockchain</div>
+                <div className="font-semibold text-green-800">{t('nft.permanentCertificate')}</div>
+                <div className="text-sm text-green-600">{t('nft.permanentCertificateDesc')}</div>
               </div>
             </div>
             
             <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg">
               <Award className="text-purple-600" size={20} />
               <div>
-                <div className="font-semibold text-purple-800">Elegible para Subasta Final</div>
-                <div className="text-sm text-purple-600">Participa en el Top 100 del Mundial</div>
+                <div className="font-semibold text-purple-800">{t('nft.auctionEligible')}</div>
+                <div className="text-sm text-purple-600">{t('nft.auctionEligibleDesc')}</div>
               </div>
             </div>
             
             <div className="flex items-center gap-3 p-3 bg-orange-50 rounded-lg">
               <Zap className="text-orange-600" size={20} />
               <div>
-                <div className="font-semibold text-orange-800">Prueba de Autoría</div>
-                <div className="text-sm text-orange-600">Verificación de fecha y creador</div>
+                <div className="font-semibold text-orange-800">{t('nft.proofOfAuthorship')}</div>
+                <div className="text-sm text-orange-600">{t('nft.proofOfAuthorshipDesc')}</div>
               </div>
             </div>
           </div>
@@ -123,28 +125,28 @@ export default function NFTCertificationModal({
                 <div className="text-sm text-gray-600">
                   <span className="line-through text-gray-400">${originalPrice.toFixed(2)}</span>
                   <span className="text-green-600 font-semibold ml-2">
-                    ¡Ahorras ${savings.toFixed(2)}!
+                    ¡{t('nft.savings')} ${savings.toFixed(2)}!
                   </span>
                 </div>
               )}
               
               <div className="text-xs text-gray-500 mt-1">
-                {userLevel >= 5 && "🎉 GRATIS por ser Leyenda"}
-                {userLevel === 4 && "🥇 Descuento Campeón"}
-                {userLevel === 3 && "🥈 Descuento Estrella"}
-                {isVIP && " + 10% descuento VIP"}
+                {userLevel >= 5 && `🎉 ${t('nft.freeForLegends')}`}
+                {userLevel === 4 && `🥇 ${t('nft.championDiscount')}`}
+                {userLevel === 3 && `🥈 ${t('nft.starDiscount')}`}
+                {isVIP && ` + 10% ${t('nft.vipDiscount')}`}
               </div>
             </div>
           </div>
 
           {/* Disclaimer */}
           <div className="bg-gray-50 p-4 rounded-lg mb-6 text-sm text-gray-600">
-            <div className="font-semibold mb-2">⚠️ Importante:</div>
+            <div className="font-semibold mb-2">⚠️ {t('nft.importantTitle')}</div>
             <ul className="space-y-1 text-xs">
-              <li>• No es una inversión financiera</li>
-              <li>• Es un certificado conmemorativo</li>
-              <li>• El proceso es irreversible</li>
-              <li>• Modo demo activo (sin costo real)</li>
+              <li>• {t('nft.notInvestment')}</li>
+              <li>• {t('nft.commemorativeCertificate')}</li>
+              <li>• {t('nft.irreversibleProcess')}</li>
+              <li>• {t('nft.productionMode')}</li>
             </ul>
           </div>
 
@@ -159,11 +161,11 @@ export default function NFTCertificationModal({
             disabled={loading}
             className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
           >
-            {loading ? 'Certificando...' : `🎫 Certificar por $${price.toFixed(2)}`}
+            {loading ? t('nft.certifying') : `🎫 ${t('nft.certifyButton')} $${price.toFixed(2)}`}
           </Button>
 
           <div className="text-xs text-gray-500 text-center mt-3">
-            Modo demo • Funcionalidad completa • Sin costo real
+            {t('nft.footerText')}
           </div>
         </div>
       </div>

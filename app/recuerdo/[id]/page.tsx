@@ -374,7 +374,7 @@ export default function RecuerdoPage() {
                   variant="outline"
                   className="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-blue-600 text-white hover:from-purple-600 hover:to-blue-700"
                 >
-                  🎫 Certificar NFT (${nftPrice.toFixed(2)})
+                  🎫 {t('nft.certifyButton')} (${nftPrice.toFixed(2)})
                 </Button>
               )}
               
@@ -385,7 +385,7 @@ export default function RecuerdoPage() {
                   disabled
                   className="w-full sm:w-auto bg-green-50 text-green-700 border-green-200"
                 >
-                  ✅ Certificado como NFT
+                  ✅ {t('nft.alreadyCertified')}
                 </Button>
               )}
               
