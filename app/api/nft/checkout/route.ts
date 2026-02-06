@@ -100,6 +100,10 @@ export async function POST(request: NextRequest) {
             email: user.email || ''
           },
           quantity: 1,
+          payment: {
+            currency: 'usd',
+            amount: price.toFixed(2)
+          },
           metadata: {
             name: `Mundial 2026 - ${memory.title}`,
             description: 'Certificado conmemorativo del Mundial 2026',
