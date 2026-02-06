@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { X, Award, Shield, Zap } from 'lucide-react'
+import { CrossmintProvider, CrossmintHostedCheckout } from '@crossmint/client-sdk-react-ui'
 
 interface NFTCertificationModalProps {
   isOpen: boolean
@@ -170,13 +171,34 @@ export default function NFTCertificationModal({
             </div>
           )}
 
-          <Button 
-            onClick={handleCrossmintPayment}
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
-          >
-            {loading ? 'Creando checkout...' : `💳 ${t('nft.certifyButton')} $${price.toFixed(2)} USD`}
-          </Button>
+          {process.env.NEXT_PUBLIC_NFT_PAYMENT_MODE === 'test' ? (
+            <Button 
+              onClick={handleCrossmintPayment}
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+            >
+              {loading ? 'Creando checkout...' : `💳 ${t('nft.certifyButton')} $${price.toFixed(2)} USD`}
+            </Button>
+          ) : (
+            <CrossmintProvider apiKey={process.env.NEXT_PUBLIC_CROSSMINT_CLIENT_API_KEY!}>
+              <CrossmintHostedCheckout
+                lineItems={{
+                  collectionLocator: `crossmint:${process.env.NEXT_PUBLIC_CROSSMINT_COLLECTION_ID}`,
+                  callData: {
+                    totalPrice: price.toFixed(2),
+                    quantity: 1,
+                  },
+                }}
+                payment={{
+                  crypto: { enabled: true },
+                  fiat: { enabled: true },
+                }}
+                recipient={{
+                  email: "bcarrillo@instepca.com"
+                }}
+              />
+            </CrossmintProvider>
+          )}
 
           <div className="text-xs text-gray-500 text-center mt-3">
             {t('nft.footerText')}
