@@ -9,11 +9,12 @@ const isDemoMode = !process.env.CROSSMINT_PROJECT_ID
 export async function POST(request: NextRequest) {
   try {
     // Debug: verificar variables de entorno
-    console.log('Environment variables check:', {
+    console.log('🔍 Environment variables check:', {
       NFT_MODE: process.env.NFT_MODE,
       CROSSMINT_PROJECT_ID: process.env.CROSSMINT_PROJECT_ID ? 'SET' : 'NOT SET',
       CROSSMINT_CLIENT_SECRET: process.env.CROSSMINT_CLIENT_SECRET ? 'SET' : 'NOT SET',
-      CROSSMINT_ENVIRONMENT: process.env.CROSSMINT_ENVIRONMENT
+      CROSSMINT_ENVIRONMENT: process.env.CROSSMINT_ENVIRONMENT,
+      CROSSMINT_COLLECTION_ID: process.env.CROSSMINT_COLLECTION_ID ? 'SET' : 'NOT SET'
     })
     
     const { memory_id, mode = 'demo' } = await request.json()
@@ -54,7 +55,8 @@ export async function POST(request: NextRequest) {
     // Determinar modo de operación - usar directamente NFT_MODE
     const operationMode = process.env.NFT_MODE === 'production' ? 'production' : 'demo'
     
-    console.log('Operation mode:', operationMode, 'NFT_MODE:', process.env.NFT_MODE)
+    console.log('🚀 Operation mode:', operationMode, 'NFT_MODE:', process.env.NFT_MODE)
+    console.log('💰 Price calculated:', price, 'for user level:', userPoints?.level)
 
     // MODO DEMO: Crear NFT directamente sin pago
     if (operationMode === 'demo') {

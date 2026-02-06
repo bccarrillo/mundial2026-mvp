@@ -4,7 +4,7 @@ import { isUserVIP } from '@/lib/vip'
 // Configuración Crossmint
 const CROSSMINT_CONFIG = {
   projectId: process.env.CROSSMINT_PROJECT_ID!,
-  clientSecret: process.env.CROSSMINT_CLIENT_SECRET!,
+  clientSecret: process.env.CROSSMINT_API_KEY!,
   collectionId: process.env.CROSSMINT_COLLECTION_ID || 'default',
   environment: process.env.CROSSMINT_ENVIRONMENT || 'staging',
   baseUrl: process.env.CROSSMINT_ENVIRONMENT === 'production' 
@@ -93,8 +93,7 @@ async function mintNFTWithCrossmint(nftData: {
   const response = await fetch(`${CROSSMINT_CONFIG.baseUrl}/api/2022-06-09/collections/${CROSSMINT_CONFIG.collectionId}/nfts`, {
     method: 'POST',
     headers: {
-      'X-CLIENT-SECRET': CROSSMINT_CONFIG.clientSecret,
-      'X-PROJECT-ID': CROSSMINT_CONFIG.projectId,
+      'X-API-KEY': CROSSMINT_CONFIG.clientSecret,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
