@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useRouter } from 'next/navigation'
@@ -40,6 +41,7 @@ interface UserPosition {
 }
 
 export default function RankingsPage() {
+  const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState<TabType>('users')
   const [selectedCountry, setSelectedCountry] = useState<CountryType>('global')
   const [userRankings, setUserRankings] = useState<UserRanking[]>([])
@@ -120,17 +122,17 @@ export default function RankingsPage() {
           onClick={() => router.push('/dashboard')}
           className="mb-4"
         >
-          ← Volver
+          ← {t('common.back')}
         </Button>
 
         {/* Header */}
         <div className="text-center mb-6">
-          <h1 className="text-4xl font-bold mb-2">🏆 Rankings</h1>
+          <h1 className="text-4xl font-bold mb-2">🏆 {t('rankings.title')}</h1>
           <p className="text-muted-foreground">
-            Compite con fanáticos de todo el mundo
+            {t('rankings.subtitle')}
           </p>
           <p className="text-xs text-muted-foreground mt-2">
-            Última actualización: {lastUpdated.toLocaleTimeString()}
+            {t('rankings.lastUpdate')} {lastUpdated.toLocaleTimeString()}
           </p>
         </div>
 
@@ -141,14 +143,14 @@ export default function RankingsPage() {
             onClick={() => setActiveTab('users')}
             className="flex-1"
           >
-            👥 Usuarios
+            👥 {t('rankings.users')}
           </Button>
           <Button
             variant={activeTab === 'memories' ? 'default' : 'outline'}
             onClick={() => setActiveTab('memories')}
             className="flex-1"
           >
-            📸 Recuerdos
+            📸 {t('rankings.memories')}
           </Button>
         </div>
 
@@ -175,7 +177,7 @@ export default function RankingsPage() {
           <Card className="mb-6 border-2 border-blue-500 bg-blue-50">
             <CardHeader>
               <CardTitle className="text-center text-blue-800">
-                📍 Tu Posición
+                📍 {t('rankings.yourPosition')}
               </CardTitle>
             </CardHeader>
             <CardContent className="text-center">
@@ -183,10 +185,10 @@ export default function RankingsPage() {
                 #{userPosition.position}
               </div>
               <p className="text-muted-foreground">
-                de {userPosition.total_users.toLocaleString()} usuarios
+                {t('rankings.of')} {userPosition.total_users.toLocaleString()} {t('rankings.users').toLowerCase()}
               </p>
               <p className="text-sm text-muted-foreground mt-1">
-                Estás en el top {Math.round((userPosition.position / userPosition.total_users) * 100)}%
+                {t('rankings.topPercent')} {Math.round((userPosition.position / userPosition.total_users) * 100)}%
               </p>
             </CardContent>
           </Card>
@@ -199,7 +201,7 @@ export default function RankingsPage() {
             onClick={handleRefresh}
             disabled={loading}
           >
-            {loading ? '🔄 Actualizando...' : '🔄 Actualizar'}
+            {loading ? `🔄 ${t('rankings.updating')}` : `🔄 ${t('rankings.refresh')}`}
           </Button>
         </div>
 
@@ -208,7 +210,7 @@ export default function RankingsPage() {
           {loading ? (
             <div className="text-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p>Cargando rankings...</p>
+              <p>{t('rankings.loadingRankings')}</p>
             </div>
           ) : (
             <>
@@ -217,7 +219,7 @@ export default function RankingsPage() {
                   <Card>
                     <CardContent className="text-center py-8">
                       <p className="text-muted-foreground">
-                        No hay usuarios en este ranking aún
+                        {t('rankings.noUsersYet')}
                       </p>
                     </CardContent>
                   </Card>
@@ -236,7 +238,7 @@ export default function RankingsPage() {
                   <Card>
                     <CardContent className="text-center py-8">
                       <p className="text-muted-foreground">
-                        No hay recuerdos en este ranking aún
+                        {t('rankings.noMemoriesYet')}
                       </p>
                     </CardContent>
                   </Card>
@@ -257,16 +259,16 @@ export default function RankingsPage() {
         {/* CTA */}
         <Card className="mt-8 bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-200">
           <CardContent className="text-center p-6">
-            <h3 className="text-xl font-bold mb-2">🚀 ¿Quieres subir en el ranking?</h3>
+            <h3 className="text-xl font-bold mb-2">🚀 {t('rankings.wantToClimb')}</h3>
             <p className="text-muted-foreground mb-4">
-              Crea recuerdos, recibe likes y comenta para ganar puntos
+              {t('rankings.climbDescription')}
             </p>
             <div className="flex flex-col sm:flex-row gap-2 justify-center">
               <Button onClick={() => router.push('/crear')}>
-                📸 Crear Recuerdo (+10 pts)
+                📸 {t('rankings.createMemoryPoints')}
               </Button>
               <Button variant="outline" onClick={() => router.push('/puntos')}>
-                🎮 Ver Mis Puntos
+                🎮 {t('rankings.viewMyPoints')}
               </Button>
             </div>
           </CardContent>

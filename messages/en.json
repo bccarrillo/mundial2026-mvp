@@ -247,5 +247,24 @@
     "createMemoryButton": "Create Memory",
     "viewRankingsButton": "View Rankings",
     "points": "points"
+  },
+  "rankings": {
+    "title": "Rankings",
+    "subtitle": "Compete with fans from around the world",
+    "lastUpdate": "Last update:",
+    "users": "Users",
+    "memories": "Memories",
+    "yourPosition": "Your Position",
+    "of": "of",
+    "topPercent": "You're in the top",
+    "updating": "Updating...",
+    "refresh": "Refresh",
+    "loadingRankings": "Loading rankings...",
+    "noUsersYet": "No users in this ranking yet",
+    "noMemoriesYet": "No memories in this ranking yet",
+    "wantToClimb": "Want to climb the ranking?",
+    "climbDescription": "Create memories, receive likes and comment to earn points",
+    "createMemoryPoints": "Create Memory (+10 pts)",
+    "viewMyPoints": "View My Points"
   }
 }

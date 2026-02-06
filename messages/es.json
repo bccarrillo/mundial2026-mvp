@@ -247,5 +247,24 @@
     "createMemoryButton": "Crear Recuerdo",
     "viewRankingsButton": "Ver Rankings",
     "points": "puntos"
+  },
+  "rankings": {
+    "title": "Rankings",
+    "subtitle": "Compite con fanáticos de todo el mundo",
+    "lastUpdate": "Última actualización:",
+    "users": "Usuarios",
+    "memories": "Recuerdos",
+    "yourPosition": "Tu Posición",
+    "of": "de",
+    "topPercent": "Estás en el top",
+    "updating": "Actualizando...",
+    "refresh": "Actualizar",
+    "loadingRankings": "Cargando rankings...",
+    "noUsersYet": "No hay usuarios en este ranking aún",
+    "noMemoriesYet": "No hay recuerdos en este ranking aún",
+    "wantToClimb": "¿Quieres subir en el ranking?",
+    "climbDescription": "Crea recuerdos, recibe likes y comenta para ganar puntos",
+    "createMemoryPoints": "Crear Recuerdo (+10 pts)",
+    "viewMyPoints": "Ver Mis Puntos"
   }
 }
