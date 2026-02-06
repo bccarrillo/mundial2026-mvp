@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
       const controller = new AbortController()
       setTimeout(() => controller.abort(), 15000) // 15 segundos timeout
       
-      const checkoutResponse = await fetch('https://www.crossmint.com/api/v1-alpha2/checkout/sessions', {
+      const checkoutResponse = await fetch('https://www.crossmint.com/api/v1-alpha1/minting/payment', {
         method: 'POST',
         signal: controller.signal,
         headers: {
@@ -101,18 +101,19 @@ export async function POST(request: NextRequest) {
           'User-Agent': 'Mozilla/5.0 (compatible; Vercel-Function)'
         },
         body: JSON.stringify({
-          payment: {
-            currency: 'USD',
-            amount: price.toFixed(2)
-          },
-          nft: {
-            collectionId: process.env.CROSSMINT_COLLECTION_ID,
-            recipient: `email:${user.email}:polygon`,
-            metadata: {
-              name: `Mundial 2026 - ${memory.title}`,
-              description: 'Certificado conmemorativo del Mundial 2026',
-              image: memory.image_url
-            }
+          type: 'evm-mint-to-email',
+          currency: 'USD',
+          price: price.toFixed(2),
+          recipient: user.email,
+          metadata: {
+            name: `Mundial 2026 - ${memory.title}`,
+            description: 'Certificado conmemorativo del Mundial 2026',
+            image: memory.image_url,
+            attributes: [
+              { trait_type: "Event", value: "Mundial 2026" },
+              { trait_type: "User Level", value: userPoints?.level || 1 },
+              { trait_type: "Price Paid", value: `$${price}` }
+            ]
           },
           successCallbackURL: `https://tu-app.vercel.app/nft/success?memory_id=${memory_id}`,
           failureCallbackURL: `https://tu-app.vercel.app/nft/failure?memory_id=${memory_id}`
