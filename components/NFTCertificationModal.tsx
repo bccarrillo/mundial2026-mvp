@@ -207,12 +207,6 @@ export default function NFTCertificationModal({
                   recipient={{
                     email: "bcarrillo@instepca.com"
                   }}
-                  onEvent={(event) => {
-                    if (event.type === 'payment:process.succeeded') {
-                      onSuccess()
-                      onClose()
-                    }
-                  }}
                 />
               </div>
             </CrossmintProvider>
