@@ -514,7 +514,7 @@ export default function AdminPanel() {
               ) : (
                 memories.map((memory) => (
                   <div key={memory.id} className={`flex gap-4 p-4 border rounded ${
-                    memory.deleted_at ? 'bg-red-50 border-red-200 opacity-75' : ''
+                    (memory as any).deleted_at ? 'bg-red-50 border-red-200 opacity-75' : ''
                   }`}>
                     <img 
                       src={memory.image_url} 
@@ -524,7 +524,7 @@ export default function AdminPanel() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <h3 className="font-semibold">{memory.title}</h3>
-                        {memory.deleted_at && (
+                        {(memory as any).deleted_at && (
                           <span className="text-xs px-2 py-1 bg-red-100 text-red-700 rounded">
                             🗑️ ELIMINADO
                           </span>
@@ -533,14 +533,14 @@ export default function AdminPanel() {
                       <p className="text-sm text-gray-600">
                         Por: {memory.profiles?.email || 'Usuario desconocido'} | {new Date(memory.created_at).toLocaleString()}
                       </p>
-                      {memory.deleted_at && (
+                      {(memory as any).deleted_at && (
                         <p className="text-xs text-red-600 mt-1">
-                          Eliminado: {new Date(memory.deleted_at).toLocaleString()}
-                          {memory.deletion_reason && ` - ${memory.deletion_reason}`}
+                          Eliminado: {new Date((memory as any).deleted_at).toLocaleString()}
+                          {(memory as any).deletion_reason && ` - ${(memory as any).deletion_reason}`}
                         </p>
                       )}
                       <div className="flex gap-2 mt-2">
-                        {!memory.deleted_at ? (
+                        {!(memory as any).deleted_at ? (
                           <>
                             <Button 
                               variant="destructive" 
