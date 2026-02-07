@@ -19,6 +19,8 @@ export default function DebugLogsPage() {
   const [filter, setFilter] = useState('all')
   const [envVars, setEnvVars] = useState<any>(null)
   const [loadingEnv, setLoadingEnv] = useState(false)
+  const [testResult, setTestResult] = useState<any>(null)
+  const [loadingTest, setLoadingTest] = useState(false)
 
   useEffect(() => {
     fetchLogs()
@@ -60,6 +62,21 @@ export default function DebugLogsPage() {
     setLoadingEnv(false)
   }
 
+  const testDebugTable = async () => {
+    setLoadingTest(true)
+    try {
+      const response = await fetch('/api/debug/check')
+      const data = await response.json()
+      setTestResult(data)
+      // Refresh logs after test
+      setTimeout(() => fetchLogs(), 1000)
+    } catch (error) {
+      console.error('Error testing debug table:', error)
+      setTestResult({ error: 'Error de conexión' })
+    }
+    setLoadingTest(false)
+  }
+
   const getLevelColor = (level: string) => {
     switch (level) {
       case 'error': return 'text-red-600 bg-red-50'
@@ -75,6 +92,13 @@ export default function DebugLogsPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">🔍 Debug Panel</h1>
         <div className="flex gap-2">
+          <button 
+            onClick={testDebugTable}
+            disabled={loadingTest}
+            className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 disabled:opacity-50"
+          >
+            {loadingTest ? 'Probando...' : '🧪 Test Tabla'}
+          </button>
           <button 
             onClick={fetchEnvVars}
             disabled={loadingEnv}
@@ -163,6 +187,52 @@ export default function DebugLogsPage() {
                 ? 'Todas las variables necesarias están configuradas' 
                 : 'Faltan variables de entorno críticas'
               }
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Resultado del Test */}
+      {testResult && (
+        <div className="mb-6 p-4 bg-gray-50 rounded-lg border">
+          <h2 className="text-lg font-semibold mb-4">🧪 Resultado del Test de Tabla</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="font-medium">Lectura:</span>
+                <span className={`font-mono text-sm ${testResult.read?.success ? 'text-green-600' : 'text-red-600'}`}>
+                  {testResult.read?.success ? '✅ OK' : '❌ Error'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium">Escritura:</span>
+                <span className={`font-mono text-sm ${testResult.write?.success ? 'text-green-600' : 'text-red-600'}`}>
+                  {testResult.write?.success ? '✅ OK' : '❌ Error'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium">Logs existentes:</span>
+                <span className="font-mono text-sm text-blue-600">
+                  {testResult.read?.count || 0}
+                </span>
+              </div>
+            </div>
+            <div className="space-y-2">
+              {testResult.read?.error && (
+                <div className="text-xs text-red-600">
+                  <strong>Error lectura:</strong> {testResult.read.error}
+                </div>
+              )}
+              {testResult.write?.error && (
+                <div className="text-xs text-red-600">
+                  <strong>Error escritura:</strong> {testResult.write.error}
+                </div>
+              )}
+              {testResult.error && (
+                <div className="text-xs text-red-600">
+                  <strong>Error general:</strong> {testResult.error}
+                </div>
+              )}
             </div>
           </div>
         </div>
