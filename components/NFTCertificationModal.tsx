@@ -35,6 +35,9 @@ export default function NFTCertificationModal({
     setLoading(true)
     setError(null)
     
+    console.log("PROJECT:", process.env.NEXT_PUBLIC_CROSSMINT_PROJECT_ID);
+    console.log("COLLECTION:", process.env.NEXT_PUBLIC_CROSSMINT_COLLECTION_ID);
+    
     try {
       const res = await fetch("/api/crossmint/checkout", {
         method: "POST",
@@ -182,6 +185,13 @@ export default function NFTCertificationModal({
           ) : (
             <CrossmintProvider apiKey={process.env.NEXT_PUBLIC_CROSSMINT_CLIENT_API_KEY!}>
               <div className="w-full">
+                {(() => {
+                  console.log("CROSSMINT DEBUG:");
+                  console.log("CLIENT_API_KEY:", process.env.NEXT_PUBLIC_CROSSMINT_CLIENT_API_KEY?.substring(0, 20) + "...");
+                  console.log("COLLECTION_ID:", process.env.NEXT_PUBLIC_CROSSMINT_COLLECTION_ID);
+                  console.log("COLLECTION_LOCATOR:", `crossmint:${process.env.NEXT_PUBLIC_CROSSMINT_COLLECTION_ID}`);
+                  return null;
+                })()}
                 <CrossmintHostedCheckout
                   lineItems={{
                     collectionLocator: `crossmint:${process.env.NEXT_PUBLIC_CROSSMINT_COLLECTION_ID}`,
