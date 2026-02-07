@@ -10,6 +10,9 @@ export interface Memory {
   likes: number
   created_at: string
   updated_at: string
+  deleted_at?: string | null
+  deleted_by?: string | null
+  deletion_reason?: string | null
   profiles?: Profile
 }
 
