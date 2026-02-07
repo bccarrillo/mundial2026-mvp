@@ -5,9 +5,18 @@ export async function POST(req: Request) {
     const body = await req.json();
     
     console.log('🚀 Creating Crossmint checkout session for:', body.email);
+    console.log('🔧 Environment:', process.env.CROSSMINT_ENVIRONMENT);
 
+    // Determinar URL base según el entorno
+    const baseUrl = process.env.CROSSMINT_ENVIRONMENT === 'staging' 
+      ? 'https://staging.crossmint.com' 
+      : 'https://www.crossmint.com';
+    
+    console.log('🌐 Using base URL:', baseUrl);
+
+    // API moderna de Crossmint
     const res = await fetch(
-      "https://www.crossmint.com/api/2022-06-09/checkout/sessions",
+      `${baseUrl}/api/2022-06-09/orders`,
       {
         method: "POST",
         headers: {
@@ -15,16 +24,20 @@ export async function POST(req: Request) {
           "x-api-key": process.env.CROSSMINT_API_KEY!,
         },
         body: JSON.stringify({
-          recipient: { email: body.email },
-          lineItems: [
-            {
-              collectionId: process.env.CROSSMINT_COLLECTION_ID,
-              quantity: 1,
-            },
-          ],
-          payment: {
-            fiat: { currency: "USD" },
+          recipient: { 
+            email: body.email 
           },
+          quantity: 1,
+          payment: {
+            method: "fiat",
+            currency: "usd",
+            amount: "0.70" // Precio fijo para test
+          },
+          metadata: {
+            name: "Mundial 2026 - Certificado NFT",
+            description: "Certificado conmemorativo del Mundial 2026",
+            image: "https://mundial2026-mvp.vercel.app/icon-512.png"
+          }
         }),
       }
     );
@@ -41,9 +54,14 @@ export async function POST(req: Request) {
     }
 
     const data = await res.json();
-    console.log('✅ Checkout session created:', data.checkoutUrl ? 'Success' : 'No URL');
+    console.log('✅ Order created:', data);
 
-    return NextResponse.json(data);
+    // Para test mode, devolver URL de checkout si existe
+    if (data.checkoutUrl) {
+      return NextResponse.json({ checkoutUrl: data.checkoutUrl });
+    } else {
+      return NextResponse.json(data);
+    }
   } catch (error) {
     console.error('💥 Server error:', error);
     return NextResponse.json({ 
