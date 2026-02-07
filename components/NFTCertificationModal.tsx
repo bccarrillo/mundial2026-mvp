@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { X, Award, Shield, Zap } from 'lucide-react'
 import { CrossmintProvider, CrossmintHostedCheckout } from '@crossmint/client-sdk-react-ui'
+import { logInfoClient, logErrorClient } from '@/lib/logger-client'
 
 interface NFTCertificationModalProps {
   isOpen: boolean
@@ -38,6 +39,20 @@ export default function NFTCertificationModal({
     console.log("PROJECT:", process.env.NEXT_PUBLIC_CROSSMINT_PROJECT_ID);
     console.log("COLLECTION:", process.env.NEXT_PUBLIC_CROSSMINT_COLLECTION_ID);
     
+    // Log a Supabase para debug
+    await logInfoClient('crossmint', 'Iniciando pago NFT (modo test)', {
+      memoryId,
+      memoryTitle,
+      price,
+      userLevel,
+      isVIP,
+      projectId: process.env.NEXT_PUBLIC_CROSSMINT_PROJECT_ID,
+      collectionId: process.env.NEXT_PUBLIC_CROSSMINT_COLLECTION_ID,
+      clientApiKey: process.env.NEXT_PUBLIC_CROSSMINT_CLIENT_API_KEY?.substring(0, 20) + '...',
+      paymentMode: process.env.NEXT_PUBLIC_NFT_PAYMENT_MODE,
+      environment: process.env.NODE_ENV
+    })
+    
     try {
       const res = await fetch("/api/crossmint/checkout", {
         method: "POST",
@@ -50,12 +65,25 @@ export default function NFTCertificationModal({
       const data = await res.json()
 
       if (data?.checkoutUrl) {
+        await logInfoClient('crossmint', 'Checkout URL recibida', {
+          checkoutUrl: data.checkoutUrl,
+          success: true
+        })
         window.location.href = data.checkoutUrl
       } else {
+        await logErrorClient('crossmint', 'Error: No se recibio checkout URL', {
+          response: data,
+          error: data.error || 'Sin URL de checkout'
+        })
         setError(data.error || 'Error creando checkout')
       }
     } catch (err) {
-      setError('Error de conexión')
+      await logErrorClient('crossmint', 'Error de conexion en pago NFT', {
+        error: err instanceof Error ? err.message : 'Unknown error',
+        memoryId,
+        price
+      })
+      setError('Error de conexion')
     } finally {
       setLoading(false)
     }
@@ -190,6 +218,24 @@ export default function NFTCertificationModal({
                   console.log("CLIENT_API_KEY:", process.env.NEXT_PUBLIC_CROSSMINT_CLIENT_API_KEY?.substring(0, 20) + "...");
                   console.log("COLLECTION_ID:", process.env.NEXT_PUBLIC_CROSSMINT_COLLECTION_ID);
                   console.log("COLLECTION_LOCATOR:", `crossmint:${process.env.NEXT_PUBLIC_CROSSMINT_COLLECTION_ID}`);
+                  
+                  // Log a Supabase para modo produccion
+                  logInfoClient('crossmint', 'Iniciando CrossmintHostedCheckout', {
+                    memoryId,
+                    memoryTitle,
+                    price,
+                    userLevel,
+                    isVIP,
+                    projectId: process.env.NEXT_PUBLIC_CROSSMINT_PROJECT_ID,
+                    collectionId: process.env.NEXT_PUBLIC_CROSSMINT_COLLECTION_ID,
+                    collectionLocator: `crossmint:${process.env.NEXT_PUBLIC_CROSSMINT_COLLECTION_ID}`,
+                    clientApiKey: process.env.NEXT_PUBLIC_CROSSMINT_CLIENT_API_KEY?.substring(0, 20) + '...',
+                    paymentMode: process.env.NEXT_PUBLIC_NFT_PAYMENT_MODE,
+                    environment: process.env.NODE_ENV,
+                    cryptoEnabled: true,
+                    fiatEnabled: true
+                  })
+                  
                   return null;
                 })()}
                 <CrossmintHostedCheckout
