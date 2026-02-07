@@ -8,7 +8,7 @@ import { logErrorClient } from '@/lib/logger-client'
 export async function POST(request: NextRequest) {
   try {
     const { email, password, recaptchaToken } = await request.json()
-    const ip = request.ip || request.headers.get('x-forwarded-for') || 'unknown'
+    const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
     
     console.log('🔐 Registration attempt:', { email, ip })
     
