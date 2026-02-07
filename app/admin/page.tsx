@@ -461,7 +461,7 @@ export default function AdminPanel() {
                         variant="destructive" 
                         size="sm"
                         onClick={() => deleteMemory(
-                          report.memory_id, 
+                          report.memories?.id || 0, 
                           report.reported_user?.id || '', 
                           `Reportado: ${report.reason}`
                         )}
