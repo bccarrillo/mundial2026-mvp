@@ -31,6 +31,7 @@ export default function MisRecuerdosPage() {
       .from('memories')
       .select('*')
       .eq('user_id', user.id)
+      .is('deleted_at', null)
       .order('created_at', { ascending: false })
 
     if (!error && data) {

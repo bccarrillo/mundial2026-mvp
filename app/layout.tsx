@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import I18nProvider from "@/components/I18nProvider";
 import RecaptchaProvider from "@/components/RecaptchaProvider";
+import { Toaster } from 'sonner';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -53,6 +54,7 @@ export default function RootLayout({
               {children}
             </main>
             <Footer />
+            <Toaster position="top-right" richColors />
           </I18nProvider>
         </RecaptchaProvider>
       </body>

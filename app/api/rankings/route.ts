@@ -96,6 +96,7 @@ export async function GET(request: NextRequest) {
           likes_count:likes(count)
         `)
         .eq('is_public', true)
+        .is('deleted_at', null)
         .order('created_at', { ascending: false }) // Temporal, cambiar por likes count
         .limit(20)
 

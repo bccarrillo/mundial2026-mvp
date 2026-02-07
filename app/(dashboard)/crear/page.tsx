@@ -13,6 +13,7 @@ import { generateFileName } from '@/lib/utils/file'
 import { useTranslation } from 'react-i18next'
 import { events } from '@/lib/analytics'
 import { addPoints } from '@/lib/points'
+import { makeAuthenticatedRequest } from '@/lib/blockedUserHandler'
 
 export default function CrearRecuerdoPage() {
   const [title, setTitle] = useState('')
@@ -76,11 +77,10 @@ export default function CrearRecuerdoPage() {
         .from('memories')
         .getPublicUrl(fileName)
 
-      // Crear recuerdo
-      const { data: newMemory, error: insertError } = await supabase
-        .from('memories')
-        .insert({
-          user_id: user.id,
+      // Crear recuerdo usando API
+      const result = await makeAuthenticatedRequest('/api/memories', {
+        method: 'POST',
+        body: JSON.stringify({
           title,
           description,
           team,
@@ -88,10 +88,9 @@ export default function CrearRecuerdoPage() {
           image_url: publicUrl,
           is_public: isPublic
         })
-        .select()
-        .single()
+      })
 
-      if (insertError) throw insertError
+      const newMemory = result.memory
 
       // Agregar puntos por crear recuerdo
       await addPoints(user.id, 'create_memory', newMemory.id)
@@ -101,6 +100,11 @@ export default function CrearRecuerdoPage() {
 
       router.push('/mis-recuerdos')
     } catch (err: any) {
+      if (err.message === 'BLOCKED_USER') {
+        // Error ya manejado por handleBlockedUserError
+        setLoading(false)
+        return
+      }
       setError(err.message)
       setLoading(false)
     }

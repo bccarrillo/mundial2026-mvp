@@ -5,6 +5,8 @@ export async function POST(request: NextRequest) {
   try {
     const { action, memoryId, userId, reason } = await request.json()
     
+    console.log('🔍 API Moderación llamada:', { action, memoryId, userId, reason })
+    
     const supabase = await createClient()
     
     // Verificar que el usuario es admin
@@ -24,8 +26,24 @@ export async function POST(request: NextRequest) {
     }
     
     if (action === 'delete_memory') {
+      console.log('🔍 Eliminando memoria:', { memoryId, userId, reason })
+      
+      // Verificar que la memoria existe primero
+      const { data: existingMemory, error: checkError } = await supabase
+        .from('memories')
+        .select('id, title')
+        .eq('id', memoryId)
+        .single()
+      
+      if (checkError || !existingMemory) {
+        console.error('❌ Memoria no encontrada:', checkError)
+        return NextResponse.json({ error: 'Memoria no encontrada' }, { status: 404 })
+      }
+      
+      console.log('✅ Memoria encontrada:', existingMemory)
+      
       // Marcar memoria como eliminada
-      const { error: deleteError } = await supabase
+      const { data: updateResult, error: deleteError } = await supabase
         .from('memories')
         .update({
           deleted_at: new Date().toISOString(),
@@ -33,8 +51,14 @@ export async function POST(request: NextRequest) {
           deletion_reason: reason
         })
         .eq('id', memoryId)
+        .select()
       
-      if (deleteError) throw deleteError
+      if (deleteError) {
+        console.error('❌ Error eliminando memoria:', deleteError)
+        return NextResponse.json({ error: deleteError.message }, { status: 500 })
+      }
+      
+      console.log('✅ Memoria actualizada:', updateResult)
       
       // Registrar acción de moderación
       const { error: actionError } = await supabase
@@ -47,9 +71,32 @@ export async function POST(request: NextRequest) {
           reason
         })
       
-      if (actionError) throw actionError
+      if (actionError) {
+        console.error('⚠️ Error registrando acción:', actionError)
+        // No fallar si no se puede registrar la acción
+      }
       
-      return NextResponse.json({ success: true, message: 'Contenido eliminado' })
+      return NextResponse.json({ 
+        success: true, 
+        message: 'Contenido eliminado',
+        updated: updateResult
+      })
+    }
+    
+    if (action === 'restore_memory') {
+      // Restaurar memoria eliminada
+      const { error: restoreError } = await supabase
+        .from('memories')
+        .update({
+          deleted_at: null,
+          deleted_by: null,
+          deletion_reason: null
+        })
+        .eq('id', memoryId)
+      
+      if (restoreError) throw restoreError
+      
+      return NextResponse.json({ success: true, message: 'Contenido restaurado' })
     }
     
     if (action === 'block_user') {
@@ -84,7 +131,7 @@ export async function POST(request: NextRequest) {
       // Desbloquear usuario
       const { error: unblockError } = await supabase
         .from('blocked_users')
-        .update({ is_active: false })
+        .delete()
         .eq('user_id', userId)
       
       if (unblockError) throw unblockError

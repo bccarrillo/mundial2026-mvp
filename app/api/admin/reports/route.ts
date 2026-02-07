@@ -53,21 +53,52 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Permisos insuficientes' }, { status: 403 })
     }
     
-    // Obtener reportes pendientes
+    // Obtener reportes pendientes con consulta simplificada
     const { data: reports, error } = await supabase
       .from('user_reports')
-      .select(`
-        *,
-        memories (id, title, image_url),
-        reported_user:profiles!user_reports_reported_user_fkey (id, email, display_name),
-        reporter:profiles!user_reports_reported_by_fkey (id, email, display_name)
-      `)
+      .select('*')
       .eq('status', 'pending')
       .order('created_at', { ascending: false })
     
-    if (error) throw error
+    if (error) {
+      console.error('Error obteniendo reportes:', error)
+      return NextResponse.json({ reports: [] })
+    }
     
-    return NextResponse.json({ reports })
+    // Obtener datos relacionados manualmente
+    const reportsWithData = await Promise.all(
+      (reports || []).map(async (report) => {
+        // Obtener memoria
+        const { data: memory } = await supabase
+          .from('memories')
+          .select('id, title, image_url')
+          .eq('id', report.memory_id)
+          .single()
+        
+        // Obtener perfil del reportado
+        const { data: reportedUser } = await supabase
+          .from('profiles')
+          .select('id, email, display_name')
+          .eq('id', report.reported_user)
+          .single()
+        
+        // Obtener perfil del reportador
+        const { data: reporter } = await supabase
+          .from('profiles')
+          .select('id, email, display_name')
+          .eq('id', report.reported_by)
+          .single()
+        
+        return {
+          ...report,
+          memories: memory,
+          reported_user: reportedUser,
+          reporter: reporter
+        }
+      })
+    )
+    
+    return NextResponse.json({ reports: reportsWithData })
     
   } catch (error) {
     console.error('Error obteniendo reportes:', error)

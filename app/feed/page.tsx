@@ -52,6 +52,7 @@ export default function FeedPage() {
           profiles (display_name, email)
         `)
         .eq('is_public', true)
+        .is('deleted_at', null)
 
       if (teamFilter) {
         query = query.ilike('team', `%${teamFilter}%`)

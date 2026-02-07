@@ -36,6 +36,7 @@ interface Report {
 export default function AdminPanel() {
   const [memories, setMemories] = useState<Memory[]>([])
   const [reports, setReports] = useState<Report[]>([])
+  const [blockedUsers, setBlockedUsers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [loadingMemories, setLoadingMemories] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
@@ -96,15 +97,14 @@ export default function AdminPanel() {
       setLoading(true)
       
       // Cargar datos en paralelo para mejor performance
-      const [memoriesResult, usersResult, reportsResult] = await Promise.all([
-        // Memorias recientes (limitadas)
+      const [memoriesResult, usersResult, reportsResult, blockedUsersResult] = await Promise.all([
+        // Memorias recientes (incluye eliminadas para moderación)
         supabase
           .from('memories')
           .select(`
             *,
             profiles (email, display_name)
           `)
-          .is('deleted_at', null)
           .order('created_at', { ascending: false })
           .limit(20),
         
@@ -114,13 +114,43 @@ export default function AdminPanel() {
           .select('email, display_name')
           .order('email'),
         
-        // Reportes pendientes
-        fetch('/api/admin/reports').then(res => res.json())
+        // Cargar reportes pendientes
+        fetch('/api/admin/reports')
+          .then(res => res.json())
+          .catch(err => {
+            console.error('Error cargando reportes:', err)
+            return { reports: [] }
+          }),
+        
+        // Cargar usuarios bloqueados con información de perfiles
+        supabase
+          .from('blocked_users')
+          .select('*')
+          .order('blocked_at', { ascending: false })
       ])
 
       setMemories(memoriesResult.data || [])
       setAllUsers(usersResult.data || [])
       setReports(reportsResult.reports || [])
+      
+      // Obtener información de perfiles para usuarios bloqueados
+      const blockedUsersWithProfiles = await Promise.all(
+        (blockedUsersResult.data || []).map(async (blocked) => {
+          const [userProfile, blockerProfile] = await Promise.all([
+            supabase.from('profiles').select('email, display_name').eq('id', blocked.user_id).single(),
+            supabase.from('profiles').select('email, display_name').eq('id', blocked.blocked_by).single()
+          ])
+          
+          return {
+            ...blocked,
+            userProfile: userProfile.data,
+            blockerProfile: blockerProfile.data
+          }
+        })
+      )
+      
+      setBlockedUsers(blockedUsersWithProfiles)
+      console.log('🔍 Usuarios bloqueados cargados:', blockedUsersWithProfiles)
       setLoading(false)
     } catch (error) {
       console.error('Error cargando datos iniciales:', error)
@@ -132,14 +162,13 @@ export default function AdminPanel() {
     try {
       setLoadingMemories(true)
       
-      // Solo recargar memorias con filtros
+      // Solo recargar memorias con filtros (incluye eliminadas)
       let memoriesQuery = supabase
         .from('memories')
         .select(`
           *,
           profiles (email, display_name)
         `)
-        .is('deleted_at', null)
         .order('created_at', { ascending: false })
         .limit(50)
       
@@ -228,6 +257,58 @@ export default function AdminPanel() {
     }
   }
 
+  const restoreMemory = async (memoryId: number) => {
+    try {
+      const response = await fetch('/api/admin/moderate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'restore_memory',
+          memoryId
+        })
+      })
+
+      if (response.ok) {
+        alert('Contenido restaurado')
+        // Recargar solo si no hay filtros, sino recargar filtrados
+        if (filterUser || filterDate) {
+          loadFilteredData()
+        } else {
+          loadInitialData()
+        }
+      } else {
+        alert('Error restaurando contenido')
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      alert('Error restaurando contenido')
+    }
+  }
+
+  const unblockUser = async (userId: string) => {
+    try {
+      const response = await fetch('/api/admin/moderate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'unblock_user',
+          userId
+        })
+      })
+
+      if (response.ok) {
+        alert('Usuario desbloqueado')
+        // Recargar datos completos
+        loadInitialData()
+      } else {
+        alert('Error desbloqueando usuario')
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      alert('Error desbloqueando usuario')
+    }
+  }
+
   if (!isAdmin || loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -308,24 +389,53 @@ export default function AdminPanel() {
             <CardTitle>🚨 Reportes Pendientes</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-red-600">{reports.length}</p>
+            <p className="text-2xl font-bold text-red-600">{reports?.length || 0}</p>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader>
-            <CardTitle>⚡ Acción Requerida</CardTitle>
+            <CardTitle>🚫 Usuarios Bloqueados</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm">
-              {reports.length > 0 ? 'Revisar reportes' : 'Todo en orden'}
-            </p>
+            <p className="text-2xl font-bold text-orange-600">{blockedUsers.length}</p>
           </CardContent>
         </Card>
       </div>
 
+      {/* Usuarios Bloqueados */}
+      {blockedUsers && blockedUsers.length > 0 && (
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>🚫 Usuarios Bloqueados</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {blockedUsers.map((blocked) => (
+              <div key={blocked.id} className="border-b pb-4 mb-4 last:border-b-0">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p><strong>Usuario:</strong> {blocked.userProfile?.display_name || 'Sin nombre'} ({blocked.userProfile?.email || 'Sin email'})</p>
+                    <p><strong>Bloqueado por:</strong> {blocked.blockerProfile?.display_name || 'Admin'} ({blocked.blockerProfile?.email || 'Sin email'})</p>
+                    <p><strong>Fecha:</strong> {new Date(blocked.blocked_at).toLocaleString()}</p>
+                    <p><strong>Razón:</strong> {blocked.reason || 'Sin razón especificada'}</p>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => unblockUser(blocked.user_id)}
+                    className="text-green-600 hover:text-green-700"
+                  >
+                    ✅ Desbloquear
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
       {/* Reportes Pendientes */}
-      {reports.length > 0 && (
+      {reports && reports.length > 0 && (
         <Card className="mb-8">
           <CardHeader>
             <CardTitle>🚨 Reportes Pendientes</CardTitle>
@@ -334,23 +444,25 @@ export default function AdminPanel() {
             {reports.map((report) => (
               <div key={report.id} className="border-b pb-4 mb-4 last:border-b-0">
                 <div className="flex gap-4">
-                  <img 
-                    src={report.memories.image_url} 
-                    alt="Contenido reportado"
-                    className="w-20 h-20 object-cover rounded"
-                  />
+                  {report.memories?.image_url && (
+                    <img 
+                      src={report.memories.image_url} 
+                      alt="Contenido reportado"
+                      className="w-20 h-20 object-cover rounded"
+                    />
+                  )}
                   <div className="flex-1">
-                    <p><strong>Reportado por:</strong> {report.reporter.email}</p>
-                    <p><strong>Usuario reportado:</strong> {report.reported_user.email}</p>
+                    <p><strong>Reportado por:</strong> {report.reporter?.email || 'Usuario desconocido'}</p>
+                    <p><strong>Usuario reportado:</strong> {report.reported_user?.email || 'Usuario desconocido'}</p>
                     <p><strong>Razón:</strong> {report.reason}</p>
-                    <p><strong>Título:</strong> {report.memories.title}</p>
+                    <p><strong>Título:</strong> {report.memories?.title || 'Sin título'}</p>
                     <div className="flex gap-2 mt-2">
                       <Button 
                         variant="destructive" 
                         size="sm"
                         onClick={() => deleteMemory(
-                          report.memories.id, 
-                          report.reported_user.id, 
+                          report.memory_id, 
+                          report.reported_user?.id || '', 
                           `Reportado: ${report.reason}`
                         )}
                       >
@@ -360,7 +472,7 @@ export default function AdminPanel() {
                         variant="outline" 
                         size="sm"
                         onClick={() => blockUser(
-                          report.reported_user.id, 
+                          report.reported_user?.id || '', 
                           `Múltiples reportes: ${report.reason}`
                         )}
                       >
@@ -401,42 +513,79 @@ export default function AdminPanel() {
                 </p>
               ) : (
                 memories.map((memory) => (
-                  <div key={memory.id} className="flex gap-4 p-4 border rounded">
+                  <div key={memory.id} className={`flex gap-4 p-4 border rounded ${
+                    memory.deleted_at ? 'bg-red-50 border-red-200 opacity-75' : ''
+                  }`}>
                     <img 
                       src={memory.image_url} 
                       alt={memory.title}
                       className="w-20 h-20 object-cover rounded"
                     />
                     <div className="flex-1">
-                      <h3 className="font-semibold">{memory.title}</h3>
+                      <div className="flex items-center gap-2 mb-2">
+                        <h3 className="font-semibold">{memory.title}</h3>
+                        {memory.deleted_at && (
+                          <span className="text-xs px-2 py-1 bg-red-100 text-red-700 rounded">
+                            🗑️ ELIMINADO
+                          </span>
+                        )}
+                      </div>
                       <p className="text-sm text-gray-600">
                         Por: {memory.profiles?.email || 'Usuario desconocido'} | {new Date(memory.created_at).toLocaleString()}
                       </p>
+                      {memory.deleted_at && (
+                        <p className="text-xs text-red-600 mt-1">
+                          Eliminado: {new Date(memory.deleted_at).toLocaleString()}
+                          {memory.deletion_reason && ` - ${memory.deletion_reason}`}
+                        </p>
+                      )}
                       <div className="flex gap-2 mt-2">
-                        <Button 
-                          variant="destructive" 
-                          size="sm"
-                          onClick={() => {
-                            const reason = prompt('Razón para eliminar:')
-                            if (reason) {
-                              deleteMemory(memory.id, memory.user_id, reason)
-                            }
-                          }}
-                        >
-                          🗑️ Eliminar
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => {
-                            const reason = prompt('Razón para bloquear usuario:')
-                            if (reason) {
-                              blockUser(memory.user_id, reason)
-                            }
-                          }}
-                        >
-                          🚫 Bloquear Usuario
-                        </Button>
+                        {!memory.deleted_at ? (
+                          <>
+                            <Button 
+                              variant="destructive" 
+                              size="sm"
+                              onClick={() => {
+                                const reason = prompt('Razón para eliminar:')
+                                if (reason) {
+                                  deleteMemory(memory.id, memory.user_id, reason)
+                                }
+                              }}
+                            >
+                              🗑️ Eliminar
+                            </Button>
+                            {/* Solo mostrar botón bloquear si el usuario NO está bloqueado */}
+                            {!blockedUsers.some(blocked => blocked.user_id === memory.user_id) && (
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => {
+                                  const reason = prompt('Razón para bloquear usuario:')
+                                  if (reason) {
+                                    blockUser(memory.user_id, reason)
+                                  }
+                                }}
+                              >
+                                🚫 Bloquear Usuario
+                              </Button>
+                            )}
+                            {/* Mostrar indicador si el usuario está bloqueado */}
+                            {blockedUsers.some(blocked => blocked.user_id === memory.user_id) && (
+                              <span className="text-xs px-2 py-1 bg-red-100 text-red-700 rounded">
+                                🚫 USUARIO BLOQUEADO
+                              </span>
+                            )}
+                          </>
+                        ) : (
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => restoreMemory(memory.id)}
+                            className="text-green-600 hover:text-green-700"
+                          >
+                            ♾️ Restaurar
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </div>

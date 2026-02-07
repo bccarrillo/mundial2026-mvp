@@ -13,6 +13,7 @@ import { events } from '@/lib/analytics'
 import { addPoints, getUserPoints } from '@/lib/points'
 import { isUserVIPClient, calculateNFTPrice } from '@/lib/vip-client'
 import NFTCertificationModal from '@/components/NFTCertificationModal'
+import { makeAuthenticatedRequest } from '@/lib/blockedUserHandler'
 
 export default function RecuerdoPage() {
   const [memory, setMemory] = useState<Memory | null>(null)
@@ -82,6 +83,7 @@ export default function RecuerdoPage() {
           profiles (display_name, email)
         `)
         .eq('id', id)
+        .is('deleted_at', null)
         .single()
 
       if (!error && data) {
@@ -145,45 +147,38 @@ export default function RecuerdoPage() {
     }
 
     if (liked) {
-      // Quitar like
-      const { error } = await supabase
-        .from('likes')
-        .delete()
-        .eq('memory_id', memory.id)
-        .eq('user_id', currentUser)
-
-      if (!error) {
+      // Quitar like usando API
+      try {
+        await fetch(`/api/likes?memory_id=${memory.id}`, {
+          method: 'DELETE'
+        })
+        
         setLiked(false)
         setLikesCount(prev => prev - 1)
-        
-        // OPCIONAL: Quitar puntos cuando se quita el like
-        // if (currentUser !== memory.user_id) {
-        //   await addPoints(memory.user_id, 'lose_like', memory.id)
-        // }
+      } catch (error: any) {
+        if (error.message === 'BLOCKED_USER') return
+        console.error('Error quitando like:', error)
       }
     } else {
-      // Dar like
-      const { error } = await supabase
-        .from('likes')
-        .insert({ memory_id: memory.id, user_id: currentUser })
-
-      if (!error) {
+      // Dar like usando API
+      try {
+        await makeAuthenticatedRequest('/api/likes', {
+          method: 'POST',
+          body: JSON.stringify({ memory_id: memory.id })
+        })
+        
         setLiked(true)
         setLikesCount(prev => prev + 1)
         
         // Solo agregar puntos si NO es el autor del recuerdo
         if (currentUser !== memory.user_id) {
           // Verificar si este usuario YA dio like antes a este recuerdo
-          // (buscando en historial de transacciones con metadata específica)
-          const transactionKey = `${currentUser}-${memory.id}-like`
-          
           const { data: existingTransaction } = await supabase
             .from('point_transactions')
             .select('id')
-            .eq('user_id', memory.user_id)           // Quien recibe los puntos (autor)
+            .eq('user_id', memory.user_id)
             .eq('action', 'receive_like')
-            .eq('reference_id', memory.id)           // El recuerdo
-            .textSearch('action', `receive_like`)    // Buscar solo likes
+            .eq('reference_id', memory.id)
             .limit(1)
             .maybeSingle()
           
@@ -209,6 +204,9 @@ export default function RecuerdoPage() {
         
         // Tracking: Like dado
         events.likeMemory(memory.id)
+      } catch (error: any) {
+        if (error.message === 'BLOCKED_USER') return
+        console.error('Error dando like:', error)
       }
     }
   }
@@ -255,29 +253,35 @@ export default function RecuerdoPage() {
     if (!newComment.trim() || !memory) return
 
     setSubmitting(true)
-    const { data, error } = await supabase
-      .from('comments')
-      .insert({
-        memory_id: memory.id,
-        user_id: currentUser,
-        content: newComment.trim()
+    try {
+      const result = await makeAuthenticatedRequest('/api/comments', {
+        method: 'POST',
+        body: JSON.stringify({
+          memory_id: memory.id,
+          content: newComment.trim()
+        })
       })
-      .select('*')
-      .single()
 
-    if (!error && data) {
-      // Agregar puntos por comentar
-      await addPoints(currentUser, 'comment', data.id)
-      
-      // Obtener profile del usuario
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', currentUser)
-        .maybeSingle()
-      
-      setComments([{ ...data, profiles: profile }, ...comments])
-      setNewComment('')
+      if (result.comment) {
+        // Agregar puntos por comentar
+        await addPoints(currentUser, 'comment', result.comment.id)
+        
+        // Obtener profile del usuario
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', currentUser)
+          .maybeSingle()
+        
+        setComments([{ ...result.comment, profiles: profile }, ...comments])
+        setNewComment('')
+      }
+    } catch (error: any) {
+      if (error.message === 'BLOCKED_USER') {
+        // Error ya manejado por handleBlockedUserError
+      } else {
+        console.error('Error enviando comentario:', error)
+      }
     }
     setSubmitting(false)
   }

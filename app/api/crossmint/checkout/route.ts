@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from '@/lib/supabase/server';
+import { checkUserBlocked, createBlockedUserError } from '@/lib/blockingUtils';
 
 export async function POST(req: Request) {
   try {
@@ -9,10 +10,22 @@ export async function POST(req: Request) {
     console.log('🔧 Environment:', process.env.CROSSMINT_ENVIRONMENT);
     console.log('📝 Memory ID:', body.memoryId);
 
+    const supabase = await createClient();
+    
+    // Verificar autenticación
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) {
+      return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+    }
+
+    // Verificar si el usuario está bloqueado
+    const isBlocked = await checkUserBlocked(user.id)
+    if (isBlocked) {
+      return createBlockedUserError()
+    }
     // Obtener datos del recuerdo si se proporciona memoryId
     let memoryData = null;
     if (body.memoryId) {
-      const supabase = await createClient();
       const { data: memory } = await supabase
         .from('memories')
         .select('title, image_url')
