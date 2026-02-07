@@ -35,7 +35,7 @@ function checkRateLimit(identifier: string, limit: number, windowMs: number) {
 export function middleware(request: NextRequest) {
   // Solo aplicar rate limiting a rutas de autenticación
   if (request.nextUrl.pathname.startsWith('/api/auth/')) {
-    const ip = request.ip || request.headers.get('x-forwarded-for') || 'unknown'
+    const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
     
     // Configuración de rate limiting
     const limit = parseInt(process.env.RATE_LIMIT_REGISTRATIONS_PER_HOUR || '3')
