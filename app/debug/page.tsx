@@ -68,11 +68,10 @@ export default function DebugLogsPage() {
       const response = await fetch('/api/debug/check')
       const data = await response.json()
       setTestResult(data)
-      // Refresh logs after test
       setTimeout(() => fetchLogs(), 1000)
     } catch (error) {
       console.error('Error testing debug table:', error)
-      setTestResult({ error: 'Error de conexión' })
+      setTestResult({ error: 'Error de conexion' })
     }
     setLoadingTest(false)
   }
@@ -89,54 +88,73 @@ export default function DebugLogsPage() {
 
   return (
     <div className="container mx-auto p-6">
+      <div>
+        <h2 className="text-lg font-semibold mb-4">Debug Panel</h2>
+        <div className="mb-4 p-3 bg-blue-50 rounded border-l-4 border-blue-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="font-semibold text-blue-800">Entorno Actual</div>
+              <div className="text-sm text-blue-600">
+                {process.env.NODE_ENV === 'production' ? 'Produccion (Vercel)' : 'Desarrollo (Local)'}
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-xs text-blue-600">Debug Mode:</div>
+              <div className="font-mono text-sm">
+                {process.env.NEXT_PUBLIC_DEBUG_MODE === 'true' ? 'Activo' : 'Inactivo'}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">🔍 Debug Panel</h1>
+        <h3 className="text-lg font-semibold">Herramientas de Debug</h3>
         <div className="flex gap-2">
           <button 
             onClick={testDebugTable}
             disabled={loadingTest}
             className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 disabled:opacity-50"
           >
-            {loadingTest ? 'Probando...' : '🧪 Test Tabla'}
+            {loadingTest ? 'Probando...' : 'Test Tabla'}
           </button>
           <button 
             onClick={fetchEnvVars}
             disabled={loadingEnv}
             className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
           >
-            {loadingEnv ? 'Cargando...' : '🔧 Ver Variables'}
+            {loadingEnv ? 'Cargando...' : 'Ver Variables'}
           </button>
           <button 
             onClick={fetchLogs}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
-            🔄 Refresh Logs
+            Refresh Logs
           </button>
         </div>
       </div>
 
-      {/* Panel de Variables de Entorno */}
       {envVars && (
         <div className="mb-6 p-4 bg-gray-50 rounded-lg border">
-          <h2 className="text-lg font-semibold mb-4">🔧 Variables de Entorno Crossmint</h2>
+          <h2 className="text-lg font-semibold mb-4">Variables de Entorno Crossmint</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="font-medium">PROJECT ID:</span>
                 <span className={`font-mono text-sm ${envVars.project ? 'text-green-600' : 'text-red-600'}`}>
-                  {envVars.project || '❌ No configurado'}
+                  {envVars.project || 'No configurado'}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="font-medium">COLLECTION ID:</span>
                 <span className={`font-mono text-sm ${envVars.collection ? 'text-green-600' : 'text-red-600'}`}>
-                  {envVars.collection || '❌ No configurado'}
+                  {envVars.collection || 'No configurado'}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="font-medium">PAYMENT MODE:</span>
                 <span className={`font-mono text-sm ${envVars.paymentMode ? 'text-green-600' : 'text-red-600'}`}>
-                  {envVars.paymentMode || '❌ No configurado'}
+                  {envVars.paymentMode || 'No configurado'}
                 </span>
               </div>
             </div>
@@ -144,13 +162,13 @@ export default function DebugLogsPage() {
               <div className="flex justify-between">
                 <span className="font-medium">CLIENT API KEY:</span>
                 <span className={`font-mono text-sm ${envVars.clientApiKey && envVars.clientApiKey !== 'undefined...' ? 'text-green-600' : 'text-red-600'}`}>
-                  {envVars.clientApiKey && envVars.clientApiKey !== 'undefined...' ? envVars.clientApiKey : '❌ No configurado'}
+                  {envVars.clientApiKey && envVars.clientApiKey !== 'undefined...' ? envVars.clientApiKey : 'No configurado'}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="font-medium">SERVER API KEY:</span>
                 <span className={`font-mono text-sm ${envVars.serverApiKey && envVars.serverApiKey !== 'undefined...' ? 'text-green-600' : 'text-red-600'}`}>
-                  {envVars.serverApiKey && envVars.serverApiKey !== 'undefined...' ? envVars.serverApiKey : '❌ No configurado'}
+                  {envVars.serverApiKey && envVars.serverApiKey !== 'undefined...' ? envVars.serverApiKey : 'No configurado'}
                 </span>
               </div>
               <div className="flex justify-between">
@@ -161,53 +179,24 @@ export default function DebugLogsPage() {
               </div>
             </div>
           </div>
-          
-          {/* Status General */}
-          <div className="mt-4 p-3 rounded border-l-4 ${
-            envVars.project && envVars.collection && envVars.clientApiKey && envVars.clientApiKey !== 'undefined...' 
-              ? 'border-green-500 bg-green-50' 
-              : 'border-red-500 bg-red-50'
-          }">
-            <div className="font-semibold ${
-              envVars.project && envVars.collection && envVars.clientApiKey && envVars.clientApiKey !== 'undefined...' 
-                ? 'text-green-800' 
-                : 'text-red-800'
-            }">
-              {envVars.project && envVars.collection && envVars.clientApiKey && envVars.clientApiKey !== 'undefined...' 
-                ? '✅ Configuración Completa' 
-                : '❌ Configuración Incompleta'
-              }
-            </div>
-            <div className="text-sm mt-1 ${
-              envVars.project && envVars.collection && envVars.clientApiKey && envVars.clientApiKey !== 'undefined...' 
-                ? 'text-green-700' 
-                : 'text-red-700'
-            }">
-              {envVars.project && envVars.collection && envVars.clientApiKey && envVars.clientApiKey !== 'undefined...' 
-                ? 'Todas las variables necesarias están configuradas' 
-                : 'Faltan variables de entorno críticas'
-              }
-            </div>
-          </div>
         </div>
       )}
 
-      {/* Resultado del Test */}
       {testResult && (
         <div className="mb-6 p-4 bg-gray-50 rounded-lg border">
-          <h2 className="text-lg font-semibold mb-4">🧪 Resultado del Test de Tabla</h2>
+          <h2 className="text-lg font-semibold mb-4">Resultado del Test de Tabla</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="font-medium">Lectura:</span>
                 <span className={`font-mono text-sm ${testResult.read?.success ? 'text-green-600' : 'text-red-600'}`}>
-                  {testResult.read?.success ? '✅ OK' : '❌ Error'}
+                  {testResult.read?.success ? 'OK' : 'Error'}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="font-medium">Escritura:</span>
                 <span className={`font-mono text-sm ${testResult.write?.success ? 'text-green-600' : 'text-red-600'}`}>
-                  {testResult.write?.success ? '✅ OK' : '❌ Error'}
+                  {testResult.write?.success ? 'OK' : 'Error'}
                 </span>
               </div>
               <div className="flex justify-between">
@@ -238,7 +227,6 @@ export default function DebugLogsPage() {
         </div>
       )}
 
-      {/* Filtros de Logs */}
       <div className="mb-4 flex gap-2">
         {['all', 'crossmint', 'nft', 'payment', 'auth', 'api'].map(category => (
           <button
@@ -255,9 +243,8 @@ export default function DebugLogsPage() {
         ))}
       </div>
 
-      {/* Logs */}
       <div>
-        <h2 className="text-lg font-semibold mb-4">📋 Logs del Sistema</h2>
+        <h2 className="text-lg font-semibold mb-4">Logs del Sistema</h2>
         {loading ? (
           <div className="text-center py-8">Cargando logs...</div>
         ) : (
