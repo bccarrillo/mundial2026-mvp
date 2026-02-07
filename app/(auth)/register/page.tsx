@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useTranslation } from 'react-i18next'
 import { events } from '@/lib/analytics'
 import { addPoints } from '@/lib/points'
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 
 function RegisterForm() {
   const [email, setEmail] = useState('')
@@ -22,37 +23,63 @@ function RegisterForm() {
   const supabase = createClient()
   const referrerId = searchParams.get('ref')
   const { t } = useTranslation()
+  const { executeRecaptcha } = useGoogleReCaptcha()
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
 
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-    })
+    try {
+      // 1. Ejecutar reCAPTCHA
+      if (!executeRecaptcha) {
+        setError('Sistema de seguridad no disponible. Recarga la página.')
+        setLoading(false)
+        return
+      }
 
-    if (error) {
-      setError(error.message)
-      setLoading(false)
-    } else {
+      const recaptchaToken = await executeRecaptcha('register')
+      
+      // 2. Llamar a nuestra API protegida
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          recaptchaToken
+        })
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        setError(result.error || 'Error en el registro')
+        setLoading(false)
+        return
+      }
+
+      // 3. Registro exitoso
+      console.log('✅ Registration successful:', result)
+      
       // Tracking: Usuario registrado
       events.signUp('email')
       
       // Si hay referido, crear invitación
-      if (referrerId && data.user) {
+      if (referrerId && result.user) {
         await supabase
           .from('invitations')
           .insert({
             inviter_id: referrerId,
             invitee_email: email,
-            invitee_id: data.user.id,
+            invitee_id: result.user.id,
             status: 'accepted'
           })
         
         // Agregar puntos al invitador por invitación exitosa
-        await addPoints(referrerId, 'invite', data.user.id)
+        await addPoints(referrerId, 'invite', result.user.id)
         
         // Tracking: Invitación aceptada
         events.acceptInvite(referrerId)
@@ -60,6 +87,11 @@ function RegisterForm() {
       
       setSuccess(true)
       setTimeout(() => router.push('/dashboard'), 2000)
+      
+    } catch (error) {
+      console.error('Registration error:', error)
+      setError('Error de conexión. Intenta de nuevo.')
+      setLoading(false)
     }
   }
 
@@ -103,6 +135,13 @@ function RegisterForm() {
                 <p className="text-xs text-muted-foreground mt-1">Mínimo 6 caracteres</p>
               </div>
               {error && <p className="text-sm text-red-500">{error}</p>}
+              
+              {/* Indicador de protección */}
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span>Protegido contra spam y bots</span>
+              </div>
+              
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? t('common.loading') : t('auth.registerButton')}
               </Button>
