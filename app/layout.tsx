@@ -19,13 +19,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mundial 2026 - Guarda tus recuerdos",
-  description: "Crea tu álbum digital del Mundial 2026",
+  title: "Memories 26 - Save your World Cup 2026 memories",
+  description: "Turn your World Cup 2026 memories into NFT - Create your digital certificate",
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Mundial 2026'
+    title: 'Memories 26'
   },
 };
 
