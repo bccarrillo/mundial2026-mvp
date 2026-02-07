@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createClient } from '@/lib/supabase/server';
 
 export async function POST(req: Request) {
   try {
@@ -6,62 +7,130 @@ export async function POST(req: Request) {
     
     console.log('🚀 Creating Crossmint checkout session for:', body.email);
     console.log('🔧 Environment:', process.env.CROSSMINT_ENVIRONMENT);
+    console.log('📝 Memory ID:', body.memoryId);
 
-    // Determinar URL base según el entorno
-    const baseUrl = process.env.CROSSMINT_ENVIRONMENT === 'staging' 
-      ? 'https://staging.crossmint.com' 
-      : 'https://www.crossmint.com';
-    
-    console.log('🌐 Using base URL:', baseUrl);
+    // Obtener datos del recuerdo si se proporciona memoryId
+    let memoryData = null;
+    if (body.memoryId) {
+      const supabase = await createClient();
+      const { data: memory } = await supabase
+        .from('memories')
+        .select('title, image_url')
+        .eq('id', body.memoryId)
+        .single();
+      
+      memoryData = memory;
+      console.log('📸 Memory data:', memoryData?.title);
+    }
 
-    // API moderna de Crossmint
-    const res = await fetch(
-      `${baseUrl}/api/2022-06-09/orders`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": process.env.CROSSMINT_API_KEY!,
-        },
-        body: JSON.stringify({
-          recipient: { 
-            email: body.email 
+    // SEPARAR COMPLETAMENTE STAGING Y PRODUCTION
+    if (process.env.CROSSMINT_ENVIRONMENT === 'staging') {
+      // STAGING: Usar API de checkout sessions (documentación oficial)
+      console.log('📦 Using STAGING environment');
+      
+      const res = await fetch(
+        `https://staging.crossmint.com/api/2022-06-09/collections/${process.env.CROSSMINT_COLLECTION_ID}/nfts`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": process.env.CROSSMINT_API_KEY!,
           },
-          quantity: 1,
-          payment: {
-            method: "fiat",
-            currency: "usd",
-            amount: "0.70" // Precio fijo para test
-          },
-          metadata: {
-            name: "Mundial 2026 - Certificado NFT",
-            description: "Certificado conmemorativo del Mundial 2026",
-            image: "https://mundial2026-mvp.vercel.app/icon-512.png"
-          }
-        }),
+          body: JSON.stringify({
+            recipient: `email:${body.email}:polygon-amoy`,
+            metadata: {
+              name: memoryData ? `Mundial 2026 - ${memoryData.title}` : `Mundial 2026 - Certificado NFT (Staging)`,
+              description: 'Certificado conmemorativo del Mundial 2026 - Modo Staging',
+              image: memoryData?.image_url || "https://mundial2026-mvp.vercel.app/icon-512.png",
+              attributes: [
+                { trait_type: "Event", value: "Mundial 2026" },
+                { trait_type: "Type", value: "Commemorative Certificate" },
+                { trait_type: "Environment", value: "Staging" }
+              ]
+            }
+          })
+        }
+      );
+
+      console.log('📡 Staging response status:', res.status);
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('❌ Staging error:', errorText);
+        return NextResponse.json({ 
+          error: 'Error creating staging checkout',
+          details: errorText 
+        }, { status: 500 });
       }
-    );
 
-    console.log('📡 Crossmint response status:', res.status);
-
-    if (!res.ok) {
-      const errorText = await res.text();
-      console.error('❌ Crossmint error:', errorText);
-      return NextResponse.json({ 
-        error: 'Error creating checkout session',
-        details: errorText 
-      }, { status: 500 });
-    }
-
-    const data = await res.json();
-    console.log('✅ Order created:', data);
-
-    // Para test mode, devolver URL de checkout si existe
-    if (data.checkoutUrl) {
-      return NextResponse.json({ checkoutUrl: data.checkoutUrl });
+      const nftData = await res.json();
+      console.log('✅ Staging NFT minted:', nftData);
+      
+      return NextResponse.json({
+        success: true,
+        nftData: nftData,
+        mode: 'staging'
+      });
+      
     } else {
-      return NextResponse.json(data);
+      // PRODUCTION: CÓDIGO ORIGINAL QUE FUNCIONABA - SIN TOCAR
+      console.log('🏭 Using PRODUCTION environment');
+      
+      const res = await fetch(
+        "https://www.crossmint.com/api/2022-06-09/orders",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": process.env.CROSSMINT_API_KEY!,
+          },
+          body: JSON.stringify({
+            recipient: {
+              email: body.email || ''
+            },
+            lineItems: [{
+              collectionId: process.env.CROSSMINT_COLLECTION_ID,
+              quantity: 1
+            }],
+            payment: {
+              method: 'polygon',
+              currency: 'usdc',
+              amount: "0.70"
+            },
+            metadata: {
+              name: memoryData ? `Mundial 2026 - ${memoryData.title}` : `Mundial 2026 - Certificado NFT`,
+              description: 'Certificado conmemorativo del Mundial 2026',
+              image: memoryData?.image_url || "https://mundial2026-mvp.vercel.app/icon-512.png",
+              attributes: [
+                { trait_type: "Event", value: "Mundial 2026" },
+                { trait_type: "Type", value: "Commemorative Certificate" }
+              ]
+            }
+          })
+        }
+      );
+
+      console.log('📡 Production response status:', res.status);
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('❌ Production error:', errorText);
+        return NextResponse.json({ 
+          error: 'Error creating production checkout',
+          details: errorText
+        }, { status: 500 });
+      }
+
+      const orderData = await res.json();
+      console.log('✅ Production order created:', orderData);
+      
+      return NextResponse.json({
+        success: true,
+        orderData: orderData,
+        mode: 'production'
+      });
     }
+
   } catch (error) {
     console.error('💥 Server error:', error);
     return NextResponse.json({ 

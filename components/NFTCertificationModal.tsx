@@ -59,21 +59,32 @@ export default function NFTCertificationModal({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: "bcarrillo@instepca.com",
+          memoryId,
+          memoryTitle,
         }),
       })
 
       const data = await res.json()
 
-      if (data?.checkoutUrl) {
+      if (data?.success && (data?.nftData || data?.orderData)) {
+        await logInfoClient('crossmint', 'NFT/Orden creado exitosamente', {
+          data: data.nftData || data.orderData,
+          mode: data.mode,
+          success: true
+        })
+        // En staging, el NFT se crea directamente
+        onSuccess()
+        onClose()
+      } else if (data?.checkoutUrl) {
         await logInfoClient('crossmint', 'Checkout URL recibida', {
           checkoutUrl: data.checkoutUrl,
           success: true
         })
         window.location.href = data.checkoutUrl
       } else {
-        await logErrorClient('crossmint', 'Error: No se recibio checkout URL', {
+        await logErrorClient('crossmint', 'Error: Respuesta inesperada', {
           response: data,
-          error: data.error || 'Sin URL de checkout'
+          error: data.error || 'Respuesta sin datos esperados'
         })
         setError(data.error || 'Error creando checkout')
       }
@@ -244,6 +255,16 @@ export default function NFTCertificationModal({
                     callData: {
                       totalPrice: price.toFixed(2),
                       quantity: 1,
+                      metadata: {
+                        name: `Mundial 2026 - ${memoryTitle}`,
+                        description: 'Certificado conmemorativo del Mundial 2026',
+                        attributes: [
+                          { trait_type: "Event", value: "Mundial 2026" },
+                          { trait_type: "Type", value: "Commemorative Certificate" },
+                          { trait_type: "User Level", value: userLevel },
+                          { trait_type: "Price Paid", value: `$${price}` }
+                        ]
+                      }
                     },
                   }}
                   payment={{
