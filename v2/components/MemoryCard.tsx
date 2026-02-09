@@ -18,6 +18,7 @@ interface Memory {
 interface MemoryCardProps {
   memory: Memory;
   onViewDetail?: (id: string) => void;
+  onCreateNFT?: () => void;
 }
 
 const locationColors = {
@@ -33,7 +34,7 @@ const avatarColors = {
   default: 'bg-gray-200 text-gray-700'
 };
 
-export default function MemoryCard({ memory, onViewDetail }: MemoryCardProps) {
+export default function MemoryCard({ memory, onViewDetail, onCreateNFT }: MemoryCardProps) {
   const locationColorClass = locationColors[memory.locationColor];
   const avatarColorClass = memory.author.avatarColor 
     ? avatarColors[memory.author.avatarColor as keyof typeof avatarColors] 
@@ -72,7 +73,7 @@ export default function MemoryCard({ memory, onViewDetail }: MemoryCardProps) {
         </div>
         
         <button 
-          onClick={memory.onCreateNFT}
+          onClick={onCreateNFT}
           className="w-full flex items-center justify-center gap-2 bg-text-dark dark:bg-white dark:text-text-dark text-white py-3.5 rounded-xl font-bold text-sm transition-transform active:scale-[0.98] shadow-md hover:shadow-lg"
         >
           <span className="text-xl">$</span>
