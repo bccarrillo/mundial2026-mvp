@@ -154,8 +154,12 @@ export default function V2Demo() {
                   <span className="material-symbols-outlined">stars</span>
                   Ver VIP Zone
                 </ActionButton>
+                <ActionButton variant="outline" fullWidth onClick={() => window.open('/v2/logo-selector', '_blank')}>
+                  <span className="material-symbols-outlined">palette</span>
+                  Ver Logo Selector
+                </ActionButton>
                 <p className="text-xs text-text-muted text-center">
-                  ✅ Landing + Dashboard + Galería + Detalle + Rankings + VIP implementadas
+                  ✅ 🎉 TODAS LAS PÁGINAS IMPLEMENTADAS (8/8 - 100%)
                 </p>
               </div>
             </div>
