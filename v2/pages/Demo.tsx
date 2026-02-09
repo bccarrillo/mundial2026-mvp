@@ -158,8 +158,16 @@ export default function V2Demo() {
                   <span className="material-symbols-outlined">palette</span>
                   Ver Logo Selector
                 </ActionButton>
+                <ActionButton variant="secondary" fullWidth onClick={() => window.open('/v2/login', '_blank')}>
+                  <span className="material-symbols-outlined">login</span>
+                  Ver Login
+                </ActionButton>
+                <ActionButton variant="primary" fullWidth onClick={() => window.open('/v2/register', '_blank')}>
+                  <span className="material-symbols-outlined">person_add</span>
+                  Ver Register
+                </ActionButton>
                 <p className="text-xs text-text-muted text-center">
-                  ✅ 🎉 TODAS LAS PÁGINAS IMPLEMENTADAS (8/8 - 100%)
+                  ✅ 🎉 TODAS LAS PÁGINAS + AUTH IMPLEMENTADAS (10/10 - 100%)
                 </p>
               </div>
             </div>
