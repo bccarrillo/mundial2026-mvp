@@ -12,15 +12,20 @@ interface TabItem {
 
 interface BottomNavigationProps {
   activeTab?: string;
+  currentPage?: string;
   variant?: 'standard' | 'donation' | 'detail';
   onTabChange?: (tab: string) => void;
 }
 
 export default function BottomNavigation({ 
-  activeTab = 'home', 
+  activeTab, 
+  currentPage,
   variant = 'standard',
   onTabChange 
 }: BottomNavigationProps) {
+  
+  // Use currentPage if provided, otherwise use activeTab
+  const currentActiveTab = currentPage || activeTab || 'home';
   
   const standardTabs: TabItem[] = [
     { id: 'home', icon: 'home', label: 'Inicio', filled: true },
@@ -85,7 +90,7 @@ export default function BottomNavigation({
           key={tab.id}
           onClick={() => onTabChange?.(tab.id)}
           className={`flex flex-col items-center gap-1 ${
-            activeTab === tab.id 
+            currentActiveTab === tab.id 
               ? tab.special 
                 ? 'text-gold-vip' 
                 : 'text-primary'
@@ -94,7 +99,7 @@ export default function BottomNavigation({
         >
           <div className="relative">
             <Icon name={tab.icon} />
-            {tab.special && activeTab === tab.id && (
+            {tab.special && currentActiveTab === tab.id && (
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
             )}
           </div>
