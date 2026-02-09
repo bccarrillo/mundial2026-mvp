@@ -1,3 +1,5 @@
+'use client';
+
 import MobileLayout from '../components/MobileLayout';
 import PixelLogo from '../components/PixelLogo';
 import ActionButton from '../components/ActionButton';
@@ -121,6 +123,40 @@ export default function V2Demo() {
                 <span className="material-symbols-outlined text-3xl text-mexico-green">explore</span>
                 <span className="material-symbols-outlined text-3xl text-usa-blue">favorite</span>
                 <span className="material-symbols-outlined text-3xl text-gold-vip">stars</span>
+              </div>
+            </div>
+
+            {/* Interactive Test */}
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700">
+              <h2 className="text-lg font-bold mb-4">Páginas Completas</h2>
+              <div className="space-y-3">
+                <ActionButton variant="primary" fullWidth onClick={() => window.open('/v2/landing', '_blank')}>
+                  <span className="material-symbols-outlined">rocket_launch</span>
+                  Ver LandingPage
+                </ActionButton>
+                <ActionButton variant="secondary" fullWidth onClick={() => window.open('/v2/dashboard', '_blank')}>
+                  <span className="material-symbols-outlined">dashboard</span>
+                  Ver Dashboard
+                </ActionButton>
+                <ActionButton variant="outline" fullWidth onClick={() => window.open('/v2/gallery', '_blank')}>
+                  <span className="material-symbols-outlined">explore</span>
+                  Ver Galería
+                </ActionButton>
+                <ActionButton variant="ghost" fullWidth onClick={() => window.open('/v2/memory/1', '_blank')}>
+                  <span className="material-symbols-outlined">visibility</span>
+                  Ver Detalle
+                </ActionButton>
+                <ActionButton variant="vip" fullWidth onClick={() => window.open('/v2/rankings', '_blank')}>
+                  <span className="material-symbols-outlined">leaderboard</span>
+                  Ver Rankings
+                </ActionButton>
+                <ActionButton variant="ghost" fullWidth onClick={() => window.open('/v2/vip', '_blank')}>
+                  <span className="material-symbols-outlined">stars</span>
+                  Ver VIP Zone
+                </ActionButton>
+                <p className="text-xs text-text-muted text-center">
+                  ✅ Landing + Dashboard + Galería + Detalle + Rankings + VIP implementadas
+                </p>
               </div>
             </div>
 

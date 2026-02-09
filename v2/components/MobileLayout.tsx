@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import MobileHeader from './MobileHeader';
 import BottomNavigation from './BottomNavigation';
+import '../globals.css';
 
 interface MobileLayoutProps {
   children: ReactNode;
