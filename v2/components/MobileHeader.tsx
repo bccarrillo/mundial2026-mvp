@@ -4,11 +4,13 @@ import MobileMenu from './MobileMenu';
 import Icon from './Icon';
 
 interface MobileHeaderProps {
+  title?: string;
   showVip?: boolean;
+  showVIPBadge?: boolean;
   onMenuClick?: () => void;
 }
 
-export default function MobileHeader({ showVip = false, onMenuClick }: MobileHeaderProps) {
+export default function MobileHeader({ title = "Memories26", showVip = false, showVIPBadge = false, onMenuClick }: MobileHeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   const handleMenuClick = () => {
@@ -27,9 +29,9 @@ export default function MobileHeader({ showVip = false, onMenuClick }: MobileHea
           <div className="flex flex-col">
             <div className="flex items-center gap-1.5">
               <h1 className="text-base font-bold tracking-tight text-[#333333] dark:text-white leading-none">
-                Memories26
+                {title}
               </h1>
-              {showVip && (
+              {(showVip || showVIPBadge) && (
                 <span className="bg-gradient-to-r from-amber-400 to-yellow-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full shadow-sm">
                   VIP
                 </span>
