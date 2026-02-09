@@ -41,6 +41,13 @@ export default function Footer() {
           </div>
           
           <div className="flex items-center gap-4">
+            <Link 
+              href="/v2-demo"
+              className="px-3 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 transition-colors font-bold"
+            >
+              🚀 Nuevo Diseño V2
+            </Link>
+            
             <span className={`px-2 py-1 rounded text-xs font-mono ${
               isProduction 
                 ? 'bg-green-100 text-green-700' 

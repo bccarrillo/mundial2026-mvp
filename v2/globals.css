@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #f8f6f6;
+    color: #181111;
+    font-family: 'Spline Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: max(884px, 100dvh);
+  }
+  .dark body {
+    background-color: #181111;
+    color: #f8f6f6;
+  }
+  .material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer utilities {
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .font-variation-fill {
+    font-variation-settings: 'FILL' 1;
+  }
+  .ios-blur {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .vip-gradient {
+    background: linear-gradient(135deg, #FFD700 0%, #B8860B 100%);
+  }
+  .bg-primary { background-color: #ec1313; }
+  .bg-mexico-green { background-color: #006847; }
+  .bg-usa-blue { background-color: #002147; }
+  .bg-gold-vip { background-color: #FFD700; }
+  .bg-background-light { background-color: #f8f6f6; }
+  .bg-background-dark { background-color: #181111; }
+  .text-primary { color: #ec1313; }
+  .text-mexico-green { color: #006847; }
+  .text-usa-blue { color: #002147; }
+  .text-gold-vip { color: #FFD700; }
+  .text-text-dark { color: #181111; }
+  .text-text-muted { color: #555555; }
+  .font-display { font-family: 'Spline Sans', sans-serif; }
+}
