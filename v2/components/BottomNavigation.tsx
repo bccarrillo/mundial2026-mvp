@@ -1,5 +1,15 @@
 import Icon from './Icon';
 
+interface TabItem {
+  id: string;
+  icon: string;
+  label: string;
+  filled?: boolean;
+  special?: boolean;
+  active?: boolean;
+  central?: boolean;
+}
+
 interface BottomNavigationProps {
   activeTab?: string;
   variant?: 'standard' | 'donation' | 'detail';
@@ -12,14 +22,14 @@ export default function BottomNavigation({
   onTabChange 
 }: BottomNavigationProps) {
   
-  const standardTabs = [
+  const standardTabs: TabItem[] = [
     { id: 'home', icon: 'home', label: 'Inicio', filled: true },
     { id: 'explore', icon: 'explore', label: 'Explorar' },
     { id: 'favorites', icon: 'favorite', label: 'Favoritos' },
     { id: 'vip', icon: 'stars', label: 'VIP', special: true }
   ];
 
-  const donationTabs = [
+  const donationTabs: TabItem[] = [
     { id: 'home', icon: 'home', label: 'Inicio' },
     { id: 'matches', icon: 'sports_soccer', label: 'Partidos' },
     { id: 'donate', icon: 'volunteer_activism', label: 'Donar', special: true },
@@ -27,7 +37,7 @@ export default function BottomNavigation({
     { id: 'settings', icon: 'settings', label: 'Ajustes' }
   ];
 
-  const detailTabs = [
+  const detailTabs: TabItem[] = [
     { id: 'home', icon: 'home', label: 'Inicio' },
     { id: 'memories', icon: 'photo_library', label: 'Recuerdos', active: true },
     { id: 'add', icon: 'add', label: '', central: true },
