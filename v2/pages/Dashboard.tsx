@@ -50,6 +50,9 @@ export default function Dashboard() {
       case 'eventos':
         router.push('/eventos');
         break;
+      case 'invitar':
+        router.push('/v2/invitar');
+        break;
       case 'galeria':
         router.push('/v2/feed');
         break;
@@ -130,6 +133,19 @@ export default function Dashboard() {
                   <span className="font-bold text-lg dark:text-white">Explorar Eventos</span>
                 </div>
                 <span className="material-symbols-outlined text-gray-300 group-hover:text-mexico-green transition-colors">chevron_right</span>
+              </button>
+              
+              <button 
+                onClick={() => handleAction('invitar')}
+                className="w-full group bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-5 rounded-2xl flex items-center justify-between shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                    <span className="material-symbols-outlined text-2xl">group_add</span>
+                  </div>
+                  <span className="font-bold text-lg dark:text-white">Invitar Amigos</span>
+                </div>
+                <span className="material-symbols-outlined text-gray-300 group-hover:text-purple-600 transition-colors">chevron_right</span>
               </button>
             </div>
 
