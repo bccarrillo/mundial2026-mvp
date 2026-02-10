@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useV2 } from '@/lib/V2Context';
 import PixelLogo from './PixelLogo';
 import MobileMenu from './MobileMenu';
@@ -16,6 +17,9 @@ interface MobileHeaderProps {
 export default function MobileHeader({ title = "Memories26", showVip = false, showVIPBadge = false, onMenuClick }: MobileHeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { language, changeLanguage } = useV2();
+  const router = useRouter();
+  
+  const showDonationIcon = process.env.NEXT_PUBLIC_SHOW_DONATION_ICON === 'true';
   
   const handleMenuClick = () => {
     if (onMenuClick) {
@@ -28,6 +32,10 @@ export default function MobileHeader({ title = "Memories26", showVip = false, sh
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newLang = e.target.value;
     changeLanguage(newLang);
+  };
+  
+  const handleDonationClick = () => {
+    router.push('/v2/donaciones');
   };
   
   return (
@@ -62,6 +70,15 @@ export default function MobileHeader({ title = "Memories26", showVip = false, sh
               <option value="pt">PT</option>
             </select>
           </div>
+          {showDonationIcon && (
+            <button 
+              onClick={handleDonationClick}
+              className="p-2 text-red-500 hover:text-red-600 transition-colors"
+              title="Apoyar el proyecto"
+            >
+              <Icon name="volunteer_activism" size="xl" />
+            </button>
+          )}
           <button 
             onClick={handleMenuClick}
             className="p-2 text-[#333333] dark:text-white"
