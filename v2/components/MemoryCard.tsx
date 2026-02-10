@@ -16,6 +16,8 @@ interface Memory {
   };
   date: string;
   hasNFT?: boolean;
+  likes: number;
+  isLiked: boolean;
   onCreateNFT?: () => void;
 }
 
@@ -23,6 +25,7 @@ interface MemoryCardProps {
   memory: Memory;
   onViewDetail?: (id: string) => void;
   onCreateNFT?: () => void;
+  onLike?: () => void;
 }
 
 const locationColors = {
@@ -38,7 +41,7 @@ const avatarColors = {
   default: 'bg-gray-200 text-gray-700'
 };
 
-function MemoryCard({ memory, onViewDetail, onCreateNFT }: MemoryCardProps) {
+function MemoryCard({ memory, onViewDetail, onCreateNFT, onLike }: MemoryCardProps) {
   const locationColorClass = locationColors[memory.locationColor];
   const avatarColorClass = memory.author.avatarColor 
     ? avatarColors[memory.author.avatarColor as keyof typeof avatarColors] 
@@ -85,9 +88,29 @@ function MemoryCard({ memory, onViewDetail, onCreateNFT }: MemoryCardProps) {
           <span className="text-gray-400 text-xs">{memory.date}</span>
         </div>
         
+        <div className="flex items-center justify-between mb-4">
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              onLike?.();
+            }}
+            className={`flex items-center gap-2 px-3 py-2 rounded-full transition-colors ${
+              memory.isLiked 
+                ? 'bg-red-50 text-red-500' 
+                : 'bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+            }`}
+          >
+            <span className="text-lg">{memory.isLiked ? '❤️' : '🤍'}</span>
+            <span className="text-sm font-medium">{memory.likes}</span>
+          </button>
+        </div>
+        
         {memory.hasNFT ? (
           <button 
-            onClick={onCreateNFT}
+            onClick={(e) => {
+              e.stopPropagation();
+              onCreateNFT?.();
+            }}
             className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white py-3.5 rounded-xl font-bold text-sm transition-transform active:scale-[0.98] shadow-md hover:shadow-lg"
           >
             <span className="text-xl">🏆</span>
@@ -95,7 +118,10 @@ function MemoryCard({ memory, onViewDetail, onCreateNFT }: MemoryCardProps) {
           </button>
         ) : (
           <button 
-            onClick={onCreateNFT}
+            onClick={(e) => {
+              e.stopPropagation();
+              onCreateNFT?.();
+            }}
             className="w-full flex items-center justify-center gap-2 bg-text-dark dark:bg-white dark:text-text-dark text-white py-3.5 rounded-xl font-bold text-sm transition-transform active:scale-[0.98] shadow-md hover:shadow-lg"
           >
             <span className="text-xl">$</span>

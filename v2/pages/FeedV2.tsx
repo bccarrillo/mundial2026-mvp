@@ -24,6 +24,8 @@ interface Memory {
   };
   date: string;
   hasNFT?: boolean;
+  likes: number;
+  isLiked: boolean;
 }
 
 const PAGE_SIZE = 12;
@@ -62,6 +64,7 @@ export default function FeedV2() {
   const [searchInput, setSearchInput] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [userVip, setUserVip] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const router = useRouter();
   const supabase = createClient();
   const observer = useRef<IntersectionObserver | null>(null);
@@ -86,6 +89,7 @@ export default function FeedV2() {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
+          setCurrentUserId(user.id);
           const { data: profile } = await supabase
             .from('profiles')
             .select('is_vip')
@@ -146,25 +150,44 @@ export default function FeedV2() {
             .in('memory_id', memoryIds)
           
           nftMemoryIds = new Set(nftData?.map(n => n.memory_id) || [])
+          
+          // Get like counts and user likes
+          const { data: likesData } = await supabase
+            .from('likes')
+            .select('memory_id, user_id')
+            .in('memory_id', memoryIds)
+          
+          const likeCounts = new Map<string, number>()
+          const userLikes = new Set<string>()
+          
+          likesData?.forEach(like => {
+            likeCounts.set(like.memory_id, (likeCounts.get(like.memory_id) || 0) + 1)
+            if (like.user_id === currentUserId) {
+              userLikes.add(like.memory_id)
+            }
+          })
+          
+          const transformedMemories = data.map((memory: any): Memory => ({
+            id: memory.id,
+            title: memory.title,
+            image: memory.image_url,
+            location: memory.team || 'MUNDIAL 2026',
+            locationColor: getLocationColor(memory.team),
+            author: {
+              name: memory.profiles?.display_name || 'Usuario',
+              initials: getInitials(memory.profiles?.display_name),
+              avatarColor: 'default',
+              isVip: memory.profiles?.is_vip || false
+            },
+            date: formatDate(memory.created_at),
+            hasNFT: nftMemoryIds.has(memory.id),
+            likes: likeCounts.get(memory.id) || 0,
+            isLiked: userLikes.has(memory.id)
+          }));
+          
+          setMemories(prev => page === 0 ? transformedMemories : [...prev, ...transformedMemories]);
         }
         
-        const transformedMemories = data.map((memory: any): Memory => ({
-          id: memory.id,
-          title: memory.title,
-          image: memory.image_url,
-          location: memory.team || 'MUNDIAL 2026',
-          locationColor: getLocationColor(memory.team),
-          author: {
-            name: memory.profiles?.display_name || 'Usuario',
-            initials: getInitials(memory.profiles?.display_name),
-            avatarColor: 'default',
-            isVip: memory.profiles?.is_vip || false
-          },
-          date: formatDate(memory.created_at),
-          hasNFT: nftMemoryIds.has(memory.id)
-        }));
-        
-        setMemories(prev => page === 0 ? transformedMemories : [...prev, ...transformedMemories]);
         setHasMore(data.length === PAGE_SIZE);
       }
       setLoading(false);
@@ -209,6 +232,43 @@ export default function FeedV2() {
 
   const handleCreateNFT = (memoryId: string) => {
     router.push(`/v2/memory/${memoryId}`);
+  };
+
+  const handleLike = async (memoryId: string) => {
+    if (!currentUserId) return;
+    
+    try {
+      const memory = memories.find(m => m.id === memoryId);
+      if (!memory) return;
+      
+      if (memory.isLiked) {
+        // Unlike
+        await supabase
+          .from('likes')
+          .delete()
+          .eq('memory_id', memoryId)
+          .eq('user_id', currentUserId);
+        
+        setMemories(prev => prev.map(m => 
+          m.id === memoryId 
+            ? { ...m, likes: m.likes - 1, isLiked: false }
+            : m
+        ));
+      } else {
+        // Like
+        await supabase
+          .from('likes')
+          .insert({ memory_id: memoryId, user_id: currentUserId });
+        
+        setMemories(prev => prev.map(m => 
+          m.id === memoryId 
+            ? { ...m, likes: m.likes + 1, isLiked: true }
+            : m
+        ));
+      }
+    } catch (error) {
+      console.error('Error toggling like:', error);
+    }
   };
 
   if (loading && memories.length === 0) {
@@ -325,6 +385,7 @@ export default function FeedV2() {
                         memory={memory}
                         onViewDetail={handleViewDetail}
                         onCreateNFT={() => handleCreateNFT(memory.id)}
+                        onLike={() => handleLike(memory.id)}
                       />
                     </div>
                   ))
