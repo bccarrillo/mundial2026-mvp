@@ -23,6 +23,7 @@ interface Memory {
     isVip?: boolean;
   };
   date: string;
+  hasNFT?: boolean;
 }
 
 const PAGE_SIZE = 12;
@@ -133,6 +134,26 @@ export default function FeedV2() {
         .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
 
       if (!error && data) {
+        // Get NFT information for each memory
+        const memoryIds = data.map(m => m.id)
+        console.log('Memory IDs to check:', memoryIds)
+        
+        // Get NFT information from nft_certificates table
+        const { data: nftData, error: nftError } = await supabase
+          .from('nft_certificates')
+          .select('memory_id')
+          .in('memory_id', memoryIds)
+        
+        console.log('Final NFT Query Result:', { nftData, nftError })
+        
+        const nftMemoryIds = new Set(nftData?.map(n => n.memory_id) || [])
+        
+        console.log('NFT Debug:', {
+          totalMemories: data.length,
+          nftData: nftData,
+          nftMemoryIds: Array.from(nftMemoryIds)
+        })
+        
         const transformedMemories = data.map((memory: any): Memory => ({
           id: memory.id,
           title: memory.title,
@@ -145,7 +166,8 @@ export default function FeedV2() {
             avatarColor: 'default',
             isVip: memory.profiles?.is_vip || false
           },
-          date: formatDate(memory.created_at)
+          date: formatDate(memory.created_at),
+          hasNFT: nftMemoryIds.has(memory.id)
         }));
         
         setMemories(prev => page === 0 ? transformedMemories : [...prev, ...transformedMemories]);

@@ -1,11 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { X, Award, Shield, Zap } from 'lucide-react'
 import { CrossmintProvider, CrossmintHostedCheckout } from '@crossmint/client-sdk-react-ui'
 import { logInfoClient, logErrorClient } from '@/lib/logger-client'
+import { logLegalAcceptance } from '@/lib/legalUtils'
+import NFTPaymentDisclaimer from '@/v2/components/NFTPaymentDisclaimer'
 
 interface NFTCertificationModalProps {
   isOpen: boolean
@@ -29,10 +32,59 @@ export default function NFTCertificationModal({
   isVIP
 }: NFTCertificationModalProps) {
   const { t } = useTranslation()
+  const supabase = createClient()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [nftConsent, setNftConsent] = useState(false)
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
+  const [memoryOwner, setMemoryOwner] = useState<string | null>(null)
+  const [existingNFT, setExistingNFT] = useState<boolean>(false)
+  const [validationLoading, setValidationLoading] = useState(true)
+  
+  useEffect(() => {
+    const validateNFTCreation = async () => {
+      setValidationLoading(true)
+      
+      const { data: { user } } = await supabase.auth.getUser()
+      setCurrentUserId(user?.id || null)
+      
+      if (!user || !memoryId) {
+        setValidationLoading(false)
+        return
+      }
+      
+      // Check if user owns the memory
+      const { data: memory } = await supabase
+        .from('memories')
+        .select('user_id')
+        .eq('id', memoryId)
+        .single()
+      
+      setMemoryOwner(memory?.user_id || null)
+      
+      // Check if NFT already exists for this memory
+      const { data: nftData, error: nftError } = await supabase
+        .from('nft_certificates')
+        .select('id')
+        .eq('memory_id', memoryId)
+        .maybeSingle()
+      
+      console.log('NFT check:', { nftData, nftError, memoryId })
+      setExistingNFT(!!nftData && !nftError)
+      setValidationLoading(false)
+    }
+    
+    if (isOpen) {
+      validateNFTCreation()
+    }
+  }, [isOpen, memoryId, supabase])
 
   const handleCrossmintPayment = async () => {
+    if (!nftConsent) {
+      setError('Debes aceptar los términos del servicio NFT')
+      return
+    }
+    
     setLoading(true)
     setError(null)
     
@@ -67,6 +119,14 @@ export default function NFTCertificationModal({
       const data = await res.json()
 
       if (data?.success && (data?.nftData || data?.orderData)) {
+        // Log NFT consent acceptance
+        if (currentUserId && nftConsent) {
+          await logLegalAcceptance({
+            userId: currentUserId,
+            context: 'nft_payment'
+          })
+        }
+        
         await logInfoClient('crossmint', 'NFT/Orden creado exitosamente', {
           data: data.nftData || data.orderData,
           mode: data.mode,
@@ -101,6 +161,68 @@ export default function NFTCertificationModal({
   }
 
   if (!isOpen) return null
+
+  // Validation checks
+  if (validationLoading) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-lg p-6 text-center">
+          <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p>Validando permisos...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // User is not the owner of the memory
+  if (currentUserId !== memoryOwner) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-lg max-w-md w-full p-6">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-3xl text-red-600">🚫</span>
+            </div>
+            <h2 className="text-xl font-bold text-red-800 mb-2">Acceso Denegado</h2>
+            <p className="text-red-600 mb-4">
+              Solo el creador del recuerdo puede generar su NFT
+            </p>
+            <button
+              onClick={onClose}
+              className="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 rounded-xl"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // NFT already exists for this memory
+  if (existingNFT) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-lg max-w-md w-full p-6">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-3xl text-blue-600">🎫</span>
+            </div>
+            <h2 className="text-xl font-bold text-blue-800 mb-2">NFT Ya Existe</h2>
+            <p className="text-blue-600 mb-4">
+              Este recuerdo ya tiene un NFT certificado
+            </p>
+            <button
+              onClick={onClose}
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-xl"
+            >
+              Ver NFT Existente
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   const originalPrice = 3
   const savings = originalPrice - price
@@ -207,6 +329,13 @@ export default function NFTCertificationModal({
             </div>
           )}
 
+          {/* NFT Payment Disclaimer */}
+          <NFTPaymentDisclaimer 
+            accepted={nftConsent}
+            onChange={setNftConsent}
+            amount={price.toFixed(2)}
+          />
+
           {error && (
             <div className="text-red-600 text-sm text-center mb-4">
               {error}
@@ -216,7 +345,7 @@ export default function NFTCertificationModal({
           {process.env.NEXT_PUBLIC_NFT_PAYMENT_MODE === 'test' ? (
             <Button 
               onClick={handleCrossmintPayment}
-              disabled={loading}
+              disabled={loading || !nftConsent}
               className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
             >
               {loading ? 'Creando checkout...' : `💳 ${t('nft.certifyButton')} $${price.toFixed(2)} USD`}

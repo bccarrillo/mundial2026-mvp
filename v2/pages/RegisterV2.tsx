@@ -6,8 +6,10 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { addPoints } from '@/lib/points'
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
+import { logLegalAcceptance } from '@/lib/legalUtils'
 import PixelLogo from '../components/PixelLogo'
 import Icon from '../components/Icon'
+import TermsAcceptance from '../components/TermsAcceptance'
 import '../globals.css'
 
 function RegisterFormV2() {
@@ -16,6 +18,7 @@ function RegisterFormV2() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [termsAccepted, setTermsAccepted] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClient()
@@ -61,6 +64,14 @@ function RegisterFormV2() {
 
       // Registration successful
       console.log('✅ Registration successful:', result)
+      
+      // Log legal acceptance
+      if (result.user) {
+        await logLegalAcceptance({
+          userId: result.user.id,
+          context: 'registration'
+        })
+      }
       
       // Handle referral if exists
       if (referrerId && result.user) {
@@ -158,6 +169,12 @@ function RegisterFormV2() {
                 </div>
               )}
               
+              {/* Terms Acceptance */}
+              <TermsAcceptance 
+                accepted={termsAccepted}
+                onChange={setTermsAccepted}
+              />
+              
               {/* Security Indicator */}
               <div className="flex items-center gap-2 text-xs text-gray-500 bg-gray-50 p-3 rounded-xl">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
@@ -167,7 +184,7 @@ function RegisterFormV2() {
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !termsAccepted}
                 className="w-full bg-primary hover:bg-red-600 text-white font-bold py-4 rounded-2xl shadow-lg shadow-primary/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (

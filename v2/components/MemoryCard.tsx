@@ -14,6 +14,7 @@ interface Memory {
     isVip?: boolean;
   };
   date: string;
+  hasNFT?: boolean;
   onCreateNFT?: () => void;
 }
 
@@ -42,6 +43,13 @@ export default function MemoryCard({ memory, onViewDetail, onCreateNFT }: Memory
     ? avatarColors[memory.author.avatarColor as keyof typeof avatarColors] 
     : avatarColors.default;
 
+  // Debug logging
+  console.log('MemoryCard:', {
+    id: memory.id,
+    title: memory.title,
+    hasNFT: memory.hasNFT
+  });
+
   return (
     <article className="flex flex-col gap-3 group cursor-pointer" onClick={() => onViewDetail?.(memory.id)}>
       <div className="relative aspect-square w-full rounded-2xl overflow-hidden bg-gray-100 shadow-sm">
@@ -50,7 +58,13 @@ export default function MemoryCard({ memory, onViewDetail, onCreateNFT }: Memory
           className="w-full h-full object-cover" 
           src={memory.image}
         />
-        <div className="absolute top-3 right-3">
+        <div className="absolute top-3 right-3 flex flex-col gap-2 items-end">
+          {memory.hasNFT && (
+            <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-2 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 shadow-sm">
+              <span className="text-xs">🏆</span>
+              NFT
+            </div>
+          )}
           <span className={`bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase ${locationColorClass} shadow-sm`}>
             {memory.location}
           </span>
@@ -77,13 +91,23 @@ export default function MemoryCard({ memory, onViewDetail, onCreateNFT }: Memory
           <span className="text-gray-400 text-xs">{memory.date}</span>
         </div>
         
-        <button 
-          onClick={onCreateNFT}
-          className="w-full flex items-center justify-center gap-2 bg-text-dark dark:bg-white dark:text-text-dark text-white py-3.5 rounded-xl font-bold text-sm transition-transform active:scale-[0.98] shadow-md hover:shadow-lg"
-        >
-          <span className="text-xl">$</span>
-          Crear un NFT
-        </button>
+        {memory.hasNFT ? (
+          <button 
+            onClick={onCreateNFT}
+            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white py-3.5 rounded-xl font-bold text-sm transition-transform active:scale-[0.98] shadow-md hover:shadow-lg"
+          >
+            <span className="text-xl">🏆</span>
+            Ver NFT Certificado
+          </button>
+        ) : (
+          <button 
+            onClick={onCreateNFT}
+            className="w-full flex items-center justify-center gap-2 bg-text-dark dark:bg-white dark:text-text-dark text-white py-3.5 rounded-xl font-bold text-sm transition-transform active:scale-[0.98] shadow-md hover:shadow-lg"
+          >
+            <span className="text-xl">$</span>
+            Crear un NFT
+          </button>
+        )}
       </div>
     </article>
   );

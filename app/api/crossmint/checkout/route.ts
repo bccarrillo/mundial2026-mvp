@@ -79,6 +79,33 @@ export async function POST(req: Request) {
       const nftData = await res.json();
       console.log('✅ Staging NFT minted:', nftData);
       
+      // Create NFT certificate record
+      if (body.memoryId && nftData.id) {
+        console.log('🔄 Creating NFT certificate record:', {
+          memory_id: body.memoryId,
+          user_id: user.id,
+          crossmint_id: nftData.id
+        })
+        
+        const { data: certData, error: certError } = await supabase
+          .from('nft_certificates')
+          .insert({
+            memory_id: body.memoryId,
+            user_id: user.id,
+            status: 'completed',
+            minted_at: new Date().toISOString()
+          })
+          .select()
+        
+        if (certError) {
+          console.error('❌ Error creating NFT certificate:', certError)
+        } else {
+          console.log('✅ NFT certificate created successfully:', certData)
+        }
+      } else {
+        console.log('⚠️ Missing memoryId or nftData.id:', { memoryId: body.memoryId, nftId: nftData.id })
+      }
+      
       return NextResponse.json({
         success: true,
         nftData: nftData,
