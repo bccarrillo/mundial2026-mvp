@@ -196,6 +196,27 @@ const translations = {
         auction: 'Elegible para subasta final del Mundial',
         ownership: 'Prueba digital de propiedad'
       }
+    },
+    vip: {
+      title: 'Zona VIP Exclusiva',
+      subtitle: 'Bienvenido a tu área premium del Mundial 2026',
+      memberSince: 'Miembro desde',
+      nftDiscount: '10% Descuento NFTs',
+      exclusiveFeatures: 'Funciones exclusivas',
+      active: 'Activas',
+      benefits: 'Tus Beneficios VIP',
+      exclusiveBadge: 'Badge VIP Exclusivo',
+      badgeDescription: 'Destaca en todos tus recuerdos',
+      discount: '10% Descuento',
+      discountDescription: 'En la creación de cualquier NFT',
+      advancedStats: 'Estadísticas Avanzadas',
+      statsDescription: 'Datos en tiempo real de tus activos',
+      comingSoon: 'Próximamente',
+      specialFilters: 'Filtros Especiales',
+      vipChat: 'Chat VIP',
+      mintVipNFT: 'Mintear NFT VIP',
+      premiumSupport: 'Soporte Premium',
+      fanClub: 'Club de Fans'
     }
   },
   en: {
@@ -391,6 +412,27 @@ const translations = {
         auction: 'Eligible for World Cup final auction',
         ownership: 'Digital proof of ownership'
       }
+    },
+    vip: {
+      title: 'Exclusive VIP Zone',
+      subtitle: 'Welcome to your premium World Cup 2026 area',
+      memberSince: 'Member since',
+      nftDiscount: '10% NFT Discount',
+      exclusiveFeatures: 'Exclusive features',
+      active: 'Active',
+      benefits: 'Your VIP Benefits',
+      exclusiveBadge: 'Exclusive VIP Badge',
+      badgeDescription: 'Stand out in all your memories',
+      discount: '10% Discount',
+      discountDescription: 'On creating any NFT',
+      advancedStats: 'Advanced Statistics',
+      statsDescription: 'Real-time data of your assets',
+      comingSoon: 'Coming Soon',
+      specialFilters: 'Special Filters',
+      vipChat: 'VIP Chat',
+      mintVipNFT: 'Mint VIP NFT',
+      premiumSupport: 'Premium Support',
+      fanClub: 'Fan Club'
     }
   },
   pt: {
@@ -586,6 +628,27 @@ const translations = {
         auction: 'Elegível para leilão final da Copa',
         ownership: 'Prova digital de propriedade'
       }
+    },
+    vip: {
+      title: 'Zona VIP Exclusiva',
+      subtitle: 'Bem-vindo à sua área premium da Copa 2026',
+      memberSince: 'Membro desde',
+      nftDiscount: '10% Desconto NFTs',
+      exclusiveFeatures: 'Recursos exclusivos',
+      active: 'Ativo',
+      benefits: 'Seus Benefícios VIP',
+      exclusiveBadge: 'Badge VIP Exclusivo',
+      badgeDescription: 'Destaque-se em todas as suas memórias',
+      discount: '10% Desconto',
+      discountDescription: 'Na criação de qualquer NFT',
+      advancedStats: 'Estatísticas Avançadas',
+      statsDescription: 'Dados em tempo real dos seus ativos',
+      comingSoon: 'Em Breve',
+      specialFilters: 'Filtros Especiais',
+      vipChat: 'Chat VIP',
+      mintVipNFT: 'Criar NFT VIP',
+      premiumSupport: 'Suporte Premium',
+      fanClub: 'Clube de Fãs'
     }
   }
 }

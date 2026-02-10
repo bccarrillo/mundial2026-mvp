@@ -55,6 +55,7 @@ export default function MyMemoriesV2() {
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(0);
   const [currentUser, setCurrentUser] = useState<string | null>(null);
+  const [isVip, setIsVip] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{ show: boolean; memory: Memory | null }>({ show: false, memory: null });
   const [deleting, setDeleting] = useState(false);
   const router = useRouter();
@@ -80,6 +81,7 @@ export default function MyMemoriesV2() {
         return;
       }
       setCurrentUser(user.id);
+      setIsVip(user.user_metadata?.is_vip || false);
     };
     getUser();
   }, [router, supabase]);
@@ -174,7 +176,7 @@ export default function MyMemoriesV2() {
       <>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
         <div className="font-display">
-          <MobileLayout activeTab="home">
+          <MobileLayout activeTab="home" showVip={isVip}>
             <main className="flex-1 overflow-y-auto hide-scrollbar pb-24">
               <div className="px-4 py-6">
                 <div className="animate-pulse space-y-6">
@@ -197,7 +199,7 @@ export default function MyMemoriesV2() {
     <>
       <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
       <div className="font-display">
-        <MobileLayout activeTab="home">
+        <MobileLayout activeTab="home" showVip={isVip}>
           <main className="flex-1 overflow-y-auto hide-scrollbar pb-24">
             <div className="px-4 py-6">
               <div className="flex justify-between items-center mb-6">
