@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useV2 } from '@/lib/V2Context';
+import { events } from '@/lib/analytics';
 import PixelLogo from '../components/PixelLogo';
 import ActionButton from '../components/ActionButton';
 import StatsGrid from '../components/StatsGrid';
@@ -16,6 +17,9 @@ export default function LandingPage() {
   const router = useRouter();
 
   useEffect(() => {
+    // Track landing page view
+    events.viewLanding();
+    
     const fetchStats = async () => {
       try {
         const response = await fetch('/api/stats');
@@ -34,14 +38,17 @@ export default function LandingPage() {
   }, []);
 
   const handleCreateAccount = () => {
+    events.clickCreateAccount();
     router.push('/v2/register');
   };
 
   const handleViewMemories = () => {
+    events.clickViewMemories();
     router.push('/v2/feed');
   };
 
   const handleGetStarted = () => {
+    events.clickCreateAccount();
     router.push('/v2/register');
   };
 

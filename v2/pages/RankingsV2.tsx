@@ -5,6 +5,7 @@ import { useV2 } from '@/lib/V2Context'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { handleAuthError } from '@/lib/auth-error-handler'
+import { events } from '@/lib/analytics'
 import MobileHeader from '../components/MobileHeader'
 import BottomNavigation from '../components/BottomNavigation'
 import Icon from '../components/Icon'
@@ -68,6 +69,9 @@ export default function RankingsV2() {
   const supabase = createClient()
 
   useEffect(() => {
+    // Track rankings view
+    events.viewRankings();
+    
     const init = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser()
@@ -80,7 +84,12 @@ export default function RankingsV2() {
             .select('is_vip')
             .eq('id', user.id)
             .single();
-          setUserVip(profile?.is_vip || false);
+          const isVip = profile?.is_vip || false;
+          setUserVip(isVip);
+          
+          if (isVip) {
+            events.vipBadgeShown();
+          }
         }
         
         await loadRankings()

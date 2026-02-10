@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { useV2 } from '@/lib/V2Context';
 import { handleAuthError } from '@/lib/auth-error-handler';
+import { events } from '@/lib/analytics';
 import MobileLayout from '../components/MobileLayout';
 import UserProfile from '../components/UserProfile';
 import '../globals.css';
@@ -43,6 +44,13 @@ export default function Dashboard() {
             avatar: user.user_metadata?.avatar_url,
             isVip: profile?.is_vip || false
           });
+          
+          // Track dashboard view and VIP status
+          events.viewDashboard();
+          if (profile?.is_vip) {
+            events.vipBadgeShown();
+          }
+          
           setLoading(false);
         }
       } catch (error) {

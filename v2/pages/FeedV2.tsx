@@ -5,6 +5,7 @@ import { useV2 } from '@/lib/V2Context';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { handleAuthError } from '@/lib/auth-error-handler';
+import { events } from '@/lib/analytics';
 import MobileLayout from '../components/MobileLayout';
 import MemoryCard from '../components/MemoryCard';
 import '../globals.css';
@@ -75,6 +76,9 @@ export default function FeedV2() {
   }, [loading, hasMore]);
 
   useEffect(() => {
+    // Track feed view
+    events.viewFeed();
+    
     // Get current user's VIP status
     const getUserVipStatus = async () => {
       try {
@@ -85,7 +89,12 @@ export default function FeedV2() {
             .select('is_vip')
             .eq('id', user.id)
             .single();
-          setUserVip(profile?.is_vip || false);
+          const isVip = profile?.is_vip || false;
+          setUserVip(isVip);
+          
+          if (isVip) {
+            events.vipBadgeShown();
+          }
         }
       } catch (error) {
         await handleAuthError(error);
