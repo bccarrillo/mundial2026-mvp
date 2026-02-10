@@ -19,6 +19,8 @@ interface Memory {
     avatarColor?: string;
   };
   date: string;
+  likes: number;
+  isLiked: boolean;
 }
 
 const PAGE_SIZE = 12;
@@ -70,7 +72,9 @@ export default function MemoriesGallery() {
         initials: getInitials(v1Memory.profiles?.display_name || 'Usuario'),
         avatarColor: 'default'
       },
-      date: new Date(v1Memory.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })
+      date: new Date(v1Memory.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }),
+      likes: 0,
+      isLiked: false
     };
   };
 
