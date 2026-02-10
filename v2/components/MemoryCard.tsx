@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import VIPBadge from './VIPBadge';
 import '../globals.css';
 
@@ -37,18 +38,11 @@ const avatarColors = {
   default: 'bg-gray-200 text-gray-700'
 };
 
-export default function MemoryCard({ memory, onViewDetail, onCreateNFT }: MemoryCardProps) {
+const MemoryCard = memo(function MemoryCard({ memory, onViewDetail, onCreateNFT }: MemoryCardProps) {
   const locationColorClass = locationColors[memory.locationColor];
   const avatarColorClass = memory.author.avatarColor 
     ? avatarColors[memory.author.avatarColor as keyof typeof avatarColors] 
     : avatarColors.default;
-
-  // Debug logging
-  console.log('MemoryCard:', {
-    id: memory.id,
-    title: memory.title,
-    hasNFT: memory.hasNFT
-  });
 
   return (
     <article className="flex flex-col gap-3 group cursor-pointer" onClick={() => onViewDetail?.(memory.id)}>
@@ -111,4 +105,6 @@ export default function MemoryCard({ memory, onViewDetail, onCreateNFT }: Memory
       </div>
     </article>
   );
-}
+});
+
+export default MemoryCard;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { useV2 } from '@/lib/V2Context';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
@@ -28,6 +28,7 @@ interface Memory {
 
 const PAGE_SIZE = 12;
 
+// Memoized utility functions
 const getLocationColor = (team?: string): 'primary' | 'usa-blue' | 'mexico-green' => {
   const colors: Record<string, 'primary' | 'usa-blue' | 'mexico-green'> = {
     'Colombia': 'primary',
@@ -134,41 +135,36 @@ export default function FeedV2() {
         .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
 
       if (!error && data) {
-        // Get NFT information for each memory
-        const memoryIds = data.map(m => m.id)
-        console.log('Memory IDs to check:', memoryIds)
+        // Get NFT information for each memory (only if we have memories)
+        let nftMemoryIds = new Set<string>()
         
-        // Get NFT information from nft_certificates table
-        const { data: nftData, error: nftError } = await supabase
-          .from('nft_certificates')
-          .select('memory_id')
-          .in('memory_id', memoryIds)
+        if (data.length > 0) {
+          const memoryIds = data.map(m => m.id)
+          const { data: nftData } = await supabase
+            .from('nft_certificates')
+            .select('memory_id')
+            .in('memory_id', memoryIds)
+          
+          nftMemoryIds = new Set(nftData?.map(n => n.memory_id) || [])
+        }
         
-        console.log('Final NFT Query Result:', { nftData, nftError })
-        
-        const nftMemoryIds = new Set(nftData?.map(n => n.memory_id) || [])
-        
-        console.log('NFT Debug:', {
-          totalMemories: data.length,
-          nftData: nftData,
-          nftMemoryIds: Array.from(nftMemoryIds)
-        })
-        
-        const transformedMemories = data.map((memory: any): Memory => ({
-          id: memory.id,
-          title: memory.title,
-          image: memory.image_url,
-          location: memory.team || 'MUNDIAL 2026',
-          locationColor: getLocationColor(memory.team),
-          author: {
-            name: memory.profiles?.display_name || 'Usuario',
-            initials: getInitials(memory.profiles?.display_name),
-            avatarColor: 'default',
-            isVip: memory.profiles?.is_vip || false
-          },
-          date: formatDate(memory.created_at),
-          hasNFT: nftMemoryIds.has(memory.id)
-        }));
+        const transformedMemories = useMemo(() => 
+          data.map((memory: any): Memory => ({
+            id: memory.id,
+            title: memory.title,
+            image: memory.image_url,
+            location: memory.team || 'MUNDIAL 2026',
+            locationColor: getLocationColor(memory.team),
+            author: {
+              name: memory.profiles?.display_name || 'Usuario',
+              initials: getInitials(memory.profiles?.display_name),
+              avatarColor: 'default',
+              isVip: memory.profiles?.is_vip || false
+            },
+            date: formatDate(memory.created_at),
+            hasNFT: nftMemoryIds.has(memory.id)
+          })), [data, nftMemoryIds]
+        );
         
         setMemories(prev => page === 0 ? transformedMemories : [...prev, ...transformedMemories]);
         setHasMore(data.length === PAGE_SIZE);
