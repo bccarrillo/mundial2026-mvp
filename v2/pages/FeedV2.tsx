@@ -18,6 +18,7 @@ interface Memory {
     name: string;
     initials: string;
     avatarColor?: string;
+    isVip?: boolean;
   };
   date: string;
 }
@@ -56,6 +57,7 @@ export default function FeedV2() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchInput, setSearchInput] = useState('');
   const [isSearching, setIsSearching] = useState(false);
+  const [userVip, setUserVip] = useState(false);
   const router = useRouter();
   const supabase = createClient();
   const observer = useRef<IntersectionObserver | null>(null);
@@ -72,6 +74,22 @@ export default function FeedV2() {
   }, [loading, hasMore]);
 
   useEffect(() => {
+    // Get current user's VIP status
+    const getUserVipStatus = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('is_vip')
+          .eq('id', user.id)
+          .single();
+        setUserVip(profile?.is_vip || false);
+      }
+    };
+    getUserVipStatus();
+  }, [supabase]);
+
+  useEffect(() => {
     // Reset memories when filters change
     if (page === 0) {
       setMemories([]);
@@ -83,7 +101,7 @@ export default function FeedV2() {
         .from('memories')
         .select(`
           *,
-          profiles (display_name, email)
+          profiles (display_name, email, is_vip)
         `)
         .eq('is_public', true)
         .is('deleted_at', null);
@@ -110,7 +128,8 @@ export default function FeedV2() {
           author: {
             name: memory.profiles?.display_name || 'Usuario',
             initials: getInitials(memory.profiles?.display_name),
-            avatarColor: 'default'
+            avatarColor: 'default',
+            isVip: memory.profiles?.is_vip || false
           },
           date: formatDate(memory.created_at)
         }));
@@ -167,7 +186,7 @@ export default function FeedV2() {
       <>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
         <div className="font-display">
-          <MobileLayout activeTab="explore">
+          <MobileLayout activeTab="explore" showVip={userVip}>
             <main className="flex-1 overflow-y-auto hide-scrollbar pb-24">
               <div className="px-4 py-6">
                 <div className="animate-pulse space-y-6">
@@ -190,7 +209,7 @@ export default function FeedV2() {
     <>
       <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
       <div className="font-display">
-        <MobileLayout activeTab="explore">
+        <MobileLayout activeTab="explore" showVip={userVip}>
           <main className="flex-1 overflow-y-auto hide-scrollbar pb-24">
             <div className="px-4 py-6">
               <div className="flex justify-between items-center mb-6">

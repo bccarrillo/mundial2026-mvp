@@ -1,3 +1,4 @@
+import VIPBadge from './VIPBadge';
 import '../globals.css';
 
 interface Memory {
@@ -10,6 +11,7 @@ interface Memory {
     name: string;
     initials: string;
     avatarColor?: string;
+    isVip?: boolean;
   };
   date: string;
   onCreateNFT?: () => void;
@@ -67,7 +69,10 @@ export default function MemoryCard({ memory, onViewDetail, onCreateNFT }: Memory
           <div className={`w-6 h-6 rounded-full ${avatarColorClass} flex items-center justify-center text-[10px] font-bold`}>
             {memory.author.initials}
           </div>
-          <span className="text-sm font-bold dark:text-gray-300">{memory.author.name}</span>
+          <div className="flex items-center gap-1">
+            <span className="text-sm font-bold dark:text-gray-300">{memory.author.name}</span>
+            {memory.author.isVip && <VIPBadge size="sm" />}
+          </div>
           <span className="text-gray-400 text-xs">•</span>
           <span className="text-gray-400 text-xs">{memory.date}</span>
         </div>

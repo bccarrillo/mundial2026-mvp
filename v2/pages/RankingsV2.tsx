@@ -62,6 +62,7 @@ export default function RankingsV2() {
   const [currentUser, setCurrentUser] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date())
+  const [userVip, setUserVip] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
@@ -69,6 +70,17 @@ export default function RankingsV2() {
     const init = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       setCurrentUser(user?.id || null)
+      
+      // Get VIP status
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('is_vip')
+          .eq('id', user.id)
+          .single();
+        setUserVip(profile?.is_vip || false);
+      }
+      
       await loadRankings()
     }
     init()
@@ -109,7 +121,7 @@ export default function RankingsV2() {
   if (loading) {
     return (
       <div className="font-display bg-white min-h-screen max-w-md mx-auto">
-        <MobileHeader />
+        <MobileHeader showVip={userVip} />
         <div className="flex items-center justify-center min-h-[50vh]">
           <div className="text-center">
             <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
@@ -122,7 +134,7 @@ export default function RankingsV2() {
 
   return (
     <div className="font-display bg-white min-h-screen max-w-md mx-auto">
-      <MobileHeader />
+      <MobileHeader showVip={userVip} />
       
       <main className="flex-1 overflow-y-auto hide-scrollbar pb-24">
         <div className="px-4 py-6">

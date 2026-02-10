@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useV2 } from '@/lib/V2Context'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -24,8 +24,25 @@ export default function CreateMemoryV2() {
   const [preview, setPreview] = useState<string>('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [userVip, setUserVip] = useState(false)
   const router = useRouter()
   const supabase = createClient()
+
+  useEffect(() => {
+    // Get current user's VIP status
+    const getUserVipStatus = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('is_vip')
+          .eq('id', user.id)
+          .single();
+        setUserVip(profile?.is_vip || false);
+      }
+    };
+    getUserVipStatus();
+  }, [supabase]);
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -104,7 +121,7 @@ export default function CreateMemoryV2() {
 
   return (
     <div className="font-display bg-white min-h-screen max-w-md mx-auto">
-      <MobileHeader />
+      <MobileHeader showVip={userVip} />
       
       <main className="flex-1 overflow-y-auto hide-scrollbar pb-24 px-6">
         <div className="py-6">
