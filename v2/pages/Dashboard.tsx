@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { useV2 } from '@/lib/V2Context';
+import { handleAuthError } from '@/lib/auth-error-handler';
 import MobileLayout from '../components/MobileLayout';
 import UserProfile from '../components/UserProfile';
 import '../globals.css';
@@ -24,28 +25,36 @@ export default function Dashboard() {
 
   useEffect(() => {
     const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        router.push('/v2/login');
-      } else {
-        // Get VIP status from profiles table
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('is_vip, display_name')
-          .eq('id', user.id)
-          .single();
-        
-        setUser({
-          name: profile?.display_name || user.email?.split('@')[0] || t('dashboard.welcome'),
-          email: user.email || '',
-          avatar: user.user_metadata?.avatar_url,
-          isVip: profile?.is_vip || false
-        });
-        setLoading(false);
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          router.push('/v2/login');
+        } else {
+          // Get VIP status from profiles table
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('is_vip, display_name')
+            .eq('id', user.id)
+            .single();
+          
+          setUser({
+            name: profile?.display_name || user.email?.split('@')[0] || t('dashboard.welcome'),
+            email: user.email || '',
+            avatar: user.user_metadata?.avatar_url,
+            isVip: profile?.is_vip || false
+          });
+          setLoading(false);
+        }
+      } catch (error) {
+        const handled = await handleAuthError(error);
+        if (!handled) {
+          console.error('Auth error:', error);
+          router.push('/v2/login');
+        }
       }
     };
     getUser();
-  }, [router, supabase]);
+  }, [router, supabase, t]);
 
   const handleAction = (action: string) => {
     switch (action) {

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useV2 } from '@/lib/V2Context'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import { handleAuthError } from '@/lib/auth-error-handler'
 import imageCompression from 'browser-image-compression'
 import { generateFileName } from '@/lib/utils/file'
 import { addPoints } from '@/lib/points'
@@ -31,14 +32,18 @@ export default function CreateMemoryV2() {
   useEffect(() => {
     // Get current user's VIP status
     const getUserVipStatus = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('is_vip')
-          .eq('id', user.id)
-          .single();
-        setUserVip(profile?.is_vip || false);
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('is_vip')
+            .eq('id', user.id)
+            .single();
+          setUserVip(profile?.is_vip || false);
+        }
+      } catch (error) {
+        await handleAuthError(error);
       }
     };
     getUserVipStatus();
