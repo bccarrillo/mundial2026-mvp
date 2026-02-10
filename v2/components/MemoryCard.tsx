@@ -38,7 +38,7 @@ const avatarColors = {
   default: 'bg-gray-200 text-gray-700'
 };
 
-const MemoryCard = memo(function MemoryCard({ memory, onViewDetail, onCreateNFT }: MemoryCardProps) {
+function MemoryCard({ memory, onViewDetail, onCreateNFT }: MemoryCardProps) {
   const locationColorClass = locationColors[memory.locationColor];
   const avatarColorClass = memory.author.avatarColor 
     ? avatarColors[memory.author.avatarColor as keyof typeof avatarColors] 
@@ -105,6 +105,6 @@ const MemoryCard = memo(function MemoryCard({ memory, onViewDetail, onCreateNFT 
       </div>
     </article>
   );
-});
+}
 
-export default MemoryCard;
+export default memo(MemoryCard);

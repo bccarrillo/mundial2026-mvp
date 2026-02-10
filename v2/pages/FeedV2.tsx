@@ -148,23 +148,21 @@ export default function FeedV2() {
           nftMemoryIds = new Set(nftData?.map(n => n.memory_id) || [])
         }
         
-        const transformedMemories = useMemo(() => 
-          data.map((memory: any): Memory => ({
-            id: memory.id,
-            title: memory.title,
-            image: memory.image_url,
-            location: memory.team || 'MUNDIAL 2026',
-            locationColor: getLocationColor(memory.team),
-            author: {
-              name: memory.profiles?.display_name || 'Usuario',
-              initials: getInitials(memory.profiles?.display_name),
-              avatarColor: 'default',
-              isVip: memory.profiles?.is_vip || false
-            },
-            date: formatDate(memory.created_at),
-            hasNFT: nftMemoryIds.has(memory.id)
-          })), [data, nftMemoryIds]
-        );
+        const transformedMemories = data.map((memory: any): Memory => ({
+          id: memory.id,
+          title: memory.title,
+          image: memory.image_url,
+          location: memory.team || 'MUNDIAL 2026',
+          locationColor: getLocationColor(memory.team),
+          author: {
+            name: memory.profiles?.display_name || 'Usuario',
+            initials: getInitials(memory.profiles?.display_name),
+            avatarColor: 'default',
+            isVip: memory.profiles?.is_vip || false
+          },
+          date: formatDate(memory.created_at),
+          hasNFT: nftMemoryIds.has(memory.id)
+        }));
         
         setMemories(prev => page === 0 ? transformedMemories : [...prev, ...transformedMemories]);
         setHasMore(data.length === PAGE_SIZE);
