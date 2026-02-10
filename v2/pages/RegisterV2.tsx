@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useTranslation } from 'react-i18next'
 import { addPoints } from '@/lib/points'
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 import PixelLogo from '../components/PixelLogo'
@@ -20,6 +21,7 @@ function RegisterFormV2() {
   const supabase = createClient()
   const referrerId = searchParams.get('ref')
   const { executeRecaptcha } = useGoogleReCaptcha()
+  const { t } = useTranslation()
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -94,7 +96,7 @@ function RegisterFormV2() {
               <PixelLogo size="large" />
             </div>
             <h1 className="text-3xl font-bold text-[#333333] mb-2">Memories26</h1>
-            <p className="text-gray-500">Crea tu cuenta y guarda tus recuerdos del Mundial</p>
+            <p className="text-gray-500">{t('landing.createAccount')}</p>
           </div>
 
           {success ? (

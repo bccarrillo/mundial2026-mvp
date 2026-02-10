@@ -33,6 +33,10 @@ export const viewport = {
   themeColor: '#3b82f6',
 };
 
+function isV2Route(pathname: string) {
+  return pathname.startsWith('/v2/');
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -49,11 +53,9 @@ export default function RootLayout({
         <RecaptchaProvider>
           <I18nProvider>
             <GoogleAnalytics />
-            <Navbar />
             <main className="flex-1">
               {children}
             </main>
-            <Footer />
             <Toaster position="top-right" richColors />
           </I18nProvider>
         </RecaptchaProvider>

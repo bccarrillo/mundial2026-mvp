@@ -13,11 +13,19 @@ i18n
       en: { translation: en },
       pt: { translation: pt }
     },
-    lng: typeof window !== 'undefined' ? localStorage.getItem('language') || 'es' : 'es',
+    lng: 'es',
     fallbackLng: 'es',
     interpolation: {
       escapeValue: false
     }
   });
+
+// Load saved language after hydration
+if (typeof window !== 'undefined') {
+  const savedLanguage = localStorage.getItem('language');
+  if (savedLanguage && ['es', 'en', 'pt'].includes(savedLanguage)) {
+    i18n.changeLanguage(savedLanguage);
+  }
+}
 
 export default i18n;

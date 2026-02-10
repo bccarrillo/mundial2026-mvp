@@ -1,4 +1,7 @@
+'use client'
+
 import { useState } from 'react';
+import { useV2 } from '@/lib/V2Context';
 import PixelLogo from './PixelLogo';
 import MobileMenu from './MobileMenu';
 import Icon from './Icon';
@@ -12,6 +15,7 @@ interface MobileHeaderProps {
 
 export default function MobileHeader({ title = "Memories26", showVip = false, showVIPBadge = false, onMenuClick }: MobileHeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { language, changeLanguage } = useV2();
   
   const handleMenuClick = () => {
     if (onMenuClick) {
@@ -19,6 +23,11 @@ export default function MobileHeader({ title = "Memories26", showVip = false, sh
     } else {
       setIsMenuOpen(true);
     }
+  };
+  
+  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newLang = e.target.value;
+    changeLanguage(newLang);
   };
   
   return (
@@ -43,10 +52,14 @@ export default function MobileHeader({ title = "Memories26", showVip = false, sh
         <div className="flex items-center gap-1">
           <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-full px-2 py-1 mr-1">
             <Icon name="language" className="text-lg text-gray-500" />
-            <select className="bg-transparent border-none text-[10px] font-bold uppercase tracking-wider focus:ring-0 py-0 pl-1 pr-4 text-gray-700 dark:text-gray-300">
-              <option>ES</option>
-              <option>EN</option>
-              <option>PT</option>
+            <select 
+              className="bg-transparent border-none text-[10px] font-bold uppercase tracking-wider focus:ring-0 py-0 pl-1 pr-4 text-gray-700 dark:text-gray-300"
+              value={language}
+              onChange={handleLanguageChange}
+            >
+              <option value="es">ES</option>
+              <option value="en">EN</option>
+              <option value="pt">PT</option>
             </select>
           </div>
           <button 

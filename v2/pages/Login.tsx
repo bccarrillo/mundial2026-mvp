@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import '../globals.css';
 import PixelLogo from '../components/PixelLogo';
 import FormInput from '../components/FormInput';
@@ -14,6 +15,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const router = useRouter();
   const supabase = createClient();
+  const { t } = useTranslation();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,22 +49,22 @@ export default function Login() {
       {/* Main Content */}
       <div className="flex-1 px-6">
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold dark:text-white mb-2">Iniciar Sesión</h2>
-          <p className="text-gray-500 dark:text-gray-400">Accede a tus recuerdos del Mundial 2026</p>
+          <h2 className="text-2xl font-bold dark:text-white mb-2">{t('auth.loginTitle')}</h2>
+          <p className="text-gray-500 dark:text-gray-400">{t('landing.subtitle')}</p>
         </div>
 
         {/* Form */}
         <form onSubmit={handleLogin} className="space-y-4 mb-8">
           <FormInput
             type="email"
-            placeholder="Correo electrónico"
+            placeholder={t('auth.email')}
             value={email}
             onChange={setEmail}
             icon="@"
           />
           <FormInput
             type="password"
-            placeholder="Contraseña"
+            placeholder={t('auth.password')}
             value={password}
             onChange={setPassword}
             icon="•"
@@ -76,14 +78,14 @@ export default function Login() {
             disabled={loading}
             className="w-full bg-primary hover:bg-red-700 text-white font-bold py-4 rounded-xl transition-colors shadow-lg shadow-primary/20 active:scale-[0.98] disabled:opacity-50"
           >
-            {loading ? 'Iniciando...' : 'Iniciar Sesión'}
+            {loading ? t('common.loading') : t('auth.loginButton')}
           </button>
         </form>
 
         {/* Forgot Password */}
         <div className="text-center mb-8">
           <button className="text-primary font-medium text-sm">
-            ¿Olvidaste tu contraseña?
+            {t('auth.forgotPassword', '¿Olvidaste tu contraseña?')}
           </button>
         </div>
 
@@ -97,13 +99,13 @@ export default function Login() {
         {/* Register Link */}
         <div className="text-center">
           <p className="text-gray-500 dark:text-gray-400 text-sm mb-2">
-            ¿No tienes cuenta?
+            {t('auth.noAccount')}
           </p>
           <button 
             onClick={() => router.push('/v2/register')}
             className="bg-gray-100 dark:bg-gray-800 text-[#181111] dark:text-white font-bold py-3 px-8 rounded-xl transition-colors active:scale-[0.98]"
           >
-            Crear Cuenta
+            {t('auth.registerButton')}
           </button>
         </div>
       </div>

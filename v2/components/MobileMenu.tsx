@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { useV2 } from '@/lib/V2Context'
 import Icon from './Icon';
 
 interface MobileMenuProps {
@@ -12,6 +13,7 @@ interface MobileMenuProps {
 export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   const router = useRouter()
   const supabase = createClient()
+  const { t, language, changeLanguage } = useV2()
 
   const handleNavigation = (path: string) => {
     onClose()
@@ -24,12 +26,16 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
     router.push('/v2/login')
   }
 
+  const handleLanguageChange = (lang: string) => {
+    changeLanguage(lang)
+  }
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[60] bg-white dark:bg-background-dark flex flex-col">
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800">
-        <span className="text-xl font-bold text-primary">Menú</span>
+        <span className="text-xl font-bold text-primary">{t('nav.menu', 'Menú')}</span>
         <button onClick={onClose} className="p-2">
           <Icon name="close" size="xl" />
         </button>
@@ -37,15 +43,30 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
       
       <nav className="flex flex-col p-6 gap-6">
         <div className="flex flex-col gap-2">
-          <label className="text-xs font-semibold uppercase text-gray-400">Idioma</label>
+          <label className="text-xs font-semibold uppercase text-gray-400">{t('nav.language', 'Idioma')}</label>
           <div className="flex gap-3">
-            <button className="px-4 py-2 bg-primary text-white rounded-full text-sm font-medium">
+            <button 
+              onClick={() => handleLanguageChange('es')}
+              className={`px-4 py-2 rounded-full text-sm font-medium ${
+                language === 'es' ? 'bg-primary text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'
+              }`}
+            >
               Español
             </button>
-            <button className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-500 rounded-full text-sm">
+            <button 
+              onClick={() => handleLanguageChange('en')}
+              className={`px-4 py-2 rounded-full text-sm font-medium ${
+                language === 'en' ? 'bg-primary text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'
+              }`}
+            >
               English
             </button>
-            <button className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-500 rounded-full text-sm">
+            <button 
+              onClick={() => handleLanguageChange('pt')}
+              className={`px-4 py-2 rounded-full text-sm font-medium ${
+                language === 'pt' ? 'bg-primary text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'
+              }`}
+            >
               Português
             </button>
           </div>
@@ -56,7 +77,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           className="flex items-center gap-4 text-lg font-medium py-3 border-b border-gray-50 dark:border-gray-800"
         >
           <Icon name="photo_library" className="text-gray-500" />
-          Recuerdos
+          {t('nav.feed', 'Recuerdos')}
         </button>
         
         <button 
@@ -64,7 +85,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           className="flex items-center gap-4 text-lg font-medium py-3 border-b border-gray-50 dark:border-gray-800"
         >
           <Icon name="dashboard" className="text-gray-500" />
-          Dashboard
+          {t('nav.dashboard', 'Dashboard')}
         </button>
         
         <button 
@@ -72,7 +93,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           className="flex items-center gap-4 text-lg font-medium py-3 border-b border-gray-50 dark:border-gray-800"
         >
           <Icon name="add_circle" className="text-gray-500" />
-          Crear
+          {t('nav.create', 'Crear')}
         </button>
         
         <button 
@@ -80,7 +101,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           className="flex items-center gap-4 text-lg font-medium py-3 border-b border-gray-50 dark:border-gray-800"
         >
           <Icon name="military_tech" className="text-gray-500" />
-          Rankings
+          {t('nav.rankings')}
         </button>
         
         <button 
@@ -88,7 +109,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           className="flex items-center gap-4 text-lg font-medium py-3 mt-4 text-primary"
         >
           <Icon name="logout" className="text-primary" />
-          Cerrar Sesión
+          {t('nav.logout', 'Cerrar Sesión')}
         </button>
       </nav>
     </div>

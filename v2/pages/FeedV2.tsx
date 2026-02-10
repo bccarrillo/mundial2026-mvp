@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import MobileLayout from '../components/MobileLayout';
@@ -46,6 +47,7 @@ const formatDate = (dateString: string): string => {
 };
 
 export default function FeedV2() {
+  const { t } = useTranslation();
   const [memories, setMemories] = useState<Memory[]>([]);
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
@@ -193,9 +195,9 @@ export default function FeedV2() {
             <div className="px-4 py-6">
               <div className="flex justify-between items-center mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold dark:text-white leading-none">Recuerdos</h2>
+                  <h2 className="text-2xl font-bold dark:text-white leading-none">{t('v2.feed.title')}</h2>
                   <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-                    Explora los momentos del Mundial
+                    {t('v2.feed.subtitle')}
                   </p>
                 </div>
                 <button 
@@ -211,7 +213,7 @@ export default function FeedV2() {
               <div className="mb-4 flex gap-2">
                 <input
                   type="text"
-                  placeholder="Buscar recuerdos..."
+                  placeholder={t('v2.feed.search')}
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
@@ -237,13 +239,13 @@ export default function FeedV2() {
               {/* Team Filters */}
               <div className="mb-6 flex gap-2 overflow-x-auto hide-scrollbar">
                 {[
-                  { name: 'Todos', value: '' },
-                  { name: '🇨🇴 Colombia', value: 'Colombia' },
-                  { name: '🇲🇽 México', value: 'México' },
-                  { name: '🇦🇷 Argentina', value: 'Argentina' },
-                  { name: '🇧🇷 Brasil', value: 'Brasil' },
-                  { name: '🇺🇸 USA', value: 'Estados Unidos' },
-                  { name: '🇨🇦 Canadá', value: 'Canadá' }
+                  { name: t('v2.feed.filters.all'), value: '' },
+                  { name: t('v2.feed.filters.colombia'), value: 'Colombia' },
+                  { name: t('v2.feed.filters.mexico'), value: 'México' },
+                  { name: t('v2.feed.filters.argentina'), value: 'Argentina' },
+                  { name: t('v2.feed.filters.brazil'), value: 'Brasil' },
+                  { name: t('v2.feed.filters.usa'), value: 'Estados Unidos' },
+                  { name: t('v2.feed.filters.canada'), value: 'Canadá' }
                 ].map((filter) => (
                   <button
                     key={filter.value}
@@ -262,7 +264,7 @@ export default function FeedV2() {
               <div className="space-y-8">
                 {memories.length === 0 && !loading ? (
                   <div className="text-center py-12">
-                    <p className="text-gray-500 dark:text-gray-400">No se encontraron recuerdos</p>
+                    <p className="text-gray-500 dark:text-gray-400">{t('v2.feed.noResults')}</p>
                   </div>
                 ) : (
                   memories.map((memory, index) => (
@@ -283,14 +285,14 @@ export default function FeedV2() {
                   <div className="text-center py-8">
                     <div className="inline-flex items-center gap-2 text-gray-500">
                       <div className="w-4 h-4 border-2 border-gray-300 border-t-primary rounded-full animate-spin"></div>
-                      Cargando más recuerdos...
+                      {t('v2.feed.loadingMore')}
                     </div>
                   </div>
                 )}
                 
                 {!hasMore && memories.length > 0 && (
                   <div className="text-center py-8">
-                    <p className="text-gray-500 dark:text-gray-400">No hay más recuerdos</p>
+                    <p className="text-gray-500 dark:text-gray-400">{t('v2.feed.noMore')}</p>
                   </div>
                 )}
               </div>

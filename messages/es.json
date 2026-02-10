@@ -8,7 +8,9 @@
     "support": "Apoyar",
     "login": "Iniciar sesión",
     "register": "Registrarse",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "menu": "Menú",
+    "language": "Idioma"
   },
   "landing": {
     "title": "Mundial 2026",
@@ -66,7 +68,8 @@
     "noAccount": "¿No tienes cuenta?",
     "hasAccount": "¿Ya tienes cuenta?",
     "registerLink": "Regístrate aquí",
-    "loginLink": "Inicia sesión aquí"
+    "loginLink": "Inicia sesión aquí",
+    "forgotPassword": "¿Olvidaste tu contraseña?"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -266,5 +269,106 @@
     "climbDescription": "Crea recuerdos, recibe likes y comenta para ganar puntos",
     "createMemoryPoints": "Crear Recuerdo (+10 pts)",
     "viewMyPoints": "Ver Mis Puntos"
+  },
+  "v2": {
+    "dashboard": {
+      "welcome": "¡Bienvenido!",
+      "createMemory": "Crear Nuevo Recuerdo",
+      "viewNFTs": "Ver Mis NFTs",
+      "exploreEvents": "Explorar Eventos",
+      "inviteFriends": "Invitar Amigos",
+      "viewGallery": "Ver Galería Pública"
+    },
+    "create": {
+      "title": "Crear Recuerdo",
+      "subtitle": "Comparte tu momento del Mundial",
+      "imageRequired": "Imagen del Recuerdo *",
+      "selectImage": "Toca para seleccionar imagen",
+      "titleRequired": "Título del Recuerdo *",
+      "titlePlaceholder": "Ej: Gol histórico de Colombia",
+      "description": "Descripción",
+      "descriptionPlaceholder": "Cuenta la historia detrás de este momento...",
+      "team": "Equipo",
+      "selectTeam": "Seleccionar equipo",
+      "matchDate": "Fecha del Partido",
+      "publicMemory": "Recuerdo Público",
+      "publicDescription": "Otros usuarios podrán ver y dar like a tu recuerdo",
+      "createButton": "Crear Recuerdo",
+      "creating": "Guardando..."
+    },
+    "feed": {
+      "title": "Recuerdos",
+      "subtitle": "Explora los momentos del Mundial",
+      "search": "Buscar recuerdos...",
+      "searching": "Buscando...",
+      "noResults": "No se encontraron recuerdos",
+      "loadingMore": "Cargando más recuerdos...",
+      "noMore": "No hay más recuerdos",
+      "filters": {
+        "all": "Todos",
+        "colombia": "🇨🇴 Colombia",
+        "mexico": "🇲🇽 México",
+        "argentina": "🇦🇷 Argentina",
+        "brazil": "🇧🇷 Brasil",
+        "usa": "🇺🇸 USA",
+        "canada": "🇨🇦 Canadá"
+      }
+    },
+    "memory": {
+      "share": "Compartir",
+      "like": "Me gusta",
+      "liked": "Te gusta",
+      "download": "Descargar",
+      "description": "Descripción",
+      "createNFT": "Convertir en NFT",
+      "nftDescription": "Protege tu propiedad digital y haz que este recuerdo sea único en la blockchain.",
+      "createNFTButton": "Crear NFT Ahora",
+      "certified": "Recuerdo Certificado como NFT",
+      "comments": "Comentarios",
+      "writeComment": "Escribe un comentario...",
+      "loginToComment": "Inicia sesión para comentar",
+      "commentButton": "Comentar",
+      "sending": "Enviando...",
+      "noComments": "No hay comentarios aún. ¡Sé el primero en comentar!",
+      "notFound": "Recuerdo no encontrado",
+      "backToFeed": "Volver al Feed"
+    },
+    "rankings": {
+      "title": "Rankings",
+      "subtitle": "Compite con fanáticos de todo el mundo",
+      "loading": "Cargando rankings...",
+      "yourPosition": "Tu Posición",
+      "users": "usuarios",
+      "refresh": "Actualizar",
+      "updating": "Actualizando...",
+      "noUsers": "No hay usuarios en el ranking aún",
+      "wantToClimb": "¿Quieres subir en el ranking?",
+      "climbDescription": "Crea recuerdos, recibe likes y gana puntos para escalar posiciones",
+      "createMemoryPoints": "Crear Recuerdo (+10 puntos)",
+      "viewGallery": "Ver Galería Pública"
+    },
+    "invite": {
+      "title": "Invitar Amigos",
+      "subtitle": "Gana puntos por cada amigo que se registre",
+      "loading": "Cargando...",
+      "registered": "Registrados",
+      "pending": "Pendientes",
+      "total": "Total",
+      "rewards": "Recompensas",
+      "inviterBadge": "Badge Invitador",
+      "ambassador": "Embajador Mundial",
+      "vipLegend": "Leyenda VIP",
+      "friends": "amigos",
+      "inviteLink": "Tu Link de Invitación",
+      "copyLink": "Copiar Link",
+      "copied": "Copiado!",
+      "shareInvite": "Compartir Invitación",
+      "sendWhatsApp": "Enviar por WhatsApp",
+      "howItWorks": "¿Cómo funciona?",
+      "step1": "Comparte tu link de invitación",
+      "step2": "Tus amigos se registran usando tu link",
+      "step3": "Ambos reciben puntos bonus",
+      "step4": "Desbloqueas recompensas especiales"
+    }
   }
 }

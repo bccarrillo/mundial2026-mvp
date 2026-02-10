@@ -1,11 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import '../globals.css';
 import PixelLogo from '../components/PixelLogo';
 import FormInput from '../components/FormInput';
 
 export default function Register() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -28,7 +30,7 @@ export default function Register() {
       {/* Main Content */}
       <div className="flex-1 px-6">
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold dark:text-white mb-2">Crear Cuenta</h2>
+          <h2 className="text-2xl font-bold dark:text-white mb-2">{t('auth.registerTitle')}</h2>
           <p className="text-gray-500 dark:text-gray-400">Únete y guarda tus recuerdos del Mundial 2026</p>
         </div>
 
@@ -36,14 +38,14 @@ export default function Register() {
         <div className="space-y-4 mb-6">
           <FormInput
             type="email"
-            placeholder="Correo electrónico"
+            placeholder={t('auth.email')}
             value={email}
             onChange={setEmail}
             icon="@"
           />
           <FormInput
             type="password"
-            placeholder="Contraseña"
+            placeholder={t('auth.password')}
             value={password}
             onChange={setPassword}
             icon="•"
@@ -64,7 +66,7 @@ export default function Register() {
           onClick={handleRegister}
           className="w-full bg-primary hover:bg-red-700 text-white font-bold py-4 rounded-xl transition-colors shadow-lg shadow-primary/20 active:scale-[0.98] mb-4"
         >
-          Crear Cuenta
+          {t('auth.registerButton')}
         </button>
 
         {/* Divider */}
@@ -77,10 +79,10 @@ export default function Register() {
         {/* Login Link */}
         <div className="text-center">
           <p className="text-gray-500 dark:text-gray-400 text-sm mb-2">
-            ¿Ya tienes cuenta?
+            {t('auth.hasAccount')}
           </p>
           <button className="bg-gray-100 dark:bg-gray-800 text-[#181111] dark:text-white font-bold py-3 px-8 rounded-xl transition-colors active:scale-[0.98]">
-            Iniciar Sesión
+            {t('auth.loginButton')}
           </button>
         </div>
       </div>

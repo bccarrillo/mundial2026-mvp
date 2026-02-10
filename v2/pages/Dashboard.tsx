@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
+import { useV2 } from '@/lib/V2Context';
 import MobileLayout from '../components/MobileLayout';
 import UserProfile from '../components/UserProfile';
 import '../globals.css';
@@ -15,6 +16,7 @@ interface User {
 }
 
 export default function Dashboard() {
+  const { t } = useV2();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -28,7 +30,7 @@ export default function Dashboard() {
       } else {
         // Transformar datos V1 a formato V2
         setUser({
-          name: user.user_metadata?.display_name || user.email?.split('@')[0] || '¡Bienvenido!',
+          name: user.user_metadata?.display_name || user.email?.split('@')[0] || t('dashboard.welcome'),
           email: user.email || '',
           avatar: user.user_metadata?.avatar_url,
           isVip: user.user_metadata?.is_vip || false
@@ -104,7 +106,7 @@ export default function Dashboard() {
                   <div className="w-12 h-12 rounded-xl bg-red-50 dark:bg-red-900/30 flex items-center justify-center text-primary">
                     <span className="material-symbols-outlined text-2xl">add_photo_alternate</span>
                   </div>
-                  <span className="font-bold text-lg dark:text-white">Crear Nuevo Recuerdo</span>
+                  <span className="font-bold text-lg dark:text-white">{t('dashboard.createMemory')}</span>
                 </div>
                 <span className="material-symbols-outlined text-gray-300 group-hover:text-primary transition-colors">chevron_right</span>
               </button>
@@ -117,7 +119,7 @@ export default function Dashboard() {
                   <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-usa-blue dark:text-blue-400">
                     <span className="material-symbols-outlined text-2xl">token</span>
                   </div>
-                  <span className="font-bold text-lg dark:text-white">Ver Mis NFTs</span>
+                  <span className="font-bold text-lg dark:text-white">{t('dashboard.viewNFTs')}</span>
                 </div>
                 <span className="material-symbols-outlined text-gray-300 group-hover:text-usa-blue transition-colors">chevron_right</span>
               </button>
@@ -130,7 +132,7 @@ export default function Dashboard() {
                   <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-900/30 flex items-center justify-center text-mexico-green dark:text-green-400">
                     <span className="material-symbols-outlined text-2xl">event</span>
                   </div>
-                  <span className="font-bold text-lg dark:text-white">Explorar Eventos</span>
+                  <span className="font-bold text-lg dark:text-white">{t('dashboard.exploreEvents')}</span>
                 </div>
                 <span className="material-symbols-outlined text-gray-300 group-hover:text-mexico-green transition-colors">chevron_right</span>
               </button>
@@ -143,7 +145,7 @@ export default function Dashboard() {
                   <div className="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400">
                     <span className="material-symbols-outlined text-2xl">group_add</span>
                   </div>
-                  <span className="font-bold text-lg dark:text-white">Invitar Amigos</span>
+                  <span className="font-bold text-lg dark:text-white">{t('dashboard.inviteFriends')}</span>
                 </div>
                 <span className="material-symbols-outlined text-gray-300 group-hover:text-purple-600 transition-colors">chevron_right</span>
               </button>
@@ -155,7 +157,7 @@ export default function Dashboard() {
                 onClick={() => handleAction('galeria')}
                 className="bg-primary/10 text-primary px-6 py-2.5 rounded-full font-bold text-sm hover:bg-primary hover:text-white transition-colors"
               >
-                Ver Galería Pública
+                {t('dashboard.viewGallery')}
               </button>
             </div>
           </main>
