@@ -1,0 +1,32 @@
+<svg width="192" height="192" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
+  <rect width="192" height="192" fill="#ffffff"/>
+  
+  <!-- PixelLogo design scaled to 192x192 -->
+  <g transform="translate(48, 48)">
+    <!-- Grid 5x4 with 19.2px squares -->
+    
+    <!-- Row 1 -->
+    <rect x="19.2" y="0" width="19.2" height="19.2" fill="#dc2626"/>
+    <rect x="38.4" y="0" width="19.2" height="19.2" fill="#dc2626"/>
+    <rect x="57.6" y="0" width="19.2" height="19.2" fill="#dc2626"/>
+    
+    <!-- Row 2 -->
+    <rect x="0" y="19.2" width="19.2" height="19.2" fill="#16a34a"/>
+    <rect x="19.2" y="19.2" width="19.2" height="19.2" fill="#1f2937"/>
+    <rect x="38.4" y="19.2" width="19.2" height="19.2" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+    <rect x="57.6" y="19.2" width="19.2" height="19.2" fill="#1f2937"/>
+    <rect x="76.8" y="19.2" width="19.2" height="19.2" fill="#2563eb"/>
+    
+    <!-- Row 3 -->
+    <rect x="0" y="38.4" width="19.2" height="19.2" fill="#16a34a"/>
+    <rect x="19.2" y="38.4" width="19.2" height="19.2" fill="#1f2937"/>
+    <rect x="38.4" y="38.4" width="19.2" height="19.2" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+    <rect x="57.6" y="38.4" width="19.2" height="19.2" fill="#1f2937"/>
+    <rect x="76.8" y="38.4" width="19.2" height="19.2" fill="#2563eb"/>
+    
+    <!-- Row 4 -->
+    <rect x="19.2" y="57.6" width="19.2" height="19.2" fill="#dc2626"/>
+    <rect x="38.4" y="57.6" width="19.2" height="19.2" fill="#dc2626"/>
+    <rect x="57.6" y="57.6" width="19.2" height="19.2" fill="#dc2626"/>
+  </g>
+</svg>
