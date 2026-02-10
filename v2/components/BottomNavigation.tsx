@@ -114,8 +114,10 @@ export default function BottomNavigation({
         >
           <div className="relative">
             <Icon name={tab.icon} />
-            {tab.special && currentActiveTab === tab.id && (
-              <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+            {currentActiveTab === tab.id && (
+              <span className={`absolute -top-1 -right-1 w-2 h-2 rounded-full border border-white ${
+                tab.special ? 'bg-gold-vip' : 'bg-red-500'
+              }`}></span>
             )}
           </div>
           <span className="text-[10px] font-bold uppercase tracking-wider">

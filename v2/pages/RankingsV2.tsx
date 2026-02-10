@@ -283,7 +283,7 @@ export default function RankingsV2() {
         </div>
       </main>
 
-      <BottomNavigation />
+      <BottomNavigation activeTab="ranking" />
     </div>
   )
 }
