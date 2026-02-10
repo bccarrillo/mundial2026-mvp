@@ -4,7 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
-import AnalyticsDebug from "@/components/AnalyticsDebug";
+
 import I18nProvider from "@/components/I18nProvider";
 import RecaptchaProvider from "@/components/RecaptchaProvider";
 import { Toaster } from 'sonner';
@@ -54,7 +54,6 @@ export default function RootLayout({
         <RecaptchaProvider>
           <I18nProvider>
             <GoogleAnalytics />
-            <AnalyticsDebug />
             <main className="flex-1">
               {children}
             </main>
