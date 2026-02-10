@@ -16,7 +16,13 @@ const translations = {
       viewGallery: 'Ver Galería Pública'
     },
     landing: {
-      subtitle: 'Comparte tus momentos del Mundial 2026'
+      title: 'Memories26',
+      subtitle: 'Comparte tus momentos del Mundial 2026',
+      createAccount: 'Crear cuenta gratis',
+      viewMemories: 'Ver recuerdos',
+      ctaTitle: '¿Listo para guardar tus recuerdos?',
+      ctaSubtitle: 'Únete a miles de fanáticos que ya están creando su álbum digital',
+      ctaButton: 'Empezar ahora'
     },
     auth: {
       loginTitle: 'Iniciar Sesión',
@@ -239,7 +245,13 @@ const translations = {
       viewGallery: 'View Public Gallery'
     },
     landing: {
-      subtitle: 'Share your World Cup 2026 moments'
+      title: 'Memories26',
+      subtitle: 'Share your World Cup 2026 moments',
+      createAccount: 'Create free account',
+      viewMemories: 'View memories',
+      ctaTitle: 'Ready to save your memories?',
+      ctaSubtitle: 'Join thousands of fans who are already creating their digital album',
+      ctaButton: 'Get started now'
     },
     auth: {
       loginTitle: 'Login',
@@ -462,7 +474,13 @@ const translations = {
       viewGallery: 'Ver Galeria Pública'
     },
     landing: {
-      subtitle: 'Compartilhe seus momentos da Copa 2026'
+      title: 'Memories26',
+      subtitle: 'Compartilhe seus momentos da Copa 2026',
+      createAccount: 'Criar conta grátis',
+      viewMemories: 'Ver memórias',
+      ctaTitle: 'Pronto para salvar suas memórias?',
+      ctaSubtitle: 'Junte-se a milhares de fãs que já estão criando seu álbum digital',
+      ctaButton: 'Começar agora'
     },
     auth: {
       loginTitle: 'Entrar',

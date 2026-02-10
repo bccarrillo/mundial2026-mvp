@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useV2 } from '@/lib/V2Context';
 import PixelLogo from '../components/PixelLogo';
 import ActionButton from '../components/ActionButton';
 import StatsGrid from '../components/StatsGrid';
@@ -8,17 +10,23 @@ import FeatureCards from '../components/FeatureCards';
 import '../globals.css';
 
 export default function LandingPage() {
-  const [stats, setStats] = useState({ users: 13, memories: 42 });
+  const { t } = useV2();
+  const [stats, setStats] = useState({ users: 0, memories: 0 });
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
-  // Simular carga de estadísticas reales
   useEffect(() => {
-    // TODO: Reemplazar con llamada real a API
     const fetchStats = async () => {
       try {
-        // Simulación de datos reales
-        setStats({ users: 13, memories: 42 });
+        const response = await fetch('/api/stats');
+        const data = await response.json();
+        setStats(data);
       } catch (error) {
         console.error('Error fetching stats:', error);
+        // Fallback to default values
+        setStats({ users: 13, memories: 42 });
+      } finally {
+        setLoading(false);
       }
     };
     
@@ -26,18 +34,15 @@ export default function LandingPage() {
   }, []);
 
   const handleCreateAccount = () => {
-    // TODO: Navegar a registro
-    console.log('Navigate to register');
+    router.push('/v2/register');
   };
 
   const handleViewMemories = () => {
-    // TODO: Navegar a galería
-    console.log('Navigate to gallery');
+    router.push('/v2/feed');
   };
 
   const handleGetStarted = () => {
-    // TODO: Navegar a registro
-    console.log('Navigate to register');
+    router.push('/v2/register');
   };
 
   return (
@@ -49,7 +54,7 @@ export default function LandingPage() {
         <h1 className="text-3xl font-bold tracking-tight text-text-dark">Memories26</h1>
         <div className="h-1 w-10 bg-primary rounded-full mt-1 mb-4"></div>
         <h2 className="text-xl font-bold text-center leading-tight mb-2">
-          Guarda y comparte tus recuerdos del Mundial
+          {t('landing.subtitle')}
         </h2>
       </header>
 
@@ -64,7 +69,7 @@ export default function LandingPage() {
           fullWidth 
           onClick={handleCreateAccount}
         >
-          Crear cuenta gratis
+          {t('landing.createAccount')}
         </ActionButton>
         <ActionButton 
           variant="secondary" 
@@ -72,7 +77,7 @@ export default function LandingPage() {
           fullWidth 
           onClick={handleViewMemories}
         >
-          Ver recuerdos
+          {t('landing.viewMemories')}
         </ActionButton>
       </div>
 
@@ -82,9 +87,9 @@ export default function LandingPage() {
       {/* Bottom CTA Section */}
       <div className="bg-text-dark text-white rounded-t-[2.5rem] px-8 pt-12 pb-16 mt-auto">
         <div className="flex flex-col items-center text-center">
-          <h3 className="text-2xl font-bold mb-3">¿Listo para guardar tus recuerdos?</h3>
+          <h3 className="text-2xl font-bold mb-3">{t('landing.ctaTitle')}</h3>
           <p className="text-gray-400 text-sm mb-8">
-            Únete a miles de fanáticos que ya están creando su álbum digital
+            {t('landing.ctaSubtitle')}
           </p>
           <ActionButton 
             variant="primary" 
@@ -93,7 +98,7 @@ export default function LandingPage() {
             onClick={handleGetStarted}
             className="shadow-xl shadow-primary/10"
           >
-            Empezar ahora
+            {t('landing.ctaButton')}
           </ActionButton>
           <p className="mt-6 text-xs text-gray-500">
             © 2026 Memories26. Todos los derechos reservados.
