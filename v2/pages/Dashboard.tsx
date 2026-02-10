@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { createClient } from '@/lib/supabase/client';
+import { useRouter } from 'next/navigation';
 import MobileLayout from '../components/MobileLayout';
 import UserProfile from '../components/UserProfile';
 import ActionCards from '../components/ActionCards';
-import ActionButton from '../components/ActionButton';
 import '../globals.css';
 
 interface User {
@@ -15,59 +16,132 @@ interface User {
 }
 
 export default function Dashboard() {
-  const [user, setUser] = useState<User>({
-    name: "¡Bienvenido!",
-    email: "usuario@memories26.com",
-    isVip: true
-  });
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const supabase = createClient();
 
-  // Simular carga de datos de usuario
   useEffect(() => {
-    // TODO: Reemplazar con llamada real a API
-    const fetchUser = async () => {
-      try {
-        // Simulación de datos reales
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        router.push('/v2/login');
+      } else {
+        // Transformar datos V1 a formato V2
         setUser({
-          name: "¡Bienvenido!",
-          email: "bcarrillo@instepca.com",
-          avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuBZULVHg-k3tpnBCshVdTI2hyb6Wdd1deI8GucA4EtTmu4M2uifMXK0379-RPeSZKwc5zd7ynkA6kTXqulkQHrx4TI8iK7Uy-LOT7qml3gcX_8QYi4oQ-1xDX0LSO65ROxUYmeWlCAEEyOEBZ7EGYzcBxxblvg6cigcbI9acgYvx4lkHXkbWp7dL8khvTQt4S-QzFPUJ3WTh79bIpQHjKy-5CJxtNH8ibkgdPDaMMdy0oiEgwYu1gPNJ6xeYIO8lsQQYwk4OP5-tBE1",
-          isVip: true
+          name: user.user_metadata?.display_name || user.email?.split('@')[0] || '¡Bienvenido!',
+          email: user.email || '',
+          avatar: user.user_metadata?.avatar_url,
+          isVip: user.user_metadata?.is_vip || false
         });
-      } catch (error) {
-        console.error('Error fetching user:', error);
+        setLoading(false);
       }
     };
-    
-    fetchUser();
-  }, []);
+    getUser();
+  }, [router, supabase]);
 
-  const handleViewGallery = () => {
-    // TODO: Navegar a galería pública
-    console.log('Navigate to public gallery');
+  const handleAction = (action: string) => {
+    switch (action) {
+      case 'crear':
+        router.push('/crear');
+        break;
+      case 'nfts':
+        router.push('/mis-nfts');
+        break;
+      case 'eventos':
+        router.push('/eventos');
+        break;
+      case 'galeria':
+        router.push('/feed');
+        break;
+      default:
+        console.log('Action:', action);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="relative flex min-h-screen w-full flex-col bg-white dark:bg-background-dark max-w-md mx-auto">
+        <div className="animate-pulse p-6">
+          <div className="h-16 bg-gray-200 rounded mb-8"></div>
+          <div className="space-y-4">
+            <div className="h-20 bg-gray-200 rounded"></div>
+            <div className="h-20 bg-gray-200 rounded"></div>
+            <div className="h-20 bg-gray-200 rounded"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // Redirecting...
+  }
 
   return (
     <div className="font-display">
       <MobileLayout showVip={user.isVip} activeTab="home">
-      <main className="flex-1 overflow-y-auto hide-scrollbar pb-24 px-6">
-        {/* User Profile Section */}
-        <UserProfile 
-          name={user.name}
-          email={user.email}
-          avatar={user.avatar}
-          isVip={user.isVip}
-        />
+        <main className="flex-1 overflow-y-auto hide-scrollbar pb-24 px-6">
+          {/* User Profile Section */}
+          <UserProfile 
+            name={user.name}
+            email={user.email}
+            avatar={user.avatar}
+            isVip={user.isVip}
+          />
 
-        {/* Action Cards */}
-        <ActionCards />
+          {/* Action Cards */}
+          <div className="py-8 space-y-4">
+            <button 
+              onClick={() => handleAction('crear')}
+              className="w-full group bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-5 rounded-2xl flex items-center justify-between shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-red-50 dark:bg-red-900/30 flex items-center justify-center text-primary">
+                  <span className="material-symbols-outlined text-2xl">add_photo_alternate</span>
+                </div>
+                <span className="font-bold text-lg dark:text-white">Crear Nuevo Recuerdo</span>
+              </div>
+              <span className="material-symbols-outlined text-gray-300 group-hover:text-primary transition-colors">chevron_right</span>
+            </button>
+            
+            <button 
+              onClick={() => handleAction('nfts')}
+              className="w-full group bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-5 rounded-2xl flex items-center justify-between shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-usa-blue dark:text-blue-400">
+                  <span className="material-symbols-outlined text-2xl">token</span>
+                </div>
+                <span className="font-bold text-lg dark:text-white">Ver Mis NFTs</span>
+              </div>
+              <span className="material-symbols-outlined text-gray-300 group-hover:text-usa-blue transition-colors">chevron_right</span>
+            </button>
+            
+            <button 
+              onClick={() => handleAction('eventos')}
+              className="w-full group bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-5 rounded-2xl flex items-center justify-between shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-900/30 flex items-center justify-center text-mexico-green dark:text-green-400">
+                  <span className="material-symbols-outlined text-2xl">event</span>
+                </div>
+                <span className="font-bold text-lg dark:text-white">Explorar Eventos</span>
+              </div>
+              <span className="material-symbols-outlined text-gray-300 group-hover:text-mexico-green transition-colors">chevron_right</span>
+            </button>
+          </div>
 
-        {/* Bottom CTA */}
-        <div className="pt-4 flex justify-center">
-          <button className="bg-primary/10 text-primary px-6 py-2.5 rounded-full font-bold text-sm hover:bg-primary hover:text-white transition-colors">
-            Ver Galería Pública
-          </button>
-        </div>
-      </main>
+          {/* Bottom CTA */}
+          <div className="pt-4 flex justify-center">
+            <button 
+              onClick={() => handleAction('galeria')}
+              className="bg-primary/10 text-primary px-6 py-2.5 rounded-full font-bold text-sm hover:bg-primary hover:text-white transition-colors"
+            >
+              Ver Galería Pública
+            </button>
+          </div>
+        </main>
       </MobileLayout>
     </div>
   );

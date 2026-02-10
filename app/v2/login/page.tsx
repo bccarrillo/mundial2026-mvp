@@ -1,5 +1,5 @@
-import Login from '../../../v2/pages/Login';
+import Login from '../../../v2/pages/Login'
 
-export default function LoginRoute() {
-  return <Login />;
+export default function V2LoginPage() {
+  return <Login />
 }

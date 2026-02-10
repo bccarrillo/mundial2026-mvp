@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { createClient } from '@/lib/supabase/client';
+import { useRouter } from 'next/navigation';
 import '../globals.css';
 import PixelLogo from '../components/PixelLogo';
 import FormInput from '../components/FormInput';
@@ -8,10 +10,27 @@ import FormInput from '../components/FormInput';
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const router = useRouter();
+  const supabase = createClient();
 
-  const handleLogin = () => {
-    // Login logic here
-    console.log('Login:', { email, password });
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      setError(error.message);
+      setLoading(false);
+    } else {
+      router.push('/v2/dashboard');
+    }
   };
 
   return (
@@ -33,7 +52,7 @@ export default function Login() {
         </div>
 
         {/* Form */}
-        <div className="space-y-4 mb-8">
+        <form onSubmit={handleLogin} className="space-y-4 mb-8">
           <FormInput
             type="email"
             placeholder="Correo electrónico"
@@ -48,15 +67,18 @@ export default function Login() {
             onChange={setPassword}
             icon="•"
           />
-        </div>
-
-        {/* Login Button */}
-        <button 
-          onClick={handleLogin}
-          className="w-full bg-primary hover:bg-red-700 text-white font-bold py-4 rounded-xl transition-colors shadow-lg shadow-primary/20 active:scale-[0.98] mb-4"
-        >
-          Iniciar Sesión
-        </button>
+          
+          {error && <p className="text-sm text-red-500 text-center">{error}</p>}
+          
+          {/* Login Button */}
+          <button 
+            type="submit"
+            disabled={loading}
+            className="w-full bg-primary hover:bg-red-700 text-white font-bold py-4 rounded-xl transition-colors shadow-lg shadow-primary/20 active:scale-[0.98] disabled:opacity-50"
+          >
+            {loading ? 'Iniciando...' : 'Iniciar Sesión'}
+          </button>
+        </form>
 
         {/* Forgot Password */}
         <div className="text-center mb-8">
@@ -77,7 +99,10 @@ export default function Login() {
           <p className="text-gray-500 dark:text-gray-400 text-sm mb-2">
             ¿No tienes cuenta?
           </p>
-          <button className="bg-gray-100 dark:bg-gray-800 text-[#181111] dark:text-white font-bold py-3 px-8 rounded-xl transition-colors active:scale-[0.98]">
+          <button 
+            onClick={() => router.push('/v2/register')}
+            className="bg-gray-100 dark:bg-gray-800 text-[#181111] dark:text-white font-bold py-3 px-8 rounded-xl transition-colors active:scale-[0.98]"
+          >
             Crear Cuenta
           </button>
         </div>

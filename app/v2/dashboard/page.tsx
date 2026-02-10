@@ -1,5 +1,5 @@
-import Dashboard from '../../../v2/pages/Dashboard';
+import Dashboard from '../../../v2/pages/Dashboard'
 
-export default function DashboardRoute() {
-  return <Dashboard />;
+export default function V2DashboardPage() {
+  return <Dashboard />
 }
