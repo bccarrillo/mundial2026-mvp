@@ -8,6 +8,7 @@ import PixelLogo from '../components/PixelLogo';
 import ActionButton from '../components/ActionButton';
 import StatsGrid from '../components/StatsGrid';
 import FeatureCards from '../components/FeatureCards';
+import EnvDebug from '../../components/EnvDebug';
 import '../globals.css';
 
 export default function LandingPage() {
@@ -54,6 +55,9 @@ export default function LandingPage() {
 
   return (
     <div className="font-display">
+      {/* Temporary debug - remove in production */}
+      <EnvDebug />
+      
       <div className="relative flex min-h-screen w-full flex-col bg-white max-w-md mx-auto">
       {/* Header */}
       <header className="flex flex-col items-center pt-8 pb-4 px-6">
