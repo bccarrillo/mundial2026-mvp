@@ -102,7 +102,7 @@ function RegisterFormV2() {
           {success ? (
             <div className="text-center py-8">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Icon name="check_circle" className="text-3xl text-green-600" />
+                <span className="text-3xl text-green-600">✓</span>
               </div>
               <p className="text-green-600 font-semibold mb-2">¡Registro exitoso!</p>
               <p className="text-sm text-gray-500">Redirigiendo al dashboard...</p>
@@ -123,7 +123,9 @@ function RegisterFormV2() {
                     className="w-full px-4 py-3 pl-12 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                     required
                   />
-                  <Icon name="email" className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl">
+                    @
+                  </div>
                 </div>
               </div>
 
@@ -142,7 +144,9 @@ function RegisterFormV2() {
                     required
                     minLength={6}
                   />
-                  <Icon name="lock" className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl">
+                    •
+                  </div>
                 </div>
                 <p className="text-xs text-gray-500 mt-1">Mínimo 6 caracteres</p>
               </div>
@@ -173,7 +177,7 @@ function RegisterFormV2() {
                   </div>
                 ) : (
                   <div className="flex items-center justify-center gap-2">
-                    <Icon name="person_add" className="text-xl" />
+                    <span className="text-xl text-white">+</span>
                     Crear Cuenta
                   </div>
                 )}
@@ -197,7 +201,7 @@ function RegisterFormV2() {
           {/* Referral Info */}
           {referrerId && (
             <div className="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
-              <Icon name="group_add" className="text-blue-600 text-2xl mb-2" />
+              <span className="text-blue-600 text-2xl mb-2 block">👥</span>
               <p className="text-blue-800 text-sm font-medium">
                 Te invitaron a unirte a Memories26
               </p>
