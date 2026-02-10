@@ -10,7 +10,15 @@ export default function DonationsV2() {
   const router = useRouter();
 
   const handlePayPalDonate = () => {
+    // Temporal: usar donate button hasta implementar Smart Buttons
     window.open('https://www.paypal.com/donate/?hosted_button_id=8J9YJEFABFWRS', '_blank');
+  };
+
+  // TODO: Implementar PayPal Smart Payment Buttons para permitir
+  // pagos con tarjeta sin crear cuenta PayPal
+  const initPayPalSmartButtons = () => {
+    // Implementación futura con PayPal SDK
+    // Permitirá: tarjeta de crédito, débito, PayPal, Apple Pay, Google Pay
   };
 
   const handleShareApp = () => {
