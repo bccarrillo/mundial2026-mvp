@@ -35,7 +35,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   return (
     <div className="fixed inset-0 z-[60] bg-white dark:bg-background-dark flex flex-col">
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800">
-        <span className="text-xl font-bold text-primary">{t('nav.menu', 'Menú')}</span>
+        <span className="text-xl font-bold text-primary">{t('nav.menu')}</span>
         <button onClick={onClose} className="p-2">
           <Icon name="close" size="xl" />
         </button>
@@ -43,7 +43,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
       
       <nav className="flex flex-col p-6 gap-6">
         <div className="flex flex-col gap-2">
-          <label className="text-xs font-semibold uppercase text-gray-400">{t('nav.language', 'Idioma')}</label>
+          <label className="text-xs font-semibold uppercase text-gray-400">{t('nav.language')}</label>
           <div className="flex gap-3">
             <button 
               onClick={() => handleLanguageChange('es')}
@@ -77,7 +77,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           className="flex items-center gap-4 text-lg font-medium py-3 border-b border-gray-50 dark:border-gray-800"
         >
           <Icon name="photo_library" className="text-gray-500" />
-          {t('nav.feed', 'Recuerdos')}
+          {t('nav.feed')}
         </button>
         
         <button 
@@ -85,7 +85,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           className="flex items-center gap-4 text-lg font-medium py-3 border-b border-gray-50 dark:border-gray-800"
         >
           <Icon name="dashboard" className="text-gray-500" />
-          {t('nav.dashboard', 'Dashboard')}
+          {t('nav.dashboard')}
         </button>
         
         <button 
@@ -93,7 +93,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           className="flex items-center gap-4 text-lg font-medium py-3 border-b border-gray-50 dark:border-gray-800"
         >
           <Icon name="add_circle" className="text-gray-500" />
-          {t('nav.create', 'Crear')}
+          {t('nav.create')}
         </button>
         
         <button 
@@ -109,7 +109,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           className="flex items-center gap-4 text-lg font-medium py-3 mt-4 text-primary"
         >
           <Icon name="logout" className="text-primary" />
-          {t('nav.logout', 'Cerrar Sesión')}
+          {t('nav.logout')}
         </button>
       </nav>
     </div>
