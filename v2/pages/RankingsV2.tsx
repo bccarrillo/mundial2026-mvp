@@ -136,7 +136,7 @@ export default function RankingsV2() {
                 onClick={handleCreateMemory}
                 className="bg-primary hover:bg-red-600 text-white px-5 py-2.5 rounded-full flex items-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-95"
               >
-                <Icon name="add" className="font-bold text-xl" />
+                <span className="font-bold text-xl text-white">+</span>
                 <span className="font-bold text-sm tracking-wide">{t('buttons.create')}</span>
               </button>
             </div>
@@ -144,7 +144,7 @@ export default function RankingsV2() {
               {t('rankings.subtitle')}
             </p>
             <div className="mt-4 inline-flex items-center gap-2 bg-gray-50 dark:bg-gray-800/50 px-3 py-1.5 rounded-lg border border-gray-100 dark:border-gray-800">
-              <Icon name="schedule" className="text-xs text-gray-400" />
+              <span className="text-xs text-gray-400">◐</span>
               <p className="text-[11px] text-gray-400 font-medium uppercase tracking-tight">
                 Última actualización: {lastUpdated.toLocaleTimeString()}
               </p>
@@ -176,7 +176,7 @@ export default function RankingsV2() {
               disabled={loading}
               className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-full flex items-center gap-2 transition-colors disabled:opacity-50"
             >
-              <Icon name="refresh" className={loading ? 'animate-spin' : ''} />
+              <span className={`text-lg ${loading ? 'animate-spin' : ''}`}>↻</span>
               <span className="text-sm font-medium">
                 {loading ? t('rankings.updating') : t('rankings.refresh')}
               </span>
@@ -221,7 +221,7 @@ export default function RankingsV2() {
                           }
                         </div>
                         <div className="absolute -bottom-1 -right-1 bg-white dark:bg-gray-900 rounded-full p-0.5">
-                          <Icon name="sports_soccer" className="text-xs text-mexico-green" />
+                          <span className="text-xs text-mexico-green">⚽</span>
                         </div>
                       </div>
                       <div>
@@ -270,13 +270,13 @@ export default function RankingsV2() {
                 onClick={handleCreateMemory}
                 className="bg-primary hover:bg-red-600 text-white font-bold py-3 rounded-xl transition-colors"
               >
-                📸 {t('rankings.createMemoryPoints')}
+                <span className="text-white">+</span> {t('rankings.createMemoryPoints')}
               </button>
               <button
                 onClick={() => router.push('/v2/feed')}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl transition-colors"
+                className="bg-primary/10 text-primary px-6 py-2.5 rounded-full font-bold text-sm hover:bg-primary hover:text-white transition-colors"
               >
-                👀 {t('rankings.viewGallery')}
+                <span>▶</span> {t('rankings.viewGallery')}
               </button>
             </div>
           </div>

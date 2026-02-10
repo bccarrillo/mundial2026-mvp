@@ -113,7 +113,7 @@ export default function CreateMemoryV2() {
               onClick={() => router.back()}
               className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center"
             >
-              <Icon name="chevron_left" className="text-xl" />
+              <span className="text-xl">←</span>
             </button>
             <div>
               <h1 className="text-2xl font-bold">{t('create.title')}</h1>
@@ -148,7 +148,7 @@ export default function CreateMemoryV2() {
                     />
                   ) : (
                     <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                      <Icon name="add_photo_alternate" className="text-4xl mb-2" />
+                      <span className="text-4xl mb-2">+</span>
                       <span className="text-sm font-medium">{t('create.selectImage')}</span>
                     </div>
                   )}
@@ -224,7 +224,7 @@ export default function CreateMemoryV2() {
               <div className="flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <Icon name="public" className="text-lg text-gray-600" />
+                    <span className="text-lg text-gray-600">●</span>
                     <span className="font-bold text-gray-900">{t('create.publicMemory')}</span>
                   </div>
                   <p className="text-sm text-gray-600">
@@ -262,7 +262,7 @@ export default function CreateMemoryV2() {
                 </div>
               ) : (
                 <div className="flex items-center justify-center gap-2">
-                  <Icon name="save" className="text-xl" />
+                  <span className="text-xl text-white">✓</span>
                   {t('create.createButton')}
                 </div>
               )}

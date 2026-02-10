@@ -135,7 +135,7 @@ export default function InviteV2() {
           {/* Rewards */}
           <div className="bg-gray-50 rounded-2xl p-4 mb-6">
             <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <Icon name="emoji_events" className="text-yellow-500" />
+              <span className="text-yellow-500">★</span>
               {t('invite.rewards')}
             </h3>
             <div className="space-y-3">
@@ -166,7 +166,7 @@ export default function InviteV2() {
           {/* Share Link */}
           <div className="bg-white border border-gray-200 rounded-2xl p-4 mb-6">
             <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <Icon name="link" className="text-blue-500" />
+              <span className="text-blue-500">◆</span>
               {t('invite.inviteLink')}
             </h3>
             
@@ -182,7 +182,7 @@ export default function InviteV2() {
                 onClick={handleCopy}
                 className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
-                <Icon name={copied ? "check" : "content_copy"} />
+                <span className="text-lg">{copied ? "✓" : "□"}</span>
                 {copied ? t('invite.copied') : t('invite.copyLink')}
               </button>
               
@@ -190,7 +190,7 @@ export default function InviteV2() {
                 onClick={handleShare}
                 className="w-full bg-primary hover:bg-red-600 text-white font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
-                <Icon name="share" />
+                <span className="text-lg text-white">→</span>
                 {t('invite.shareInvite')}
               </button>
               
@@ -198,7 +198,7 @@ export default function InviteV2() {
                 onClick={handleWhatsApp}
                 className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
-                <Icon name="chat" />
+                <span className="text-lg text-white">▶</span>
                 {t('invite.sendWhatsApp')}
               </button>
             </div>
@@ -207,7 +207,7 @@ export default function InviteV2() {
           {/* How it Works */}
           <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4">
             <h3 className="font-bold text-blue-900 mb-3 flex items-center gap-2">
-              <Icon name="info" className="text-blue-600" />
+              <span className="text-blue-600">●</span>
               {t('invite.howItWorks')}
             </h3>
             <div className="space-y-2 text-sm text-blue-800">

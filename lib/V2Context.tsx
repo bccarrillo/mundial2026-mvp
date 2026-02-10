@@ -4,6 +4,9 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 
 const translations = {
   es: {
+    common: {
+      loading: 'Cargando...'
+    },
     dashboard: {
       welcome: '¡Bienvenido!',
       createMemory: 'Crear Nuevo Recuerdo',
@@ -224,6 +227,9 @@ const translations = {
     }
   },
   en: {
+    common: {
+      loading: 'Loading...'
+    },
     dashboard: {
       welcome: 'Welcome!',
       createMemory: 'Create New Memory',
@@ -444,6 +450,9 @@ const translations = {
     }
   },
   pt: {
+    common: {
+      loading: 'Carregando...'
+    },
     dashboard: {
       welcome: 'Bem-vindo!',
       createMemory: 'Criar Nova Memória',

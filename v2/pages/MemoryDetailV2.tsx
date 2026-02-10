@@ -409,7 +409,7 @@ export default function MemoryDetailV2({ params }: MemoryDetailV2Props) {
         {/* NFT Certified Indicator */}
         {hasNFT && (
           <div className="bg-green-50 border border-green-200 rounded-2xl p-4 mb-8 text-center">
-            <Icon name="verified" className="text-green-600 text-3xl mb-2" />
+            <span className="text-green-600 text-3xl mb-2 block">✓</span>
             <p className="text-green-700 font-bold">✅ {t('memory.certified')}</p>
           </div>
         )}
