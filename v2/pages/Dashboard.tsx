@@ -5,7 +5,6 @@ import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import MobileLayout from '../components/MobileLayout';
 import UserProfile from '../components/UserProfile';
-import ActionCards from '../components/ActionCards';
 import '../globals.css';
 
 interface User {
@@ -43,7 +42,7 @@ export default function Dashboard() {
   const handleAction = (action: string) => {
     switch (action) {
       case 'crear':
-        router.push('/crear');
+        router.push('/v2/crear');
         break;
       case 'nfts':
         router.push('/mis-nfts');
@@ -52,7 +51,7 @@ export default function Dashboard() {
         router.push('/eventos');
         break;
       case 'galeria':
-        router.push('/feed');
+        router.push('/v2/feed');
         break;
       default:
         console.log('Action:', action);
@@ -79,70 +78,73 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="font-display">
-      <MobileLayout showVip={user.isVip} activeTab="home">
-        <main className="flex-1 overflow-y-auto hide-scrollbar pb-24 px-6">
-          {/* User Profile Section */}
-          <UserProfile 
-            name={user.name}
-            email={user.email}
-            avatar={user.avatar}
-            isVip={user.isVip}
-          />
+    <>
+      <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+      <div className="font-display">
+        <MobileLayout showVip={user.isVip} activeTab="home">
+          <main className="flex-1 overflow-y-auto hide-scrollbar pb-24 px-6">
+            {/* User Profile Section */}
+            <UserProfile 
+              name={user.name}
+              email={user.email}
+              avatar={user.avatar}
+              isVip={user.isVip}
+            />
 
-          {/* Action Cards */}
-          <div className="py-8 space-y-4">
-            <button 
-              onClick={() => handleAction('crear')}
-              className="w-full group bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-5 rounded-2xl flex items-center justify-between shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
-            >
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-red-50 dark:bg-red-900/30 flex items-center justify-center text-primary">
-                  <span className="material-symbols-outlined text-2xl">add_photo_alternate</span>
+            {/* Action Cards */}
+            <div className="py-8 space-y-4">
+              <button 
+                onClick={() => handleAction('crear')}
+                className="w-full group bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-5 rounded-2xl flex items-center justify-between shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-red-50 dark:bg-red-900/30 flex items-center justify-center text-primary">
+                    <span className="material-symbols-outlined text-2xl">add_photo_alternate</span>
+                  </div>
+                  <span className="font-bold text-lg dark:text-white">Crear Nuevo Recuerdo</span>
                 </div>
-                <span className="font-bold text-lg dark:text-white">Crear Nuevo Recuerdo</span>
-              </div>
-              <span className="material-symbols-outlined text-gray-300 group-hover:text-primary transition-colors">chevron_right</span>
-            </button>
-            
-            <button 
-              onClick={() => handleAction('nfts')}
-              className="w-full group bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-5 rounded-2xl flex items-center justify-between shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
-            >
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-usa-blue dark:text-blue-400">
-                  <span className="material-symbols-outlined text-2xl">token</span>
+                <span className="material-symbols-outlined text-gray-300 group-hover:text-primary transition-colors">chevron_right</span>
+              </button>
+              
+              <button 
+                onClick={() => handleAction('nfts')}
+                className="w-full group bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-5 rounded-2xl flex items-center justify-between shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-usa-blue dark:text-blue-400">
+                    <span className="material-symbols-outlined text-2xl">token</span>
+                  </div>
+                  <span className="font-bold text-lg dark:text-white">Ver Mis NFTs</span>
                 </div>
-                <span className="font-bold text-lg dark:text-white">Ver Mis NFTs</span>
-              </div>
-              <span className="material-symbols-outlined text-gray-300 group-hover:text-usa-blue transition-colors">chevron_right</span>
-            </button>
-            
-            <button 
-              onClick={() => handleAction('eventos')}
-              className="w-full group bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-5 rounded-2xl flex items-center justify-between shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
-            >
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-900/30 flex items-center justify-center text-mexico-green dark:text-green-400">
-                  <span className="material-symbols-outlined text-2xl">event</span>
+                <span className="material-symbols-outlined text-gray-300 group-hover:text-usa-blue transition-colors">chevron_right</span>
+              </button>
+              
+              <button 
+                onClick={() => handleAction('eventos')}
+                className="w-full group bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-5 rounded-2xl flex items-center justify-between shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-900/30 flex items-center justify-center text-mexico-green dark:text-green-400">
+                    <span className="material-symbols-outlined text-2xl">event</span>
+                  </div>
+                  <span className="font-bold text-lg dark:text-white">Explorar Eventos</span>
                 </div>
-                <span className="font-bold text-lg dark:text-white">Explorar Eventos</span>
-              </div>
-              <span className="material-symbols-outlined text-gray-300 group-hover:text-mexico-green transition-colors">chevron_right</span>
-            </button>
-          </div>
+                <span className="material-symbols-outlined text-gray-300 group-hover:text-mexico-green transition-colors">chevron_right</span>
+              </button>
+            </div>
 
-          {/* Bottom CTA */}
-          <div className="pt-4 flex justify-center">
-            <button 
-              onClick={() => handleAction('galeria')}
-              className="bg-primary/10 text-primary px-6 py-2.5 rounded-full font-bold text-sm hover:bg-primary hover:text-white transition-colors"
-            >
-              Ver Galería Pública
-            </button>
-          </div>
-        </main>
-      </MobileLayout>
-    </div>
+            {/* Bottom CTA */}
+            <div className="pt-4 flex justify-center">
+              <button 
+                onClick={() => handleAction('galeria')}
+                className="bg-primary/10 text-primary px-6 py-2.5 rounded-full font-bold text-sm hover:bg-primary hover:text-white transition-colors"
+              >
+                Ver Galería Pública
+              </button>
+            </div>
+          </main>
+        </MobileLayout>
+      </div>
+    </>
   );
 }

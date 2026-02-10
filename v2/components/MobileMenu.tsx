@@ -1,3 +1,7 @@
+'use client'
+
+import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 import Icon from './Icon';
 
 interface MobileMenuProps {
@@ -6,6 +10,20 @@ interface MobileMenuProps {
 }
 
 export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
+  const router = useRouter()
+  const supabase = createClient()
+
+  const handleNavigation = (path: string) => {
+    onClose()
+    router.push(path)
+  }
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    onClose()
+    router.push('/v2/login')
+  }
+
   if (!isOpen) return null;
 
   return (
@@ -33,27 +51,42 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           </div>
         </div>
         
-        <button className="flex items-center gap-4 text-lg font-medium py-3 border-b border-gray-50 dark:border-gray-800">
+        <button 
+          onClick={() => handleNavigation('/v2/feed')}
+          className="flex items-center gap-4 text-lg font-medium py-3 border-b border-gray-50 dark:border-gray-800"
+        >
           <Icon name="photo_library" className="text-gray-500" />
           Recuerdos
         </button>
         
-        <button className="flex items-center gap-4 text-lg font-medium py-3 border-b border-gray-50 dark:border-gray-800">
+        <button 
+          onClick={() => handleNavigation('/v2/dashboard')}
+          className="flex items-center gap-4 text-lg font-medium py-3 border-b border-gray-50 dark:border-gray-800"
+        >
           <Icon name="dashboard" className="text-gray-500" />
           Dashboard
         </button>
         
-        <button className="flex items-center gap-4 text-lg font-medium py-3 border-b border-gray-50 dark:border-gray-800">
+        <button 
+          onClick={() => handleNavigation('/v2/crear')}
+          className="flex items-center gap-4 text-lg font-medium py-3 border-b border-gray-50 dark:border-gray-800"
+        >
           <Icon name="add_circle" className="text-gray-500" />
           Crear
         </button>
         
-        <button className="flex items-center gap-4 text-lg font-medium py-3 border-b border-gray-50 dark:border-gray-800">
+        <button 
+          onClick={() => handleNavigation('/v2/rankings')}
+          className="flex items-center gap-4 text-lg font-medium py-3 border-b border-gray-50 dark:border-gray-800"
+        >
           <Icon name="military_tech" className="text-gray-500" />
           Rankings
         </button>
         
-        <button className="flex items-center gap-4 text-lg font-medium py-3 mt-4 text-primary">
+        <button 
+          onClick={handleLogout}
+          className="flex items-center gap-4 text-lg font-medium py-3 mt-4 text-primary"
+        >
           <Icon name="logout" className="text-primary" />
           Cerrar Sesión
         </button>

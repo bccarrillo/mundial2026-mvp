@@ -1,3 +1,6 @@
+'use client'
+
+import { useRouter } from 'next/navigation'
 import Icon from './Icon';
 
 interface TabItem {
@@ -8,6 +11,7 @@ interface TabItem {
   special?: boolean;
   active?: boolean;
   central?: boolean;
+  route?: string;
 }
 
 interface BottomNavigationProps {
@@ -23,15 +27,16 @@ export default function BottomNavigation({
   variant = 'standard',
   onTabChange 
 }: BottomNavigationProps) {
+  const router = useRouter()
   
   // Use currentPage if provided, otherwise use activeTab
   const currentActiveTab = currentPage || activeTab || 'home';
   
   const standardTabs: TabItem[] = [
-    { id: 'home', icon: 'home', label: 'Inicio', filled: true },
-    { id: 'explore', icon: 'explore', label: 'Explorar' },
-    { id: 'favorites', icon: 'favorite', label: 'Favoritos' },
-    { id: 'vip', icon: 'stars', label: 'VIP', special: true }
+    { id: 'home', icon: 'home', label: 'Inicio', filled: true, route: '/v2/dashboard' },
+    { id: 'explore', icon: 'explore', label: 'Explorar', route: '/v2/feed' },
+    { id: 'ranking', icon: 'leaderboard', label: 'Rankings', route: '/v2/rankings' },
+    { id: 'vip', icon: 'stars', label: 'VIP', special: true, route: '/v2/vip' }
   ];
 
   const donationTabs: TabItem[] = [
@@ -53,6 +58,14 @@ export default function BottomNavigation({
   const tabs = variant === 'donation' ? donationTabs : 
                variant === 'detail' ? detailTabs : standardTabs;
 
+  const handleTabClick = (tab: TabItem) => {
+    if (onTabChange) {
+      onTabChange(tab.id)
+    } else if (tab.route) {
+      router.push(tab.route)
+    }
+  }
+
   if (variant === 'detail') {
     return (
       <div className="fixed bottom-0 left-0 right-0 bg-white/80 ios-blur border-t border-gray-100 px-8 py-3 flex justify-between items-center z-40 pb-6">
@@ -60,7 +73,7 @@ export default function BottomNavigation({
           tab.central ? (
             <div key={tab.id} className="relative -top-8">
               <button 
-                onClick={() => onTabChange?.(tab.id)}
+                onClick={() => handleTabClick(tab)}
                 className="bg-primary text-white w-14 h-14 rounded-full shadow-xl shadow-red-200 flex items-center justify-center border-4 border-white"
               >
                 <Icon name={tab.icon} size="xl" />
@@ -69,7 +82,7 @@ export default function BottomNavigation({
           ) : (
             <button
               key={tab.id}
-              onClick={() => onTabChange?.(tab.id)}
+              onClick={() => handleTabClick(tab)}
               className={`flex flex-col items-center gap-1 ${
                 tab.active ? 'text-primary' : 'text-gray-400'
               }`}
@@ -88,7 +101,7 @@ export default function BottomNavigation({
       {tabs.map((tab) => (
         <button
           key={tab.id}
-          onClick={() => onTabChange?.(tab.id)}
+          onClick={() => handleTabClick(tab)}
           className={`flex flex-col items-center gap-1 ${
             currentActiveTab === tab.id 
               ? tab.special 
