@@ -28,12 +28,18 @@ export default function Dashboard() {
       if (!user) {
         router.push('/v2/login');
       } else {
-        // Transformar datos V1 a formato V2
+        // Get VIP status from profiles table
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('is_vip, display_name')
+          .eq('id', user.id)
+          .single();
+        
         setUser({
-          name: user.user_metadata?.display_name || user.email?.split('@')[0] || t('dashboard.welcome'),
+          name: profile?.display_name || user.email?.split('@')[0] || t('dashboard.welcome'),
           email: user.email || '',
           avatar: user.user_metadata?.avatar_url,
-          isVip: user.user_metadata?.is_vip || false
+          isVip: profile?.is_vip || false
         });
         setLoading(false);
       }

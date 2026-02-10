@@ -27,8 +27,14 @@ export default function VIPZone() {
         return;
       }
 
-      // Get VIP status from user metadata or VIP table
-      const isVip = user.user_metadata?.is_vip || false;
+      // Get VIP status from profiles table
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('is_vip')
+        .eq('id', user.id)
+        .single();
+      
+      const isVip = profile?.is_vip || false;
       const memberSince = user.created_at ? new Date(user.created_at).toLocaleDateString('es-ES') : '5/2/2026';
       
       setVipData({

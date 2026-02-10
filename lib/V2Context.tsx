@@ -12,6 +12,9 @@ const translations = {
       inviteFriends: 'Invitar Amigos',
       viewGallery: 'Ver Galería Pública'
     },
+    landing: {
+      subtitle: 'Comparte tus momentos del Mundial 2026'
+    },
     auth: {
       loginTitle: 'Iniciar Sesión',
       registerTitle: 'Crear Cuenta',
@@ -20,7 +23,8 @@ const translations = {
       loginButton: 'Entrar',
       registerButton: 'Crear Cuenta',
       hasAccount: '¿Ya tienes cuenta?',
-      noAccount: '¿No tienes cuenta?'
+      noAccount: '¿No tienes cuenta?',
+      forgotPassword: '¿Olvidaste tu contraseña?'
     },
     create: {
       title: 'Crear Recuerdo',
@@ -228,6 +232,9 @@ const translations = {
       inviteFriends: 'Invite Friends',
       viewGallery: 'View Public Gallery'
     },
+    landing: {
+      subtitle: 'Share your World Cup 2026 moments'
+    },
     auth: {
       loginTitle: 'Login',
       registerTitle: 'Create Account',
@@ -236,7 +243,8 @@ const translations = {
       loginButton: 'Login',
       registerButton: 'Create Account',
       hasAccount: 'Already have an account?',
-      noAccount: "Don't have an account?"
+      noAccount: "Don't have an account?",
+      forgotPassword: 'Forgot your password?'
     },
     create: {
       title: 'Create Memory',
@@ -444,6 +452,9 @@ const translations = {
       inviteFriends: 'Convidar Amigos',
       viewGallery: 'Ver Galeria Pública'
     },
+    landing: {
+      subtitle: 'Compartilhe seus momentos da Copa 2026'
+    },
     auth: {
       loginTitle: 'Entrar',
       registerTitle: 'Criar Conta',
@@ -452,7 +463,8 @@ const translations = {
       loginButton: 'Entrar',
       registerButton: 'Criar Conta',
       hasAccount: 'Já tem uma conta?',
-      noAccount: 'Não tem uma conta?'
+      noAccount: 'Não tem uma conta?',
+      forgotPassword: 'Esqueceu sua senha?'
     },
     create: {
       title: 'Criar Memória',

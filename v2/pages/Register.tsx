@@ -1,15 +1,21 @@
 'use client';
 
 import { useState } from 'react';
+import { createClient } from '@/lib/supabase/client';
+import { useRouter } from 'next/navigation';
 import { useV2 } from '@/lib/V2Context';
 import '../globals.css';
 import PixelLogo from '../components/PixelLogo';
 import FormInput from '../components/FormInput';
 
 export default function Register() {
-  const { t } = useV2();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const router = useRouter();
+  const supabase = createClient();
+  const { t } = useV2();
 
   const handleRegister = () => {
     // Register logic here
@@ -35,22 +41,40 @@ export default function Register() {
         </div>
 
         {/* Form */}
-        <div className="space-y-4 mb-6">
-          <FormInput
-            type="email"
-            placeholder={t('auth.email')}
-            value={email}
-            onChange={setEmail}
-            icon="@"
-          />
-          <FormInput
-            type="password"
-            placeholder={t('auth.password')}
-            value={password}
-            onChange={setPassword}
-            icon="•"
-          />
-        </div>
+        <form onSubmit={(e) => { e.preventDefault(); handleRegister(); }} className="space-y-4 mb-8">
+          <div className="relative">
+            <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+              <span className="text-xl">@</span>
+            </div>
+            <input
+              type="email"
+              placeholder={t('auth.email')}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full pl-12 pr-4 py-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-[#181111] dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            />
+          </div>
+          <div className="relative">
+            <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+              <span className="text-xl">•</span>
+            </div>
+            <input
+              type="password"
+              placeholder={t('auth.password')}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full pl-12 pr-4 py-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-[#181111] dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            />
+          </div>
+          
+          {/* Register Button */}
+          <button 
+            type="submit"
+            className="w-full bg-primary hover:bg-red-700 text-white font-bold py-4 rounded-xl transition-colors shadow-lg shadow-primary/20 active:scale-[0.98] disabled:opacity-50"
+          >
+            {t('auth.registerButton')}
+          </button>
+        </form>
 
         {/* Terms */}
         <div className="mb-8">
@@ -60,14 +84,6 @@ export default function Register() {
             <span className="text-primary font-medium">Política de Privacidad</span>
           </p>
         </div>
-
-        {/* Register Button */}
-        <button 
-          onClick={handleRegister}
-          className="w-full bg-primary hover:bg-red-700 text-white font-bold py-4 rounded-xl transition-colors shadow-lg shadow-primary/20 active:scale-[0.98] mb-4"
-        >
-          {t('auth.registerButton')}
-        </button>
 
         {/* Divider */}
         <div className="flex items-center mb-8">

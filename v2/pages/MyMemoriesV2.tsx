@@ -80,8 +80,16 @@ export default function MyMemoriesV2() {
         router.push('/v2/login');
         return;
       }
+      
+      // Get VIP status from profiles table
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('is_vip')
+        .eq('id', user.id)
+        .single();
+      
       setCurrentUser(user.id);
-      setIsVip(user.user_metadata?.is_vip || false);
+      setIsVip(profile?.is_vip || false);
     };
     getUser();
   }, [router, supabase]);

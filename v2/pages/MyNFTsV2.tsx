@@ -47,6 +47,7 @@ export default function MyNFTsV2() {
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(0);
   const [currentUser, setCurrentUser] = useState<string | null>(null);
+  const [isVip, setIsVip] = useState(false);
   const router = useRouter();
   const supabase = createClient();
   const observer = useRef<IntersectionObserver | null>(null);
@@ -69,7 +70,16 @@ export default function MyNFTsV2() {
         router.push('/v2/login');
         return;
       }
+
+      // Get VIP status from profiles table
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('is_vip')
+        .eq('id', user.id)
+        .single();
+      
       setCurrentUser(user.id);
+      setIsVip(profile?.is_vip || false);
     };
     getUser();
   }, [router, supabase]);
@@ -136,7 +146,7 @@ export default function MyNFTsV2() {
       <>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
         <div className="font-display">
-          <MobileLayout activeTab="vip">
+          <MobileLayout activeTab="vip" showVip={isVip}>
             <main className="flex-1 overflow-y-auto hide-scrollbar pb-24">
               <div className="px-4 py-6">
                 <div className="animate-pulse space-y-6">
@@ -159,7 +169,7 @@ export default function MyNFTsV2() {
     <>
       <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
       <div className="font-display">
-        <MobileLayout activeTab="vip">
+        <MobileLayout activeTab="vip" showVip={isVip}>
           <main className="flex-1 overflow-y-auto hide-scrollbar pb-24">
             <div className="px-4 py-6">
               <div className="flex justify-between items-center mb-6">

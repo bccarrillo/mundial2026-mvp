@@ -85,7 +85,7 @@ export default function Login() {
         {/* Forgot Password */}
         <div className="text-center mb-8">
           <button className="text-primary font-medium text-sm">
-            {t('auth.forgotPassword', '¿Olvidaste tu contraseña?')}
+            {t('auth.forgotPassword')}
           </button>
         </div>
 

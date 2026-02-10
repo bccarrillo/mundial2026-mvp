@@ -5,7 +5,7 @@ interface FormInputProps {
   placeholder: string;
   value: string;
   onChange: (value: string) => void;
-  icon: string;
+  icon?: string;
 }
 
 export default function FormInput({ type, placeholder, value, onChange, icon }: FormInputProps) {
