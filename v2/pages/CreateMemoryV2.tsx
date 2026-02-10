@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useV2 } from '@/lib/V2Context'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import imageCompression from 'browser-image-compression'
@@ -14,7 +14,7 @@ import Icon from '../components/Icon'
 import '../globals.css'
 
 export default function CreateMemoryV2() {
-  const { t } = useTranslation();
+  const { t } = useV2();
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [team, setTeam] = useState('')
@@ -116,8 +116,8 @@ export default function CreateMemoryV2() {
               <Icon name="chevron_left" className="text-xl" />
             </button>
             <div>
-              <h1 className="text-2xl font-bold">{t('v2.create.title')}</h1>
-              <p className="text-gray-500 text-sm">{t('v2.create.subtitle')}</p>
+              <h1 className="text-2xl font-bold">{t('create.title')}</h1>
+              <p className="text-gray-500 text-sm">{t('create.subtitle')}</p>
             </div>
           </div>
 
@@ -125,7 +125,7 @@ export default function CreateMemoryV2() {
             {/* Image Upload */}
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-3">
-                📸 {t('v2.create.imageRequired')}
+                📸 {t('create.imageRequired')}
               </label>
               <div className="relative">
                 <input
@@ -149,7 +149,7 @@ export default function CreateMemoryV2() {
                   ) : (
                     <div className="flex flex-col items-center justify-center h-full text-gray-500">
                       <Icon name="add_photo_alternate" className="text-4xl mb-2" />
-                      <span className="text-sm font-medium">{t('v2.create.selectImage')}</span>
+                      <span className="text-sm font-medium">{t('create.selectImage')}</span>
                     </div>
                   )}
                 </label>
@@ -159,13 +159,13 @@ export default function CreateMemoryV2() {
             {/* Title */}
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">
-                {t('v2.create.titleRequired')}
+                {t('create.titleRequired')}
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder={t('v2.create.titlePlaceholder')}
+                placeholder={t('create.titlePlaceholder')}
                 className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 required
               />
@@ -174,12 +174,12 @@ export default function CreateMemoryV2() {
             {/* Description */}
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">
-                {t('v2.create.description')}
+                {t('create.description')}
               </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder={t('v2.create.descriptionPlaceholder')}
+                placeholder={t('create.descriptionPlaceholder')}
                 rows={4}
                 className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
               />
@@ -188,14 +188,14 @@ export default function CreateMemoryV2() {
             {/* Team */}
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">
-                {t('v2.create.team')}
+                {t('create.team')}
               </label>
               <select
                 value={team}
                 onChange={(e) => setTeam(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               >
-                <option value="">{t('v2.create.selectTeam')}</option>
+                <option value="">{t('create.selectTeam')}</option>
                 <option value="Colombia">🇨🇴 Colombia</option>
                 <option value="México">🇲🇽 México</option>
                 <option value="Argentina">🇦🇷 Argentina</option>
@@ -209,7 +209,7 @@ export default function CreateMemoryV2() {
             {/* Match Date */}
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">
-                {t('v2.create.matchDate')}
+                {t('create.matchDate')}
               </label>
               <input
                 type="date"
@@ -225,10 +225,10 @@ export default function CreateMemoryV2() {
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <Icon name="public" className="text-lg text-gray-600" />
-                    <span className="font-bold text-gray-900">{t('v2.create.publicMemory')}</span>
+                    <span className="font-bold text-gray-900">{t('create.publicMemory')}</span>
                   </div>
                   <p className="text-sm text-gray-600">
-                    {t('v2.create.publicDescription')}
+                    {t('create.publicDescription')}
                   </p>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
@@ -258,12 +258,12 @@ export default function CreateMemoryV2() {
               {loading ? (
                 <div className="flex items-center justify-center gap-2">
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  {t('v2.create.creating')}
+                  {t('create.creating')}
                 </div>
               ) : (
                 <div className="flex items-center justify-center gap-2">
                   <Icon name="save" className="text-xl" />
-                  {t('v2.create.createButton')}
+                  {t('create.createButton')}
                 </div>
               )}
             </button>

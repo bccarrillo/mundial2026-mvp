@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
-import { useTranslation } from 'react-i18next';
+import { useV2 } from '@/lib/V2Context';
 import '../globals.css';
 import PixelLogo from '../components/PixelLogo';
 import FormInput from '../components/FormInput';
@@ -15,7 +15,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const router = useRouter();
   const supabase = createClient();
-  const { t } = useTranslation();
+  const { t } = useV2();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

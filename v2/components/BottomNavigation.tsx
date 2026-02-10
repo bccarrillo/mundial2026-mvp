@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { useV2 } from '@/lib/V2Context'
 import Icon from './Icon';
 
 interface TabItem {
@@ -28,15 +29,16 @@ export default function BottomNavigation({
   onTabChange 
 }: BottomNavigationProps) {
   const router = useRouter()
+  const { t } = useV2()
   
   // Use currentPage if provided, otherwise use activeTab
   const currentActiveTab = currentPage || activeTab || 'home';
   
   const standardTabs: TabItem[] = [
-    { id: 'home', icon: 'home', label: 'Inicio', filled: true, route: '/v2/dashboard' },
-    { id: 'explore', icon: 'explore', label: 'Explorar', route: '/v2/feed' },
+    { id: 'home', icon: 'home', label: t('footer.home'), filled: true, route: '/v2/dashboard' },
+    { id: 'explore', icon: 'explore', label: t('footer.explore'), route: '/v2/feed' },
     { id: 'ranking', icon: 'leaderboard', label: 'Rankings', route: '/v2/rankings' },
-    { id: 'vip', icon: 'stars', label: 'VIP', special: true, route: '/v2/vip' }
+    { id: 'vip', icon: 'stars', label: t('footer.vip'), special: true, route: '/v2/vip' }
   ];
 
   const donationTabs: TabItem[] = [
@@ -48,7 +50,7 @@ export default function BottomNavigation({
   ];
 
   const detailTabs: TabItem[] = [
-    { id: 'home', icon: 'home', label: 'Inicio' },
+    { id: 'home', icon: 'home', label: t('footer.home') },
     { id: 'memories', icon: 'photo_library', label: 'Recuerdos', active: true },
     { id: 'add', icon: 'add', label: '', central: true },
     { id: 'ranking', icon: 'military_tech', label: 'Ranking' },

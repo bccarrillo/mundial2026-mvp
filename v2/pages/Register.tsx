@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useV2 } from '@/lib/V2Context';
 import '../globals.css';
 import PixelLogo from '../components/PixelLogo';
 import FormInput from '../components/FormInput';
 
 export default function Register() {
-  const { t } = useTranslation();
+  const { t } = useV2();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 

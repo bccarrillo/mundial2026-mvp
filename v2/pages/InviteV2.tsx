@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useV2 } from '@/lib/V2Context'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { Invitation } from '@/types/database'
@@ -11,7 +11,7 @@ import Icon from '../components/Icon'
 import '../globals.css'
 
 export default function InviteV2() {
-  const { t } = useTranslation();
+  const { t } = useV2();
   const [user, setUser] = useState<any>(null)
   const [invitations, setInvitations] = useState<Invitation[]>([])
   const [inviteLink, setInviteLink] = useState('')
@@ -86,7 +86,7 @@ export default function InviteV2() {
         <div className="flex items-center justify-center min-h-[50vh]">
           <div className="text-center">
             <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
-            <p className="text-gray-500">{t('v2.invite.loading')}</p>
+            <p className="text-gray-500">{t('invite.loading')}</p>
           </div>
         </div>
       </div>
@@ -111,8 +111,8 @@ export default function InviteV2() {
               <Icon name="chevron_left" className="text-xl" />
             </button>
             <div>
-              <h1 className="text-2xl font-bold">{t('v2.invite.title')}</h1>
-              <p className="text-gray-500 text-sm">{t('v2.invite.subtitle')}</p>
+              <h1 className="text-2xl font-bold">{t('invite.title')}</h1>
+              <p className="text-gray-500 text-sm">{t('invite.subtitle')}</p>
             </div>
           </div>
 
@@ -120,15 +120,15 @@ export default function InviteV2() {
           <div className="grid grid-cols-3 gap-3 mb-6">
             <div className="bg-green-50 border border-green-200 rounded-2xl p-4 text-center">
               <p className="text-2xl font-bold text-green-600">{acceptedCount}</p>
-              <p className="text-xs text-green-600 font-medium">{t('v2.invite.registered')}</p>
+              <p className="text-xs text-green-600 font-medium">{t('invite.registered')}</p>
             </div>
             <div className="bg-orange-50 border border-orange-200 rounded-2xl p-4 text-center">
               <p className="text-2xl font-bold text-orange-600">{pendingCount}</p>
-              <p className="text-xs text-orange-600 font-medium">{t('v2.invite.pending')}</p>
+              <p className="text-xs text-orange-600 font-medium">{t('invite.pending')}</p>
             </div>
             <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 text-center">
               <p className="text-2xl font-bold text-blue-600">{invitations.length}</p>
-              <p className="text-xs text-blue-600 font-medium">{t('v2.invite.total')}</p>
+              <p className="text-xs text-blue-600 font-medium">{t('invite.total')}</p>
             </div>
           </div>
 
@@ -136,28 +136,28 @@ export default function InviteV2() {
           <div className="bg-gray-50 rounded-2xl p-4 mb-6">
             <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
               <Icon name="emoji_events" className="text-yellow-500" />
-              {t('v2.invite.rewards')}
+              {t('invite.rewards')}
             </h3>
             <div className="space-y-3">
               <div className={`flex items-center gap-3 p-3 rounded-xl ${acceptedCount >= 3 ? 'bg-green-100 border border-green-200' : 'bg-white border border-gray-200'}`}>
                 <span className="text-2xl">{acceptedCount >= 3 ? '✅' : '⭐'}</span>
                 <div className="flex-1">
-                  <p className="font-semibold text-sm">{t('v2.invite.inviterBadge')}</p>
-                  <p className="text-xs text-gray-500">{acceptedCount}/3 {t('v2.invite.friends')}</p>
+                  <p className="font-semibold text-sm">{t('invite.inviterBadge')}</p>
+                  <p className="text-xs text-gray-500">{acceptedCount}/3 {t('invite.friends')}</p>
                 </div>
               </div>
               <div className={`flex items-center gap-3 p-3 rounded-xl ${acceptedCount >= 10 ? 'bg-green-100 border border-green-200' : 'bg-white border border-gray-200'}`}>
                 <span className="text-2xl">{acceptedCount >= 10 ? '✅' : '🏆'}</span>
                 <div className="flex-1">
-                  <p className="font-semibold text-sm">{t('v2.invite.ambassador')}</p>
-                  <p className="text-xs text-gray-500">{acceptedCount}/10 {t('v2.invite.friends')}</p>
+                  <p className="font-semibold text-sm">{t('invite.ambassador')}</p>
+                  <p className="text-xs text-gray-500">{acceptedCount}/10 {t('invite.friends')}</p>
                 </div>
               </div>
               <div className={`flex items-center gap-3 p-3 rounded-xl ${acceptedCount >= 50 ? 'bg-green-100 border border-green-200' : 'bg-white border border-gray-200'}`}>
                 <span className="text-2xl">{acceptedCount >= 50 ? '✅' : '💎'}</span>
                 <div className="flex-1">
-                  <p className="font-semibold text-sm">{t('v2.invite.vipLegend')}</p>
-                  <p className="text-xs text-gray-500">{acceptedCount}/50 {t('v2.invite.friends')}</p>
+                  <p className="font-semibold text-sm">{t('invite.vipLegend')}</p>
+                  <p className="text-xs text-gray-500">{acceptedCount}/50 {t('invite.friends')}</p>
                 </div>
               </div>
             </div>
@@ -167,7 +167,7 @@ export default function InviteV2() {
           <div className="bg-white border border-gray-200 rounded-2xl p-4 mb-6">
             <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
               <Icon name="link" className="text-blue-500" />
-              {t('v2.invite.inviteLink')}
+              {t('invite.inviteLink')}
             </h3>
             
             {/* Link Display */}
@@ -183,7 +183,7 @@ export default function InviteV2() {
                 className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
                 <Icon name={copied ? "check" : "content_copy"} />
-                {copied ? t('v2.invite.copied') : t('v2.invite.copyLink')}
+                {copied ? t('invite.copied') : t('invite.copyLink')}
               </button>
               
               <button
@@ -191,7 +191,7 @@ export default function InviteV2() {
                 className="w-full bg-primary hover:bg-red-600 text-white font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
                 <Icon name="share" />
-                {t('v2.invite.shareInvite')}
+                {t('invite.shareInvite')}
               </button>
               
               <button
@@ -199,7 +199,7 @@ export default function InviteV2() {
                 className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
                 <Icon name="chat" />
-                {t('v2.invite.sendWhatsApp')}
+                {t('invite.sendWhatsApp')}
               </button>
             </div>
           </div>
@@ -208,13 +208,13 @@ export default function InviteV2() {
           <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4">
             <h3 className="font-bold text-blue-900 mb-3 flex items-center gap-2">
               <Icon name="info" className="text-blue-600" />
-              {t('v2.invite.howItWorks')}
+              {t('invite.howItWorks')}
             </h3>
             <div className="space-y-2 text-sm text-blue-800">
-              <p>• {t('v2.invite.step1')}</p>
-              <p>• {t('v2.invite.step2')}</p>
-              <p>• {t('v2.invite.step3')}</p>
-              <p>• {t('v2.invite.step4')}</p>
+              <p>• {t('invite.step1')}</p>
+              <p>• {t('invite.step2')}</p>
+              <p>• {t('invite.step3')}</p>
+              <p>• {t('invite.step4')}</p>
             </div>
           </div>
         </div>
