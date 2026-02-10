@@ -72,6 +72,7 @@ const translations = {
       subtitle: 'Compite con fanáticos de todo el mundo',
       loading: 'Cargando rankings...',
       yourPosition: 'Tu Posición',
+      of: 'de',
       users: 'usuarios',
       refresh: 'Actualizar',
       updating: 'Actualizando...',
@@ -113,11 +114,46 @@ const translations = {
       language: 'Idioma',
       logout: 'Cerrar Sesión'
     },
+    buttons: {
+      create: 'CREAR'
+    },
+    filters: {
+      all: 'Todos',
+      colombia: 'Colombia',
+      mexico: 'México',
+      argentina: 'Argentina',
+      brazil: 'Brasil',
+      usa: 'Estados Unidos',
+      canada: 'Canadá'
+    },
     footer: {
       home: 'Inicio',
       explore: 'Explorar',
       favorites: 'Favoritos',
       vip: 'VIP'
+    },
+    nft: {
+      modalTitle: 'Certificar como NFT',
+      description: 'Protege tu propiedad digital y haz que este recuerdo sea único en la blockchain.',
+      benefitsTitle: 'Beneficios de la Certificación',
+      permanentCertificate: 'Certificado Permanente',
+      permanentCertificateDesc: 'Tu recuerdo quedará registrado para siempre en la blockchain',
+      auctionEligible: 'Elegible para Subasta',
+      auctionEligibleDesc: 'Podrás participar en la subasta final del Mundial',
+      proofOfAuthorship: 'Prueba de Autoría',
+      proofOfAuthorshipDesc: 'Certificación digital de que tú creaste este recuerdo',
+      savings: 'Ahorras',
+      freeForLegends: 'GRATIS para Leyendas',
+      championDiscount: 'Descuento Campeón',
+      starDiscount: 'Descuento Estrella',
+      vipDiscount: 'Descuento VIP',
+      importantTitle: 'Importante',
+      notInvestment: 'No es una inversión financiera',
+      commemorativeCertificate: 'Es un certificado conmemorativo',
+      irreversibleProcess: 'El proceso es irreversible',
+      productionMode: 'Modo producción activo',
+      certifyButton: 'Certificar Ahora',
+      footerText: 'Powered by Crossmint • Blockchain segura'
     }
   },
   en: {
@@ -189,6 +225,7 @@ const translations = {
       subtitle: 'Compete with fans worldwide',
       loading: 'Loading rankings...',
       yourPosition: 'Your Position',
+      of: 'of',
       users: 'users',
       refresh: 'Refresh',
       updating: 'Updating...',
@@ -230,11 +267,46 @@ const translations = {
       language: 'Language',
       logout: 'Logout'
     },
+    buttons: {
+      create: 'CREATE'
+    },
+    filters: {
+      all: 'All',
+      colombia: 'Colombia',
+      mexico: 'Mexico',
+      argentina: 'Argentina',
+      brazil: 'Brazil',
+      usa: 'United States',
+      canada: 'Canada'
+    },
     footer: {
       home: 'Home',
       explore: 'Explore',
       favorites: 'Favorites',
       vip: 'VIP'
+    },
+    nft: {
+      modalTitle: 'Certify as NFT',
+      description: 'Protect your digital property and make this memory unique on the blockchain.',
+      benefitsTitle: 'Certification Benefits',
+      permanentCertificate: 'Permanent Certificate',
+      permanentCertificateDesc: 'Your memory will be registered forever on the blockchain',
+      auctionEligible: 'Auction Eligible',
+      auctionEligibleDesc: 'You can participate in the World Cup final auction',
+      proofOfAuthorship: 'Proof of Authorship',
+      proofOfAuthorshipDesc: 'Digital certification that you created this memory',
+      savings: 'You save',
+      freeForLegends: 'FREE for Legends',
+      championDiscount: 'Champion Discount',
+      starDiscount: 'Star Discount',
+      vipDiscount: 'VIP Discount',
+      importantTitle: 'Important',
+      notInvestment: 'Not a financial investment',
+      commemorativeCertificate: 'It is a commemorative certificate',
+      irreversibleProcess: 'The process is irreversible',
+      productionMode: 'Production mode active',
+      certifyButton: 'Certify Now',
+      footerText: 'Powered by Crossmint • Secure blockchain'
     }
   },
   pt: {
@@ -306,6 +378,7 @@ const translations = {
       subtitle: 'Compete com fãs do mundo todo',
       loading: 'Carregando rankings...',
       yourPosition: 'Sua Posição',
+      of: 'de',
       users: 'usuários',
       refresh: 'Atualizar',
       updating: 'Atualizando...',
@@ -347,11 +420,46 @@ const translations = {
       language: 'Idioma',
       logout: 'Sair'
     },
+    buttons: {
+      create: 'CRIAR'
+    },
+    filters: {
+      all: 'Todos',
+      colombia: 'Colômbia',
+      mexico: 'México',
+      argentina: 'Argentina',
+      brazil: 'Brasil',
+      usa: 'Estados Unidos',
+      canada: 'Canadá'
+    },
     footer: {
       home: 'Início',
       explore: 'Explorar',
       favorites: 'Favoritos',
       vip: 'VIP'
+    },
+    nft: {
+      modalTitle: 'Certificar como NFT',
+      description: 'Proteja sua propriedade digital e torne esta memória única na blockchain.',
+      benefitsTitle: 'Benefícios da Certificação',
+      permanentCertificate: 'Certificado Permanente',
+      permanentCertificateDesc: 'Sua memória ficará registrada para sempre na blockchain',
+      auctionEligible: 'Elegível para Leilão',
+      auctionEligibleDesc: 'Você poderá participar do leilão final da Copa',
+      proofOfAuthorship: 'Prova de Autoria',
+      proofOfAuthorshipDesc: 'Certificação digital de que você criou esta memória',
+      savings: 'Você economiza',
+      freeForLegends: 'GRÁTIS para Lendas',
+      championDiscount: 'Desconto Campeão',
+      starDiscount: 'Desconto Estrela',
+      vipDiscount: 'Desconto VIP',
+      importantTitle: 'Importante',
+      notInvestment: 'Não é um investimento financeiro',
+      commemorativeCertificate: 'É um certificado comemorativo',
+      irreversibleProcess: 'O processo é irreversível',
+      productionMode: 'Modo produção ativo',
+      certifyButton: 'Certificar Agora',
+      footerText: 'Powered by Crossmint • Blockchain segura'
     }
   }
 }

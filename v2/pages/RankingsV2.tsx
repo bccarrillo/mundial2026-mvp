@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useV2 } from '@/lib/V2Context'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import MobileHeader from '../components/MobileHeader'
@@ -56,7 +56,7 @@ const getRankIcon = (position: number): string => {
 }
 
 export default function RankingsV2() {
-  const { t } = useTranslation();
+  const { t } = useV2();
   const [userRankings, setUserRankings] = useState<UserRanking[]>([])
   const [userPosition, setUserPosition] = useState<UserPosition | null>(null)
   const [currentUser, setCurrentUser] = useState<string | null>(null)
@@ -113,7 +113,7 @@ export default function RankingsV2() {
         <div className="flex items-center justify-center min-h-[50vh]">
           <div className="text-center">
             <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
-            <p className="text-gray-500">{t('v2.rankings.loading')}</p>
+            <p className="text-gray-500 dark:text-gray-400">{t('rankings.loading')}</p>
           </div>
         </div>
       </div>
@@ -130,18 +130,18 @@ export default function RankingsV2() {
           <div className="mb-8">
             <div className="flex justify-between items-center mb-1">
               <h2 className="text-2xl font-bold dark:text-white flex items-center gap-2">
-                <span>🏆</span> {t('v2.rankings.title')}
+                <span>🏆</span> {t('rankings.title')}
               </h2>
               <button 
                 onClick={handleCreateMemory}
                 className="bg-primary hover:bg-red-600 text-white px-5 py-2.5 rounded-full flex items-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-95"
               >
                 <Icon name="add" className="font-bold text-xl" />
-                <span className="font-bold text-sm tracking-wide">CREAR</span>
+                <span className="font-bold text-sm tracking-wide">{t('buttons.create')}</span>
               </button>
             </div>
             <p className="text-gray-500 dark:text-gray-400 text-sm">
-              {t('v2.rankings.subtitle')}
+              {t('rankings.subtitle')}
             </p>
             <div className="mt-4 inline-flex items-center gap-2 bg-gray-50 dark:bg-gray-800/50 px-3 py-1.5 rounded-lg border border-gray-100 dark:border-gray-800">
               <Icon name="schedule" className="text-xs text-gray-400" />
@@ -155,12 +155,12 @@ export default function RankingsV2() {
           {userPosition && currentUser && (
             <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 mb-6">
               <div className="text-center">
-                <h3 className="font-bold text-blue-800 mb-2">📍 {t('v2.rankings.yourPosition')}</h3>
+                <h3 className="font-bold text-blue-800 mb-2">📍 {t('rankings.yourPosition')}</h3>
                 <div className="text-3xl font-bold text-blue-600 mb-2">
                   #{userPosition.position}
                 </div>
                 <p className="text-blue-600 text-sm">
-                  {t('v2.rankings.of')} {userPosition.total_users.toLocaleString()} {t('v2.rankings.users')}
+                  {t('rankings.of')} {userPosition.total_users.toLocaleString()} {t('rankings.users')}
                 </p>
                 <p className="text-blue-500 text-xs mt-1">
                   Top {Math.round((userPosition.position / userPosition.total_users) * 100)}%
@@ -178,7 +178,7 @@ export default function RankingsV2() {
             >
               <Icon name="refresh" className={loading ? 'animate-spin' : ''} />
               <span className="text-sm font-medium">
-                {loading ? t('v2.rankings.updating') : t('v2.rankings.refresh')}
+                {loading ? t('rankings.updating') : t('rankings.refresh')}
               </span>
             </button>
           </div>
@@ -187,7 +187,7 @@ export default function RankingsV2() {
           <div className="space-y-3">
             {userRankings.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-gray-500">{t('v2.rankings.noUsers')}</p>
+                <p className="text-gray-500">{t('rankings.noUsers')}</p>
               </div>
             ) : (
               userRankings.map((user, index) => {
@@ -250,7 +250,7 @@ export default function RankingsV2() {
                         {user.points}
                       </span>
                       <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
-                        {t('v2.rankings.users')}
+                        {t('rankings.users')}
                       </span>
                     </div>
                   </div>
@@ -261,22 +261,22 @@ export default function RankingsV2() {
 
           {/* CTA */}
           <div className="mt-8 bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-200 rounded-2xl p-6 text-center">
-            <h3 className="text-xl font-bold mb-2">🚀 {t('v2.rankings.wantToClimb')}</h3>
+            <h3 className="text-xl font-bold mb-2">🚀 {t('rankings.wantToClimb')}</h3>
             <p className="text-gray-600 mb-4 text-sm">
-              {t('v2.rankings.climbDescription')}
+              {t('rankings.climbDescription')}
             </p>
             <div className="flex flex-col gap-2">
               <button
                 onClick={handleCreateMemory}
                 className="bg-primary hover:bg-red-600 text-white font-bold py-3 rounded-xl transition-colors"
               >
-                📸 {t('v2.rankings.createMemoryPoints')}
+                📸 {t('rankings.createMemoryPoints')}
               </button>
               <button
                 onClick={() => router.push('/v2/feed')}
                 className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-xl transition-colors"
               >
-                👀 {t('v2.rankings.viewGallery')}
+                👀 {t('rankings.viewGallery')}
               </button>
             </div>
           </div>

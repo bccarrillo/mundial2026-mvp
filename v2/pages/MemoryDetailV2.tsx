@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useV2 } from '@/lib/V2Context'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { Memory, Comment } from '@/types/database'
@@ -19,7 +19,7 @@ interface MemoryDetailV2Props {
 }
 
 export default function MemoryDetailV2({ params }: MemoryDetailV2Props) {
-  const { t } = useTranslation();
+  const { t } = useV2();
   const [memory, setMemory] = useState<Memory | null>(null)
   const [loading, setLoading] = useState(true)
   const [liked, setLiked] = useState(false)
@@ -273,12 +273,12 @@ export default function MemoryDetailV2({ params }: MemoryDetailV2Props) {
         <MobileHeader />
         <div className="flex items-center justify-center min-h-[50vh]">
           <div className="text-center">
-            <p className="text-gray-500 mb-4">{t('v2.memory.notFound')}</p>
+            <p className="text-gray-500 mb-4">{t('memory.notFound')}</p>
             <button 
               onClick={() => router.push('/v2/feed')}
               className="bg-primary text-white px-4 py-2 rounded-lg"
             >
-              {t('v2.memory.backToFeed')}
+              {t('memory.backToFeed')}
             </button>
           </div>
         </div>
@@ -351,21 +351,21 @@ export default function MemoryDetailV2({ params }: MemoryDetailV2Props) {
             <div className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-600 group-active:bg-gray-100 transition-colors">
               <Icon name="share" className="text-2xl" />
             </div>
-            <span className="text-xs font-semibold text-gray-500">{t('v2.memory.share')}</span>
+            <span className="text-xs font-semibold text-gray-500">{t('memory.share')}</span>
           </button>
           <button className="flex flex-col items-center gap-2 group" onClick={handleLike}>
             <div className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-600 group-active:bg-gray-100 transition-colors">
               <Icon name="favorite" className={`text-2xl ${liked ? 'text-primary' : ''}`} />
             </div>
             <span className="text-xs font-semibold text-gray-500">
-              {likesCount} {liked ? t('v2.memory.liked') : t('v2.memory.like')}
+              {likesCount} {liked ? t('memory.liked') : t('memory.like')}
             </span>
           </button>
           <button className="flex flex-col items-center gap-2 group">
             <div className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-600 group-active:bg-gray-100 transition-colors">
               <Icon name="download" className="text-2xl" />
             </div>
-            <span className="text-xs font-semibold text-gray-500">{t('v2.memory.download')}</span>
+            <span className="text-xs font-semibold text-gray-500">{t('memory.download')}</span>
           </button>
         </div>
 
@@ -373,7 +373,7 @@ export default function MemoryDetailV2({ params }: MemoryDetailV2Props) {
         {memory.description && (
           <div className="mb-10">
             <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-3">
-              {t('v2.memory.description')}
+              {t('memory.description')}
             </h3>
             <p className="text-gray-700 leading-relaxed text-lg">
               {memory.description}
@@ -391,16 +391,16 @@ export default function MemoryDetailV2({ params }: MemoryDetailV2Props) {
                 <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center border border-primary/30">
                   <Icon name="token" className="text-primary font-bold" />
                 </div>
-                <span className="font-bold text-lg uppercase tracking-tight">{t('v2.memory.createNFT')}</span>
+                <span className="font-bold text-lg uppercase tracking-tight">{t('memory.createNFT')}</span>
               </div>
               <p className="text-gray-400 text-sm mb-6 leading-snug">
-                {t('v2.memory.nftDescription')}
+                {t('memory.nftDescription')}
               </p>
               <button 
                 className="w-full bg-primary hover:bg-red-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-red-900/20 active:scale-95 transition-all"
                 onClick={() => setShowNFTModal(true)}
               >
-                {t('v2.memory.createNFTButton')} (${nftPrice.toFixed(2)})
+                {t('memory.createNFTButton')} (${nftPrice.toFixed(2)})
               </button>
             </div>
           </div>
@@ -410,18 +410,18 @@ export default function MemoryDetailV2({ params }: MemoryDetailV2Props) {
         {hasNFT && (
           <div className="bg-green-50 border border-green-200 rounded-2xl p-4 mb-8 text-center">
             <Icon name="verified" className="text-green-600 text-3xl mb-2" />
-            <p className="text-green-700 font-bold">✅ {t('v2.memory.certified')}</p>
+            <p className="text-green-700 font-bold">✅ {t('memory.certified')}</p>
           </div>
         )}
 
         {/* Comments Section */}
         <div className="border-t pt-8">
-          <h3 className="text-lg font-bold mb-4">💬 {t('v2.memory.comments')} ({comments.length})</h3>
+          <h3 className="text-lg font-bold mb-4">💬 {t('memory.comments')} ({comments.length})</h3>
           
           {/* New Comment Form */}
           <div className="mb-6">
             <textarea
-              placeholder={currentUser ? t('v2.memory.writeComment') : t('v2.memory.loginToComment')}
+              placeholder={currentUser ? t('memory.writeComment') : t('memory.loginToComment')}
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               disabled={!currentUser || submitting}
@@ -433,7 +433,7 @@ export default function MemoryDetailV2({ params }: MemoryDetailV2Props) {
               disabled={!newComment.trim() || submitting}
               className="mt-2 px-4 py-2 bg-primary text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {submitting ? t('v2.memory.sending') : t('v2.memory.commentButton')}
+              {submitting ? t('memory.sending') : t('memory.commentButton')}
             </button>
           </div>
 
@@ -441,7 +441,7 @@ export default function MemoryDetailV2({ params }: MemoryDetailV2Props) {
           <div className="space-y-4">
             {comments.length === 0 ? (
               <p className="text-gray-500 text-center py-4">
-                {t('v2.memory.noComments')}
+                {t('memory.noComments')}
               </p>
             ) : (
               comments.map((comment) => (

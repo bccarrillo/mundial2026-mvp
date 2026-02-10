@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useV2 } from '@/lib/V2Context'
 import { Button } from '@/components/ui/button'
 import { X, Award, Shield, Zap } from 'lucide-react'
 import { CrossmintProvider, CrossmintHostedCheckout } from '@crossmint/client-sdk-react-ui'
@@ -28,7 +28,7 @@ export default function NFTCertificationModal({
   userLevel,
   isVIP
 }: NFTCertificationModalProps) {
-  const { t } = useTranslation()
+  const { t } = useV2()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 

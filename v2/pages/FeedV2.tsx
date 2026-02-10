@@ -205,7 +205,7 @@ export default function FeedV2() {
                   className="bg-primary hover:bg-red-600 text-white px-5 py-2.5 rounded-full flex items-center gap-2 shadow-lg shadow-primary/20 transition-all active:scale-95"
                 >
                   <span className="material-symbols-outlined text-xl">add</span>
-                  <span className="font-bold text-sm tracking-wide">CREAR</span>
+                  <span className="font-bold text-sm tracking-wide">{t('buttons.create')}</span>
                 </button>
               </div>
               
@@ -239,13 +239,13 @@ export default function FeedV2() {
               {/* Team Filters */}
               <div className="mb-6 flex gap-2 overflow-x-auto hide-scrollbar">
                 {[
-                  { name: t('v2.feed.filters.all'), value: '' },
-                  { name: t('v2.feed.filters.colombia'), value: 'Colombia' },
-                  { name: t('v2.feed.filters.mexico'), value: 'México' },
-                  { name: t('v2.feed.filters.argentina'), value: 'Argentina' },
-                  { name: t('v2.feed.filters.brazil'), value: 'Brasil' },
-                  { name: t('v2.feed.filters.usa'), value: 'Estados Unidos' },
-                  { name: t('v2.feed.filters.canada'), value: 'Canadá' }
+                  { name: t('filters.all'), value: '' },
+                  { name: t('filters.colombia'), value: 'Colombia' },
+                  { name: t('filters.mexico'), value: 'México' },
+                  { name: t('filters.argentina'), value: 'Argentina' },
+                  { name: t('filters.brazil'), value: 'Brasil' },
+                  { name: t('filters.usa'), value: 'Estados Unidos' },
+                  { name: t('filters.canada'), value: 'Canadá' }
                 ].map((filter) => (
                   <button
                     key={filter.value}
