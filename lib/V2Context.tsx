@@ -8,7 +8,7 @@ const translations = {
       welcome: '¡Bienvenido!',
       createMemory: 'Crear Nuevo Recuerdo',
       viewNFTs: 'Ver Mis NFTs',
-      exploreEvents: 'Explorar Eventos',
+      exploreEvents: 'Mis Recuerdos',
       inviteFriends: 'Invitar Amigos',
       viewGallery: 'Ver Galería Pública'
     },
@@ -154,6 +154,48 @@ const translations = {
       productionMode: 'Modo producción activo',
       certifyButton: 'Certificar Ahora',
       footerText: 'Powered by Crossmint • Blockchain segura'
+    },
+    myMemories: {
+      title: 'Mis Recuerdos',
+      subtitle: 'Gestiona tus momentos del Mundial',
+      noMemories: 'Aún no has creado recuerdos',
+      createFirst: 'Crear mi primer recuerdo',
+      loadingMore: 'Cargando más recuerdos...',
+      noMore: 'No hay más recuerdos',
+      private: 'Privado',
+      public: 'Público',
+      deleteTitle: '¿Eliminar este recuerdo?',
+      deleteMessage: 'Esta acción no se puede deshacer',
+      cancel: 'Cancelar',
+      delete: 'Eliminar',
+      deleting: 'Eliminando...'
+    },
+    editMemory: {
+      title: 'Editar Recuerdo',
+      subtitle: 'Actualiza tu momento del Mundial',
+      updateButton: 'Actualizar Recuerdo',
+      updating: 'Actualizando...',
+      updated: 'Recuerdo actualizado exitosamente',
+      error: 'Error al actualizar el recuerdo'
+    },
+    myNFTs: {
+      title: 'Mis NFTs',
+      subtitle: 'Tus recuerdos certificados en blockchain',
+      noNFTs: 'Aún no has creado NFTs',
+      createFirst: 'Crear mi primer NFT',
+      loadingMore: 'Cargando más NFTs...',
+      noMore: 'No hay más NFTs',
+      certified: 'Certificado',
+      crossmintId: 'ID Crossmint',
+      blockchainAddress: 'Dirección Blockchain',
+      viewMemory: 'Ver Recuerdo',
+      share: 'Compartir',
+      benefits: {
+        title: 'Beneficios de tus NFTs',
+        permanent: 'Certificado permanente en blockchain',
+        auction: 'Elegible para subasta final del Mundial',
+        ownership: 'Prueba digital de propiedad'
+      }
     }
   },
   en: {
@@ -161,7 +203,7 @@ const translations = {
       welcome: 'Welcome!',
       createMemory: 'Create New Memory',
       viewNFTs: 'View My NFTs',
-      exploreEvents: 'Explore Events',
+      exploreEvents: 'My Memories',
       inviteFriends: 'Invite Friends',
       viewGallery: 'View Public Gallery'
     },
@@ -307,6 +349,48 @@ const translations = {
       productionMode: 'Production mode active',
       certifyButton: 'Certify Now',
       footerText: 'Powered by Crossmint • Secure blockchain'
+    },
+    myMemories: {
+      title: 'My Memories',
+      subtitle: 'Manage your World Cup moments',
+      noMemories: 'You haven\'t created memories yet',
+      createFirst: 'Create my first memory',
+      loadingMore: 'Loading more memories...',
+      noMore: 'No more memories',
+      private: 'Private',
+      public: 'Public',
+      deleteTitle: 'Delete this memory?',
+      deleteMessage: 'This action cannot be undone',
+      cancel: 'Cancel',
+      delete: 'Delete',
+      deleting: 'Deleting...'
+    },
+    editMemory: {
+      title: 'Edit Memory',
+      subtitle: 'Update your World Cup moment',
+      updateButton: 'Update Memory',
+      updating: 'Updating...',
+      updated: 'Memory updated successfully',
+      error: 'Error updating memory'
+    },
+    myNFTs: {
+      title: 'My NFTs',
+      subtitle: 'Your blockchain-certified memories',
+      noNFTs: 'You haven\'t created NFTs yet',
+      createFirst: 'Create my first NFT',
+      loadingMore: 'Loading more NFTs...',
+      noMore: 'No more NFTs',
+      certified: 'Certified',
+      crossmintId: 'Crossmint ID',
+      blockchainAddress: 'Blockchain Address',
+      viewMemory: 'View Memory',
+      share: 'Share',
+      benefits: {
+        title: 'Your NFT Benefits',
+        permanent: 'Permanent blockchain certificate',
+        auction: 'Eligible for World Cup final auction',
+        ownership: 'Digital proof of ownership'
+      }
     }
   },
   pt: {
@@ -314,7 +398,7 @@ const translations = {
       welcome: 'Bem-vindo!',
       createMemory: 'Criar Nova Memória',
       viewNFTs: 'Ver Meus NFTs',
-      exploreEvents: 'Explorar Eventos',
+      exploreEvents: 'Minhas Memórias',
       inviteFriends: 'Convidar Amigos',
       viewGallery: 'Ver Galeria Pública'
     },
@@ -460,6 +544,48 @@ const translations = {
       productionMode: 'Modo produção ativo',
       certifyButton: 'Certificar Agora',
       footerText: 'Powered by Crossmint • Blockchain segura'
+    },
+    myMemories: {
+      title: 'Minhas Memórias',
+      subtitle: 'Gerencie seus momentos da Copa',
+      noMemories: 'Você ainda não criou memórias',
+      createFirst: 'Criar minha primeira memória',
+      loadingMore: 'Carregando mais memórias...',
+      noMore: 'Não há mais memórias',
+      private: 'Privado',
+      public: 'Público',
+      deleteTitle: 'Excluir esta memória?',
+      deleteMessage: 'Esta ação não pode ser desfeita',
+      cancel: 'Cancelar',
+      delete: 'Excluir',
+      deleting: 'Excluindo...'
+    },
+    editMemory: {
+      title: 'Editar Memória',
+      subtitle: 'Atualize seu momento da Copa',
+      updateButton: 'Atualizar Memória',
+      updating: 'Atualizando...',
+      updated: 'Memória atualizada com sucesso',
+      error: 'Erro ao atualizar memória'
+    },
+    myNFTs: {
+      title: 'Meus NFTs',
+      subtitle: 'Suas memórias certificadas na blockchain',
+      noNFTs: 'Você ainda não criou NFTs',
+      createFirst: 'Criar meu primeiro NFT',
+      loadingMore: 'Carregando mais NFTs...',
+      noMore: 'Não há mais NFTs',
+      certified: 'Certificado',
+      crossmintId: 'ID Crossmint',
+      blockchainAddress: 'Endereço Blockchain',
+      viewMemory: 'Ver Memória',
+      share: 'Compartilhar',
+      benefits: {
+        title: 'Benefícios dos seus NFTs',
+        permanent: 'Certificado permanente na blockchain',
+        auction: 'Elegível para leilão final da Copa',
+        ownership: 'Prova digital de propriedade'
+      }
     }
   }
 }

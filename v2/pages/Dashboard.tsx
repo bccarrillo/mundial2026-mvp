@@ -47,10 +47,10 @@ export default function Dashboard() {
         router.push('/v2/crear');
         break;
       case 'nfts':
-        router.push('/mis-nfts');
+        router.push('/v2/mis-nfts');
         break;
       case 'eventos':
-        router.push('/eventos');
+        router.push('/v2/mis-recuerdos');
         break;
       case 'invitar':
         router.push('/v2/invitar');
@@ -130,7 +130,7 @@ export default function Dashboard() {
               >
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-900/30 flex items-center justify-center text-mexico-green dark:text-green-400">
-                    <span className="material-symbols-outlined text-2xl">event</span>
+                    <span className="material-symbols-outlined text-2xl">photo_library</span>
                   </div>
                   <span className="font-bold text-lg dark:text-white">{t('dashboard.exploreEvents')}</span>
                 </div>
