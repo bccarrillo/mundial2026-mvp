@@ -2,6 +2,23 @@ export default function PrivacyPolicy() {
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4">
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8">
+        {/* Logo */}
+        <div className="text-center mb-6">
+          <a href="/" className="inline-block">
+            <div className="flex items-center justify-center gap-3">
+              <div className="grid grid-cols-5 gap-px w-8 h-8">
+                <div className="w-full h-full"></div><div className="w-full h-full bg-blue-600"></div><div className="w-full h-full bg-blue-600"></div><div className="w-full h-full bg-blue-600"></div><div className="w-full h-full"></div>
+                <div className="w-full h-full bg-green-600"></div><div className="w-full h-full bg-gray-800"></div><div className="w-full h-full bg-white border border-gray-100"></div><div className="w-full h-full bg-gray-800"></div><div className="w-full h-full bg-blue-800"></div>
+                <div className="w-full h-full bg-green-600"></div><div className="w-full h-full bg-gray-800"></div><div className="w-full h-full bg-white border border-gray-100"></div><div className="w-full h-full bg-gray-800"></div><div className="w-full h-full bg-blue-800"></div>
+                <div className="w-full h-full"></div><div className="w-full h-full bg-blue-600"></div><div className="w-full h-full bg-blue-600"></div><div className="w-full h-full bg-blue-600"></div><div className="w-full h-full"></div>
+              </div>
+              <span className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors">
+                Memories26
+              </span>
+            </div>
+          </a>
+        </div>
+        
         <h1 className="text-3xl font-bold text-center mb-8 text-blue-800">
           POLÍTICA DE PRIVACIDAD
         </h1>
