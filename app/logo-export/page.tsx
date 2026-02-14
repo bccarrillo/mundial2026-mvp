@@ -1,3 +1,5 @@
+'use client'
+
 import PixelLogo from '@/v2/components/PixelLogo'
 
 export default function LogoExport() {
