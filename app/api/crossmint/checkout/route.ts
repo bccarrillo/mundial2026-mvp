@@ -164,9 +164,30 @@ export async function POST(req: Request) {
       const orderData = await res.json();
       console.log('✅ Production order created:', orderData);
       
+      // Crear registro NFT pendiente (sin mint hasta confirmar pago)
+      if (body.memoryId && orderData.id) {
+        const { error: certError } = await supabase
+          .from('nft_certificates')
+          .insert({
+            memory_id: body.memoryId,
+            user_id: user.id,
+            payment_intent_id: orderData.id,
+            amount_paid: 0.70,
+            currency: 'USD',
+            status: 'pending',
+            blockchain: 'polygon',
+            is_eligible_for_auction: true
+          })
+        
+        if (certError) {
+          console.error('❌ Error creating pending NFT certificate:', certError)
+        }
+      }
+      
       return NextResponse.json({
         success: true,
         orderData: orderData,
+        checkoutUrl: orderData.checkoutUrl,
         mode: 'production'
       });
     }

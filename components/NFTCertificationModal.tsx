@@ -132,9 +132,15 @@ export default function NFTCertificationModal({
           mode: data.mode,
           success: true
         })
-        // En staging, el NFT se crea directamente
-        onSuccess()
-        onClose()
+        
+        // Si hay checkoutUrl, redirigir para pago
+        if (data.checkoutUrl) {
+          window.location.href = data.checkoutUrl
+        } else {
+          // En staging, el NFT se crea directamente
+          onSuccess()
+          onClose()
+        }
       } else if (data?.checkoutUrl) {
         await logInfoClient('crossmint', 'Checkout URL recibida', {
           checkoutUrl: data.checkoutUrl,
