@@ -38,11 +38,11 @@ export async function POST(req: Request) {
 
     // SEPARAR COMPLETAMENTE STAGING Y PRODUCTION
     if (process.env.CROSSMINT_ENVIRONMENT === 'staging') {
-      // STAGING: Usar API de checkout sessions (documentación oficial)
+      // STAGING: Crear orden de pago (NO mint directo)
       console.log('📦 Using STAGING environment');
       
       const res = await fetch(
-        `https://staging.crossmint.com/api/2022-06-09/collections/${process.env.CROSSMINT_COLLECTION_ID}/nfts`,
+        "https://staging.crossmint.com/api/2022-06-09/orders",
         {
           method: "POST",
           headers: {
@@ -50,7 +50,18 @@ export async function POST(req: Request) {
             "x-api-key": process.env.CROSSMINT_API_KEY!,
           },
           body: JSON.stringify({
-            recipient: `email:${body.email}:polygon-amoy`,
+            recipient: {
+              email: body.email || ''
+            },
+            lineItems: [{
+              collectionId: process.env.CROSSMINT_COLLECTION_ID,
+              quantity: 1
+            }],
+            payment: {
+              method: 'fiat',
+              currency: 'usd',
+              amount: "0.70"
+            },
             metadata: {
               name: memoryData ? `Mundial 2026 - ${memoryData.title}` : `Mundial 2026 - Certificado NFT (Staging)`,
               description: 'Certificado conmemorativo del Mundial 2026 - Modo Staging',
@@ -76,39 +87,33 @@ export async function POST(req: Request) {
         }, { status: 500 });
       }
 
-      const nftData = await res.json();
-      console.log('✅ Staging NFT minted:', nftData);
+      const orderData = await res.json();
+      console.log('✅ Staging order created:', orderData);
       
-      // Create NFT certificate record
-      if (body.memoryId && nftData.id) {
-        console.log('🔄 Creating NFT certificate record:', {
-          memory_id: body.memoryId,
-          user_id: user.id,
-          crossmint_id: nftData.id
-        })
-        
-        const { data: certData, error: certError } = await supabase
+      // Crear registro NFT pendiente (sin mint hasta confirmar pago)
+      if (body.memoryId && orderData.id) {
+        const { error: certError } = await supabase
           .from('nft_certificates')
           .insert({
             memory_id: body.memoryId,
             user_id: user.id,
-            status: 'completed',
-            minted_at: new Date().toISOString()
+            payment_intent_id: orderData.id,
+            amount_paid: 0.70,
+            currency: 'USD',
+            status: 'pending',
+            blockchain: 'polygon',
+            is_eligible_for_auction: true
           })
-          .select()
         
         if (certError) {
-          console.error('❌ Error creating NFT certificate:', certError)
-        } else {
-          console.log('✅ NFT certificate created successfully:', certData)
+          console.error('❌ Error creating pending NFT certificate:', certError)
         }
-      } else {
-        console.log('⚠️ Missing memoryId or nftData.id:', { memoryId: body.memoryId, nftId: nftData.id })
       }
       
       return NextResponse.json({
         success: true,
-        nftData: nftData,
+        orderData: orderData,
+        checkoutUrl: orderData.checkoutUrl,
         mode: 'staging'
       });
       
