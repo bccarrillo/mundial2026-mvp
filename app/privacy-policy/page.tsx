@@ -7,7 +7,7 @@ export default function PrivacyPolicy() {
         </h1>
         
         <div className="text-center mb-8">
-          <h2 className="text-xl font-semibold text-gray-700">Plataforma Mundial 2026 Memorias</h2>
+          <h2 className="text-xl font-semibold text-gray-700">Plataforma 2026 Memorias</h2>
           <p className="text-sm text-gray-500 mt-2">Última actualización: Febrero 2025</p>
         </div>
 
@@ -15,7 +15,7 @@ export default function PrivacyPolicy() {
           <section>
             <h3 className="text-xl font-bold mb-4 text-blue-700">1. INTRODUCCIÓN</h3>
             <p className="mb-4">
-              Bienvenido a Mundial 2026 Memorias (en adelante, "la Plataforma").
+              Bienvenido a 2026 Memorias (en adelante, "la Plataforma").
             </p>
             <p className="mb-4">
               Esta Política de Privacidad explica cómo recopilamos, utilizamos, almacenamos y protegemos 
@@ -145,7 +145,7 @@ export default function PrivacyPolicy() {
               <li>Solicitar limitación del tratamiento</li>
             </ul>
             <p>Para ejercer estos derechos, puede escribir a:</p>
-            <p className="font-semibold">📩 privacy@mundial2026.app</p>
+            <p className="font-semibold">📩 social@memories26.com</p>
           </section>
 
           <section>
@@ -204,8 +204,8 @@ export default function PrivacyPolicy() {
             <h3 className="text-xl font-bold mb-4 text-blue-700">14. CONTACTO</h3>
             <p className="mb-2">Si tiene preguntas sobre esta Política de Privacidad:</p>
             <div className="bg-blue-50 p-4 rounded-lg">
-              <p>📧 Email: privacy@mundial2026.app</p>
-              <p>🌐 Website: https://mundial2026.app</p>
+              <p>📧 Email: social@memories26.com</p>
+              <p>🌐 Website: https://memories26.com</p>
             </div>
           </section>
         </div>
