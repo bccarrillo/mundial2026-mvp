@@ -141,12 +141,15 @@ export async function POST(request: NextRequest) {
                   ]
                 }
               }
+            },
+            price: {
+              amount: price.toString(),
+              currency: "USD"
             }
           }
         ],
         payment: {
-          currency: 'USD',
-          amount: price.toString()
+          method: "stripe-payment-element"
         },
         successCallbackURL: `${process.env.NEXT_PUBLIC_BASE_URL}/nft-success?memory_id=${memory_id}`,
         failureCallbackURL: `${process.env.NEXT_PUBLIC_BASE_URL}/nft-error?memory_id=${memory_id}`
