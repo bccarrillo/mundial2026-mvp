@@ -38,11 +38,11 @@ export async function POST(req: Request) {
 
     // SEPARAR COMPLETAMENTE STAGING Y PRODUCTION
     if (process.env.CROSSMINT_ENVIRONMENT === 'staging') {
-      // STAGING: Crear orden de pago (NO mint directo)
-      console.log('📦 Using STAGING environment');
+      // STAGING: Crear checkout session con mint dinámico
+      console.log('📦 Using STAGING environment with dynamic minting');
       
       const res = await fetch(
-        "https://staging.crossmint.com/api/2022-06-09/orders",
+        "https://staging.crossmint.com/api/2022-06-09/checkout/sessions",
         {
           method: "POST",
           headers: {
@@ -50,28 +50,29 @@ export async function POST(req: Request) {
             "x-api-key": process.env.CROSSMINT_API_KEY!,
           },
           body: JSON.stringify({
-            recipient: {
-              email: body.email || ''
-            },
             lineItems: [{
-              collectionId: process.env.CROSSMINT_COLLECTION_ID,
-              quantity: 1
+              collectionLocator: `crossmint:${process.env.CROSSMINT_COLLECTION_ID}`,
+              callData: {
+                totalPrice: "0.70",
+                quantity: 1,
+                metadata: {
+                  name: memoryData ? `Mundial 2026 - ${memoryData.title}` : `Mundial 2026 - Certificado NFT (Staging)`,
+                  description: 'Certificado conmemorativo del Mundial 2026 - Modo Staging',
+                  image: memoryData?.image_url || "https://mundial2026-mvp.vercel.app/icon-512.png",
+                  attributes: [
+                    { trait_type: "Event", value: "Mundial 2026" },
+                    { trait_type: "Type", value: "Commemorative Certificate" },
+                    { trait_type: "Environment", value: "Staging" }
+                  ]
+                }
+              },
+              price: {
+                amount: "0.70",
+                currency: "usd"
+              }
             }],
-            payment: {
-              method: 'fiat',
-              currency: 'usd',
-              amount: "0.70"
-            },
-            metadata: {
-              name: memoryData ? `Mundial 2026 - ${memoryData.title}` : `Mundial 2026 - Certificado NFT (Staging)`,
-              description: 'Certificado conmemorativo del Mundial 2026 - Modo Staging',
-              image: memoryData?.image_url || "https://mundial2026-mvp.vercel.app/icon-512.png",
-              attributes: [
-                { trait_type: "Event", value: "Mundial 2026" },
-                { trait_type: "Type", value: "Commemorative Certificate" },
-                { trait_type: "Environment", value: "Staging" }
-              ]
-            }
+            successUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'https://mundial2026-mvp.vercel.app'}/recuerdo/${body.memoryId}?nft_success=true`,
+            cancelUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'https://mundial2026-mvp.vercel.app'}/recuerdo/${body.memoryId}?nft_cancelled=true`
           })
         }
       );
@@ -87,17 +88,17 @@ export async function POST(req: Request) {
         }, { status: 500 });
       }
 
-      const orderData = await res.json();
-      console.log('✅ Staging order created:', orderData);
+      const sessionData = await res.json();
+      console.log('✅ Staging checkout session created:', sessionData);
       
       // Crear registro NFT pendiente (sin mint hasta confirmar pago)
-      if (body.memoryId && orderData.id) {
+      if (body.memoryId && sessionData.id) {
         const { error: certError } = await supabase
           .from('nft_certificates')
           .insert({
             memory_id: body.memoryId,
             user_id: user.id,
-            payment_intent_id: orderData.id,
+            payment_intent_id: sessionData.id,
             amount_paid: 0.70,
             currency: 'USD',
             status: 'pending',
@@ -112,17 +113,17 @@ export async function POST(req: Request) {
       
       return NextResponse.json({
         success: true,
-        orderData: orderData,
-        checkoutUrl: orderData.checkoutUrl,
+        sessionData: sessionData,
+        checkoutUrl: sessionData.url,
         mode: 'staging'
       });
       
     } else {
-      // PRODUCTION: CÓDIGO ORIGINAL QUE FUNCIONABA - SIN TOCAR
-      console.log('🏭 Using PRODUCTION environment');
+      // PRODUCTION: Crear checkout session con mint dinámico
+      console.log('🏭 Using PRODUCTION environment with dynamic minting');
       
       const res = await fetch(
-        "https://www.crossmint.com/api/2022-06-09/orders",
+        "https://www.crossmint.com/api/2022-06-09/checkout/sessions",
         {
           method: "POST",
           headers: {
@@ -130,27 +131,28 @@ export async function POST(req: Request) {
             "x-api-key": process.env.CROSSMINT_API_KEY!,
           },
           body: JSON.stringify({
-            recipient: {
-              email: body.email || ''
-            },
             lineItems: [{
-              collectionId: process.env.CROSSMINT_COLLECTION_ID,
-              quantity: 1
+              collectionLocator: `crossmint:${process.env.CROSSMINT_COLLECTION_ID}`,
+              callData: {
+                totalPrice: "0.70",
+                quantity: 1,
+                metadata: {
+                  name: memoryData ? `Mundial 2026 - ${memoryData.title}` : `Mundial 2026 - Certificado NFT`,
+                  description: 'Certificado conmemorativo del Mundial 2026',
+                  image: memoryData?.image_url || "https://mundial2026-mvp.vercel.app/icon-512.png",
+                  attributes: [
+                    { trait_type: "Event", value: "Mundial 2026" },
+                    { trait_type: "Type", value: "Commemorative Certificate" }
+                  ]
+                }
+              },
+              price: {
+                amount: "0.70",
+                currency: "usd"
+              }
             }],
-            payment: {
-              method: 'polygon',
-              currency: 'usdc',
-              amount: "0.70"
-            },
-            metadata: {
-              name: memoryData ? `Mundial 2026 - ${memoryData.title}` : `Mundial 2026 - Certificado NFT`,
-              description: 'Certificado conmemorativo del Mundial 2026',
-              image: memoryData?.image_url || "https://mundial2026-mvp.vercel.app/icon-512.png",
-              attributes: [
-                { trait_type: "Event", value: "Mundial 2026" },
-                { trait_type: "Type", value: "Commemorative Certificate" }
-              ]
-            }
+            successUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'https://mundial2026-mvp.vercel.app'}/recuerdo/${body.memoryId}?nft_success=true`,
+            cancelUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'https://mundial2026-mvp.vercel.app'}/recuerdo/${body.memoryId}?nft_cancelled=true`
           })
         }
       );
@@ -166,17 +168,17 @@ export async function POST(req: Request) {
         }, { status: 500 });
       }
 
-      const orderData = await res.json();
-      console.log('✅ Production order created:', orderData);
+      const sessionData = await res.json();
+      console.log('✅ Production checkout session created:', sessionData);
       
       // Crear registro NFT pendiente (sin mint hasta confirmar pago)
-      if (body.memoryId && orderData.id) {
+      if (body.memoryId && sessionData.id) {
         const { error: certError } = await supabase
           .from('nft_certificates')
           .insert({
             memory_id: body.memoryId,
             user_id: user.id,
-            payment_intent_id: orderData.id,
+            payment_intent_id: sessionData.id,
             amount_paid: 0.70,
             currency: 'USD',
             status: 'pending',
@@ -191,8 +193,8 @@ export async function POST(req: Request) {
       
       return NextResponse.json({
         success: true,
-        orderData: orderData,
-        checkoutUrl: orderData.checkoutUrl,
+        sessionData: sessionData,
+        checkoutUrl: sessionData.url,
         mode: 'production'
       });
     }
