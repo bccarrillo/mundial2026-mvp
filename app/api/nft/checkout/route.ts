@@ -53,6 +53,9 @@ export async function POST(request: NextRequest) {
     const paymentMode = process.env.NFT_PAYMENT_MODE || 'production'
     console.log('🔧 Payment mode:', paymentMode)
     
+    console.log("ENV:", process.env.VERCEL_ENV);
+    console.log("API KEY EXISTS:", !!process.env.CROSSMINT_API_KEY);
+    
     if (paymentMode === 'test') {
       console.log('🧪 Creating test NFT')
       // MODO TEST - NFT gratis sin pago
