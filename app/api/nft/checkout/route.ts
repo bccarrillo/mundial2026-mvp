@@ -125,11 +125,6 @@ export async function POST(request: NextRequest) {
       
       console.log('📤 Request body:', JSON.stringify(requestBody, null, 2))
       
-      // MODO PRODUCCIÓN - Mint dinámico directo
-      const baseUrl = process.env.CROSSMINT_ENVIRONMENT === 'staging' 
-        ? 'https://staging.crossmint.com' 
-        : 'https://www.crossmint.com'
-      
       const mintResponse = await fetch(mintUrl, {
         method: 'POST',
         headers: {
