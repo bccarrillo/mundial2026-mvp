@@ -88,55 +88,68 @@ export async function POST(request: NextRequest) {
       console.log('🔑 API Key exists:', !!process.env.CROSSMINT_API_KEY)
       console.log('📦 Collection ID:', process.env.CROSSMINT_COLLECTION_ID)
       
-      // MODO PRODUCCIÓN - Crear Crossmint Order con API moderna
-      const checkoutResponse = await fetch('https://www.crossmint.com/api/2022-06-09/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': process.env.CROSSMINT_API_KEY!
-        },
-        body: JSON.stringify({
-          recipient: {
-            email: user.email || ''
+      // MODO PRODUCCIÓN - Crear Crossmint Checkout Session con mint dinámico
+      const baseUrl = process.env.CROSSMINT_ENVIRONMENT === 'staging' 
+        ? 'https://staging.crossmint.com' 
+        : 'https://www.crossmint.com'
+      
+      const checkoutResponse = await fetch(
+        `${baseUrl}/api/2022-06-09/checkout/sessions`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': process.env.CROSSMINT_API_KEY!
           },
-          quantity: 1,
-          payment: {
-            method: 'fiat',
-            currency: 'usd',
-            amount: price.toFixed(2)
-          },
-          metadata: {
-            name: `Mundial 2026 - ${memory.title}`,
-            description: 'Certificado conmemorativo del Mundial 2026',
-            image: memory.image_url,
-            attributes: [
-              { trait_type: "Event", value: "Mundial 2026" },
-              { trait_type: "User Level", value: userPoints?.level || 1 },
-              { trait_type: "Price Paid", value: `$${price}` }
-            ]
-          }
-        })
-      })
-
-      console.log('📡 Crossmint response status:', checkoutResponse.status)
+          body: JSON.stringify({
+            lineItems: [
+              {
+                collectionLocator: `crossmint:${process.env.CROSSMINT_COLLECTION_ID}`,
+                callData: {
+                  method: "mintTo",
+                  args: {
+                    recipient: user.email,
+                    metadata: {
+                      name: `Mundial 2026 - ${memory.title}`,
+                      description: 'Certificado conmemorativo del Mundial 2026',
+                      image: memory.image_url,
+                      attributes: [
+                        { trait_type: "Event", value: "Mundial 2026" },
+                        { trait_type: "User Level", value: userPoints?.level || 1 },
+                        { trait_type: "Price Paid", value: `$${price}` }
+                      ]
+                    }
+                  }
+                },
+                price: {
+                  amount: price.toFixed(2),
+                  currency: "usd"
+                }
+              }
+            ],
+            successUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'https://mundial2026-mvp.vercel.app'}/recuerdo/${memory_id}?nft_success=true`,
+            cancelUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'https://mundial2026-mvp.vercel.app'}/recuerdo/${memory_id}?nft_cancelled=true`
+          })
+        }
+      );
 
       if (!checkoutResponse.ok) {
         const errorText = await checkoutResponse.text()
-        console.error('❌ Crossmint Order Error:', errorText)
-        return NextResponse.json({ 
-          error: 'Error creando orden de Crossmint',
+        console.error('❌ Crossmint Checkout Error:', errorText)
+        return NextResponse.json({
+          error: 'Error creando checkout',
           details: errorText
         }, { status: 500 })
       }
 
-      const orderData = await checkoutResponse.json()
-      console.log('✅ Crossmint order created:', orderData)
-      
+      const checkoutData = await checkoutResponse.json()
+      console.log('✅ Crossmint checkout created:', checkoutData)
+
       return NextResponse.json({
         success: true,
-        orderData: orderData,
+        checkoutUrl: checkoutData.url,
         price,
-        mode: 'production'
+        mode: process.env.CROSSMINT_ENVIRONMENT || 'production'
       })
     }
 
