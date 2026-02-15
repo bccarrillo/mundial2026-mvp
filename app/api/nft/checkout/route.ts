@@ -105,18 +105,21 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Collection ID no configurado' }, { status: 500 })
       }
       
-      // STAGING - Crear order con mint dinámico
-      const environment = 'staging'
-      const blockchain = 'polygon-amoy'
+      // Auto-detectar environment basado en API key
+      const isStaging = process.env.CROSSMINT_API_KEY.startsWith('ck_staging_')
+      const environment = isStaging ? 'staging' : 'production'
+      const blockchain = isStaging ? 'polygon-amoy' : 'polygon'
       
       console.log('🌍 Environment:', environment)
       console.log('⛓️ Blockchain:', blockchain)
       
-      const baseUrl = 'https://staging.crossmint.com'
+      const baseUrl = isStaging 
+        ? 'https://staging.crossmint.com' 
+        : 'https://www.crossmint.com'
       const ordersUrl = `${baseUrl}/api/2022-06-09/orders`
       
-      console.log('🔗 FORCED Orders URL:', ordersUrl)
-      console.log('🔗 CONFIRMING baseUrl:', baseUrl)
+      console.log('🔗 Orders URL:', ordersUrl)
+      console.log('🔗 Base URL:', baseUrl)
       
       const orderBody = {
         lineItems: [
