@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     const price = await calculateNFTPrice(user.id, userPoints?.level || 1)
     console.log('💰 Price calculated:', price, 'Level:', userPoints?.level)
 
-    const paymentMode = process.env.NFT_PAYMENT_MODE || 'production'
+    const paymentMode = process.env.NFT_PAYMENT_MODE || 'test'
     console.log('🔧 Payment mode:', paymentMode)
     
     console.log("ENV:", process.env.VERCEL_ENV);
@@ -115,7 +115,8 @@ export async function POST(request: NextRequest) {
       const baseUrl = 'https://staging.crossmint.com'
       const ordersUrl = `${baseUrl}/api/2022-06-09/orders`
       
-      console.log('🔗 Orders URL:', ordersUrl)
+      console.log('🔗 FORCED Orders URL:', ordersUrl)
+      console.log('🔗 CONFIRMING baseUrl:', baseUrl)
       
       const orderBody = {
         lineItems: [
