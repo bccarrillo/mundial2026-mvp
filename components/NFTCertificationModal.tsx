@@ -124,7 +124,7 @@ export default function NFTCertificationModal({
           })
         }
         
-        await logInfoClient('crossmint', 'NFT creado exitosamente', {
+        await logInfoClient('crossmint', 'NFT creado dinámicamente', {
           nftData: data.nftData,
           success: true
         })

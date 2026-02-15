@@ -84,22 +84,25 @@ export async function POST(request: NextRequest) {
         mode: 'test'
       })
     } else {
-      console.log('🚀 Creating Crossmint checkout')
+      console.log('🚀 Creating dynamic NFT mint')
       console.log('🔑 API Key exists:', !!process.env.CROSSMINT_API_KEY)
       console.log('📦 Collection ID:', process.env.CROSSMINT_COLLECTION_ID)
+      console.log('🌍 Environment:', process.env.CROSSMINT_ENVIRONMENT)
       
-      // MODO PRODUCCIÓN - Crear Crossmint Checkout Session con mint dinámico
+      // MODO PRODUCCIÓN - Mint dinámico directo
       const baseUrl = process.env.CROSSMINT_ENVIRONMENT === 'staging' 
         ? 'https://staging.crossmint.com' 
         : 'https://www.crossmint.com'
       
-      const checkoutResponse = await fetch(
+      console.log('🔗 Using URL:', `${baseUrl}/api/2022-06-09/collections/${process.env.CROSSMINT_COLLECTION_ID}/nfts`)
+      
+      const mintResponse = await fetch(
         `${baseUrl}/api/2022-06-09/collections/${process.env.CROSSMINT_COLLECTION_ID}/nfts`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-api-key': process.env.CROSSMINT_API_KEY!
+            'X-API-KEY': process.env.CROSSMINT_API_KEY!
           },
           body: JSON.stringify({
             recipient: `email:${user.email}:${process.env.CROSSMINT_ENVIRONMENT === 'staging' ? 'polygon-amoy' : 'polygon'}`,
@@ -110,51 +113,56 @@ export async function POST(request: NextRequest) {
               attributes: [
                 { trait_type: "Event", value: "Mundial 2026" },
                 { trait_type: "User Level", value: userPoints?.level || 1 },
-                { trait_type: "Price Paid", value: `$${price}` }
+                { trait_type: "Price Paid", value: `$${price}` },
+                { trait_type: "Memory ID", value: memory_id }
               ]
             }
           })
         }
       );
 
-      if (!checkoutResponse.ok) {
-        const errorText = await checkoutResponse.text()
-        console.error('❌ Crossmint Checkout Error:', errorText)
+      console.log('📡 Mint response status:', mintResponse.status)
+
+      if (!mintResponse.ok) {
+        const errorText = await mintResponse.text()
+        console.error('❌ Crossmint Mint Error:', errorText)
         return NextResponse.json({
-          error: 'Error creando checkout',
+          error: 'Error minteando NFT',
           details: errorText
         }, { status: 500 })
       }
 
-      const checkoutData = await checkoutResponse.json()
-      console.log('✅ Crossmint NFT minted:', checkoutData)
+      const mintData = await mintResponse.json()
+      console.log('✅ NFT minted successfully:', mintData)
 
       // Crear registro NFT completado
-      if (checkoutData.id) {
+      if (mintData.id) {
         const { error: certError } = await supabase
           .from('nft_certificates')
           .insert({
             memory_id: memory_id,
             user_id: user.id,
-            payment_intent_id: checkoutData.id,
+            payment_intent_id: mintData.id,
             amount_paid: price,
             currency: 'USD',
             status: 'completed',
             blockchain: 'polygon',
             is_eligible_for_auction: true,
-            token_id: checkoutData.id,
-            mint_transaction_hash: checkoutData.onChain?.txHash,
+            token_id: mintData.id,
+            mint_transaction_hash: mintData.onChain?.txHash,
             minted_at: new Date().toISOString()
           })
         
         if (certError) {
           console.error('❌ Error creating NFT certificate:', certError)
+        } else {
+          console.log('✅ NFT certificate created in database')
         }
       }
 
       return NextResponse.json({
         success: true,
-        nftData: checkoutData,
+        nftData: mintData,
         price,
         mode: process.env.CROSSMINT_ENVIRONMENT || 'production'
       })
