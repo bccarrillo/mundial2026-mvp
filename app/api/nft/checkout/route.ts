@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Collection ID no configurado' }, { status: 500 })
       }
       
-      // STAGING - Crear checkout session con pago
+      // STAGING - Crear order con mint dinámico
       const environment = 'staging'
       const blockchain = 'polygon-amoy'
       
@@ -113,23 +113,33 @@ export async function POST(request: NextRequest) {
       console.log('⛓️ Blockchain:', blockchain)
       
       const baseUrl = 'https://staging.crossmint.com'
-      const checkoutUrl = `${baseUrl}/api/2022-06-09/collections/${process.env.CROSSMINT_COLLECTION_ID}/nfts/checkout/sessions`
+      const ordersUrl = `${baseUrl}/api/2022-06-09/orders`
       
-      console.log('🔗 Checkout URL:', checkoutUrl)
+      console.log('🔗 Orders URL:', ordersUrl)
       
-      const checkoutBody = {
-        recipient: `email:${user.email}:${blockchain}`,
-        metadata: {
-          name: `Mundial 2026 - ${memory.title}`,
-          description: 'Certificado conmemorativo del Mundial 2026',
-          image: memory.image_url,
-          attributes: [
-            { trait_type: "Event", value: "Mundial 2026" },
-            { trait_type: "User Level", value: userPoints?.level || 1 },
-            { trait_type: "Price Paid", value: `$${price}` },
-            { trait_type: "Memory ID", value: memory_id }
-          ]
-        },
+      const orderBody = {
+        lineItems: [
+          {
+            collectionLocator: `crossmint:${process.env.CROSSMINT_COLLECTION_ID}`,
+            callData: {
+              method: "mintTo",
+              args: {
+                recipient: `email:${user.email}:${blockchain}`,
+                metadata: {
+                  name: `Mundial 2026 - ${memory.title}`,
+                  description: 'Certificado conmemorativo del Mundial 2026',
+                  image: memory.image_url,
+                  attributes: [
+                    { trait_type: "Event", value: "Mundial 2026" },
+                    { trait_type: "User Level", value: userPoints?.level || 1 },
+                    { trait_type: "Price Paid", value: `$${price}` },
+                    { trait_type: "Memory ID", value: memory_id }
+                  ]
+                }
+              }
+            }
+          }
+        ],
         payment: {
           currency: 'USD',
           amount: price.toString()
@@ -138,30 +148,30 @@ export async function POST(request: NextRequest) {
         failureCallbackURL: `${process.env.NEXT_PUBLIC_BASE_URL}/nft-error?memory_id=${memory_id}`
       }
       
-      console.log('📤 Checkout body:', JSON.stringify(checkoutBody, null, 2))
+      console.log('📤 Order body:', JSON.stringify(orderBody, null, 2))
       
-      const checkoutResponse = await fetch(checkoutUrl, {
+      const orderResponse = await fetch(ordersUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-API-KEY': process.env.CROSSMINT_API_KEY!
         },
-        body: JSON.stringify(checkoutBody)
+        body: JSON.stringify(orderBody)
       });
 
-      console.log('📡 Checkout response status:', checkoutResponse.status)
+      console.log('📡 Order response status:', orderResponse.status)
 
-      if (!checkoutResponse.ok) {
-        const errorText = await checkoutResponse.text()
-        console.error('❌ Crossmint Checkout Error:', errorText)
+      if (!orderResponse.ok) {
+        const errorText = await orderResponse.text()
+        console.error('❌ Crossmint Order Error:', errorText)
         return NextResponse.json({
-          error: 'Error creando checkout',
+          error: 'Error creando order',
           details: errorText
         }, { status: 500 })
       }
 
-      const checkoutData = await checkoutResponse.json()
-      console.log('✅ Checkout created:', checkoutData)
+      const orderData = await orderResponse.json()
+      console.log('✅ Order created:', orderData)
 
       // Crear registro pendiente de pago
       const { error: pendingError } = await supabase
@@ -169,7 +179,7 @@ export async function POST(request: NextRequest) {
         .insert({
           memory_id: memory_id,
           user_id: user.id,
-          payment_intent_id: checkoutData.id,
+          payment_intent_id: orderData.id,
           amount_paid: price,
           currency: 'USD',
           status: 'pending',
@@ -183,8 +193,8 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        checkoutUrl: checkoutData.url,
-        sessionId: checkoutData.id,
+        checkoutUrl: orderData.checkoutUrl,
+        orderId: orderData.id,
         price,
         mode: environment
       })

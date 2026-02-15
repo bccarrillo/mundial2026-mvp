@@ -124,9 +124,9 @@ export default function NFTCertificationModal({
           })
         }
         
-        await logInfoClient('crossmint', 'Checkout creado, redirigiendo', {
+        await logInfoClient('crossmint', 'Order creada, redirigiendo', {
           checkoutUrl: data.checkoutUrl,
-          sessionId: data.sessionId,
+          orderId: data.orderId,
           success: true
         })
         
