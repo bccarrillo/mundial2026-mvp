@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
         : 'https://www.crossmint.com'
       
       const checkoutResponse = await fetch(
-        `${baseUrl}/api/2022-06-09/checkout/sessions`,
+        `${baseUrl}/api/2022-06-09/collections/${process.env.CROSSMINT_COLLECTION_ID}/nfts`,
         {
           method: 'POST',
           headers: {
@@ -102,33 +102,17 @@ export async function POST(request: NextRequest) {
             'x-api-key': process.env.CROSSMINT_API_KEY!
           },
           body: JSON.stringify({
-            lineItems: [
-              {
-                collectionLocator: `crossmint:${process.env.CROSSMINT_COLLECTION_ID}`,
-                callData: {
-                  method: "mintTo",
-                  args: {
-                    recipient: user.email,
-                    metadata: {
-                      name: `Mundial 2026 - ${memory.title}`,
-                      description: 'Certificado conmemorativo del Mundial 2026',
-                      image: memory.image_url,
-                      attributes: [
-                        { trait_type: "Event", value: "Mundial 2026" },
-                        { trait_type: "User Level", value: userPoints?.level || 1 },
-                        { trait_type: "Price Paid", value: `$${price}` }
-                      ]
-                    }
-                  }
-                },
-                price: {
-                  amount: price.toFixed(2),
-                  currency: "usd"
-                }
-              }
-            ],
-            successUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'https://mundial2026-mvp.vercel.app'}/recuerdo/${memory_id}?nft_success=true`,
-            cancelUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'https://mundial2026-mvp.vercel.app'}/recuerdo/${memory_id}?nft_cancelled=true`
+            recipient: `email:${user.email}:${process.env.CROSSMINT_ENVIRONMENT === 'staging' ? 'polygon-amoy' : 'polygon'}`,
+            metadata: {
+              name: `Mundial 2026 - ${memory.title}`,
+              description: 'Certificado conmemorativo del Mundial 2026',
+              image: memory.image_url,
+              attributes: [
+                { trait_type: "Event", value: "Mundial 2026" },
+                { trait_type: "User Level", value: userPoints?.level || 1 },
+                { trait_type: "Price Paid", value: `$${price}` }
+              ]
+            }
           })
         }
       );
@@ -143,11 +127,34 @@ export async function POST(request: NextRequest) {
       }
 
       const checkoutData = await checkoutResponse.json()
-      console.log('✅ Crossmint checkout created:', checkoutData)
+      console.log('✅ Crossmint NFT minted:', checkoutData)
+
+      // Crear registro NFT completado
+      if (checkoutData.id) {
+        const { error: certError } = await supabase
+          .from('nft_certificates')
+          .insert({
+            memory_id: memory_id,
+            user_id: user.id,
+            payment_intent_id: checkoutData.id,
+            amount_paid: price,
+            currency: 'USD',
+            status: 'completed',
+            blockchain: 'polygon',
+            is_eligible_for_auction: true,
+            token_id: checkoutData.id,
+            mint_transaction_hash: checkoutData.onChain?.txHash,
+            minted_at: new Date().toISOString()
+          })
+        
+        if (certError) {
+          console.error('❌ Error creating NFT certificate:', certError)
+        }
+      }
 
       return NextResponse.json({
         success: true,
-        checkoutUrl: checkoutData.url,
+        nftData: checkoutData,
         price,
         mode: process.env.CROSSMINT_ENVIRONMENT || 'production'
       })

@@ -115,7 +115,7 @@ export default function NFTCertificationModal({
 
       const data = await res.json()
 
-      if (data?.success && data?.checkoutUrl) {
+      if (data?.success && data?.nftData) {
         // Log NFT consent acceptance
         if (currentUserId && nftConsent) {
           await logLegalAcceptance({
@@ -124,13 +124,14 @@ export default function NFTCertificationModal({
           })
         }
         
-        await logInfoClient('crossmint', 'Checkout URL recibida', {
-          checkoutUrl: data.checkoutUrl,
+        await logInfoClient('crossmint', 'NFT creado exitosamente', {
+          nftData: data.nftData,
           success: true
         })
         
-        // Redirigir al checkout de Crossmint
-        window.location.href = data.checkoutUrl
+        // NFT creado directamente
+        onSuccess()
+        onClose()
       } else {
         await logErrorClient('crossmint', 'Error: Respuesta inesperada', {
           response: data,
