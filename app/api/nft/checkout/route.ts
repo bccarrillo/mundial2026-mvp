@@ -105,17 +105,14 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Collection ID no configurado' }, { status: 500 })
       }
       
-      // Auto-detect environment based on API key
-      const isStaging = process.env.CROSSMINT_API_KEY.startsWith('ck_staging_')
-      const environment = isStaging ? 'staging' : 'production'
-      const blockchain = isStaging ? 'polygon-amoy' : 'polygon'
+      // Forzar staging environment
+      const environment = 'staging'
+      const blockchain = 'polygon-amoy'
       
-      console.log('🌍 Detected environment:', environment)
+      console.log('🌍 Forced environment:', environment)
       console.log('⛓️ Using blockchain:', blockchain)
       
-      const baseUrl = isStaging 
-        ? 'https://staging.crossmint.com' 
-        : 'https://www.crossmint.com'
+      const baseUrl = 'https://staging.crossmint.com'
       
       const mintUrl = `${baseUrl}/api/2022-06-09/collections/${process.env.CROSSMINT_COLLECTION_ID}/nfts`
       console.log('🔗 Using URL:', mintUrl)
