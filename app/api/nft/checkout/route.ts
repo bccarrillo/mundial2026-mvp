@@ -55,6 +55,9 @@ export async function POST(request: NextRequest) {
     
     console.log("ENV:", process.env.VERCEL_ENV);
     console.log("API KEY EXISTS:", !!process.env.CROSSMINT_API_KEY);
+    console.log("API KEY PREFIX:", process.env.CROSSMINT_API_KEY?.substring(0, 12));
+    console.log("COLLECTION ID:", process.env.CROSSMINT_COLLECTION_ID);
+    console.log("CROSSMINT_ENVIRONMENT:", process.env.CROSSMINT_ENVIRONMENT);
     
     if (paymentMode === 'test') {
       console.log('🧪 Creating test NFT')
