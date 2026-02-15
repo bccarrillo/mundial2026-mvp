@@ -90,7 +90,6 @@ export async function POST(request: NextRequest) {
       console.log('🚀 Creating dynamic NFT mint')
       console.log('🔑 API Key exists:', !!process.env.CROSSMINT_API_KEY)
       console.log('📦 Collection ID:', process.env.CROSSMINT_COLLECTION_ID)
-      console.log('🌍 Environment:', process.env.CROSSMINT_ENVIRONMENT)
       
       // Validar variables de entorno
       if (!process.env.CROSSMINT_API_KEY) {
@@ -103,8 +102,15 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Collection ID no configurado' }, { status: 500 })
       }
       
-      // MODO PRODUCCIÓN - Mint dinámico directo
-      const baseUrl = process.env.CROSSMINT_ENVIRONMENT === 'staging' 
+      // Auto-detect environment based on API key
+      const isStaging = process.env.CROSSMINT_API_KEY.startsWith('ck_staging_')
+      const environment = isStaging ? 'staging' : 'production'
+      const blockchain = isStaging ? 'polygon-amoy' : 'polygon'
+      
+      console.log('🌍 Detected environment:', environment)
+      console.log('⛓️ Using blockchain:', blockchain)
+      
+      const baseUrl = isStaging 
         ? 'https://staging.crossmint.com' 
         : 'https://www.crossmint.com'
       
@@ -112,7 +118,7 @@ export async function POST(request: NextRequest) {
       console.log('🔗 Using URL:', mintUrl)
       
       const requestBody = {
-        recipient: `email:${user.email}:${process.env.CROSSMINT_ENVIRONMENT === 'staging' ? 'polygon-amoy' : 'polygon'}`,
+        recipient: `email:${user.email}:${blockchain}`,
         metadata: {
           name: `Mundial 2026 - ${memory.title}`,
           description: 'Certificado conmemorativo del Mundial 2026',
@@ -180,7 +186,7 @@ export async function POST(request: NextRequest) {
         success: true,
         nftData: mintData,
         price,
-        mode: process.env.CROSSMINT_ENVIRONMENT || 'production'
+        mode: environment
       })
     }
 
