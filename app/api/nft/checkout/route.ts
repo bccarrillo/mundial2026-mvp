@@ -105,19 +105,19 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Collection ID no configurado' }, { status: 500 })
       }
       
-      // Forzar staging environment
+      // STAGING - Crear checkout session con pago
       const environment = 'staging'
       const blockchain = 'polygon-amoy'
       
-      console.log('🌍 Forced environment:', environment)
-      console.log('⛓️ Using blockchain:', blockchain)
+      console.log('🌍 Environment:', environment)
+      console.log('⛓️ Blockchain:', blockchain)
       
       const baseUrl = 'https://staging.crossmint.com'
+      const checkoutUrl = `${baseUrl}/api/2022-06-09/collections/${process.env.CROSSMINT_COLLECTION_ID}/nfts/checkout/sessions`
       
-      const mintUrl = `${baseUrl}/api/2022-06-09/collections/${process.env.CROSSMINT_COLLECTION_ID}/nfts`
-      console.log('🔗 Using URL:', mintUrl)
+      console.log('🔗 Checkout URL:', checkoutUrl)
       
-      const requestBody = {
+      const checkoutBody = {
         recipient: `email:${user.email}:${blockchain}`,
         metadata: {
           name: `Mundial 2026 - ${memory.title}`,
@@ -129,62 +129,62 @@ export async function POST(request: NextRequest) {
             { trait_type: "Price Paid", value: `$${price}` },
             { trait_type: "Memory ID", value: memory_id }
           ]
-        }
+        },
+        payment: {
+          currency: 'USD',
+          amount: price.toString()
+        },
+        successCallbackURL: `${process.env.NEXT_PUBLIC_BASE_URL}/nft-success?memory_id=${memory_id}`,
+        failureCallbackURL: `${process.env.NEXT_PUBLIC_BASE_URL}/nft-error?memory_id=${memory_id}`
       }
       
-      console.log('📤 Request body:', JSON.stringify(requestBody, null, 2))
+      console.log('📤 Checkout body:', JSON.stringify(checkoutBody, null, 2))
       
-      const mintResponse = await fetch(mintUrl, {
+      const checkoutResponse = await fetch(checkoutUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-API-KEY': process.env.CROSSMINT_API_KEY!
         },
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify(checkoutBody)
       });
 
-      console.log('📡 Mint response status:', mintResponse.status)
+      console.log('📡 Checkout response status:', checkoutResponse.status)
 
-      if (!mintResponse.ok) {
-        const errorText = await mintResponse.text()
-        console.error('❌ Crossmint Mint Error:', errorText)
+      if (!checkoutResponse.ok) {
+        const errorText = await checkoutResponse.text()
+        console.error('❌ Crossmint Checkout Error:', errorText)
         return NextResponse.json({
-          error: 'Error minteando NFT',
+          error: 'Error creando checkout',
           details: errorText
         }, { status: 500 })
       }
 
-      const mintData = await mintResponse.json()
-      console.log('✅ NFT minted successfully:', mintData)
+      const checkoutData = await checkoutResponse.json()
+      console.log('✅ Checkout created:', checkoutData)
 
-      // Crear registro NFT completado
-      if (mintData.id) {
-        const { error: certError } = await supabase
-          .from('nft_certificates')
-          .insert({
-            memory_id: memory_id,
-            user_id: user.id,
-            payment_intent_id: mintData.id,
-            amount_paid: price,
-            currency: 'USD',
-            status: 'completed',
-            blockchain: 'polygon',
-            is_eligible_for_auction: true,
-            token_id: mintData.id,
-            mint_transaction_hash: mintData.onChain?.txHash,
-            minted_at: new Date().toISOString()
-          })
-        
-        if (certError) {
-          console.error('❌ Error creating NFT certificate:', certError)
-        } else {
-          console.log('✅ NFT certificate created in database')
-        }
+      // Crear registro pendiente de pago
+      const { error: pendingError } = await supabase
+        .from('nft_certificates')
+        .insert({
+          memory_id: memory_id,
+          user_id: user.id,
+          payment_intent_id: checkoutData.id,
+          amount_paid: price,
+          currency: 'USD',
+          status: 'pending',
+          blockchain: blockchain,
+          is_eligible_for_auction: true
+        })
+      
+      if (pendingError) {
+        console.error('❌ Error creating pending NFT:', pendingError)
       }
 
       return NextResponse.json({
         success: true,
-        nftData: mintData,
+        checkoutUrl: checkoutData.url,
+        sessionId: checkoutData.id,
         price,
         mode: environment
       })
