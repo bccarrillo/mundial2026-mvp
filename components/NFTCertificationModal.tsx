@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { X, Award, Shield, Zap } from 'lucide-react'
-import { CrossmintProvider, CrossmintHostedCheckout } from '@crossmint/client-sdk-react-ui'
 import { logInfoClient, logErrorClient } from '@/lib/logger-client'
 import { logLegalAcceptance } from '@/lib/legalUtils'
 import NFTPaymentDisclaimer from '@/v2/components/NFTPaymentDisclaimer'
@@ -106,19 +105,17 @@ export default function NFTCertificationModal({
     })
     
     try {
-      const res = await fetch("/api/crossmint/checkout", {
+      const res = await fetch("/api/nft/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: "bcarrillo@instepca.com",
-          memoryId,
-          memoryTitle,
+          memory_id: memoryId
         }),
       })
 
       const data = await res.json()
 
-      if (data?.success && (data?.nftData || data?.orderData)) {
+      if (data?.success && data?.checkoutUrl) {
         // Log NFT consent acceptance
         if (currentUserId && nftConsent) {
           await logLegalAcceptance({
@@ -127,25 +124,12 @@ export default function NFTCertificationModal({
           })
         }
         
-        await logInfoClient('crossmint', 'NFT/Orden creado exitosamente', {
-          data: data.nftData || data.orderData,
-          mode: data.mode,
-          success: true
-        })
-        
-        // Si hay checkoutUrl, redirigir para pago
-        if (data.checkoutUrl) {
-          window.location.href = data.checkoutUrl
-        } else {
-          // En staging, el NFT se crea directamente
-          onSuccess()
-          onClose()
-        }
-      } else if (data?.checkoutUrl) {
         await logInfoClient('crossmint', 'Checkout URL recibida', {
           checkoutUrl: data.checkoutUrl,
           success: true
         })
+        
+        // Redirigir al checkout de Crossmint
         window.location.href = data.checkoutUrl
       } else {
         await logErrorClient('crossmint', 'Error: Respuesta inesperada', {
@@ -357,61 +341,13 @@ export default function NFTCertificationModal({
               {loading ? 'Creando checkout...' : `💳 ${t('nft.certifyButton')} $${price.toFixed(2)} USD`}
             </Button>
           ) : (
-            <CrossmintProvider apiKey={process.env.NEXT_PUBLIC_CROSSMINT_CLIENT_API_KEY!}>
-              <div className="w-full">
-                {(() => {
-                  console.log("CROSSMINT DEBUG:");
-                  console.log("CLIENT_API_KEY:", process.env.NEXT_PUBLIC_CROSSMINT_CLIENT_API_KEY?.substring(0, 20) + "...");
-                  console.log("COLLECTION_ID:", process.env.NEXT_PUBLIC_CROSSMINT_COLLECTION_ID);
-                  console.log("COLLECTION_LOCATOR:", `crossmint:${process.env.NEXT_PUBLIC_CROSSMINT_COLLECTION_ID}`);
-                  
-                  // Log a Supabase para modo produccion
-                  logInfoClient('crossmint', 'Iniciando CrossmintHostedCheckout', {
-                    memoryId,
-                    memoryTitle,
-                    price,
-                    userLevel,
-                    isVIP,
-                    projectId: process.env.NEXT_PUBLIC_CROSSMINT_PROJECT_ID,
-                    collectionId: process.env.NEXT_PUBLIC_CROSSMINT_COLLECTION_ID,
-                    collectionLocator: `crossmint:${process.env.NEXT_PUBLIC_CROSSMINT_COLLECTION_ID}`,
-                    clientApiKey: process.env.NEXT_PUBLIC_CROSSMINT_CLIENT_API_KEY?.substring(0, 20) + '...',
-                    paymentMode: process.env.NEXT_PUBLIC_NFT_PAYMENT_MODE,
-                    environment: process.env.NODE_ENV,
-                    cryptoEnabled: true,
-                    fiatEnabled: true
-                  })
-                  
-                  return null;
-                })()}
-                <CrossmintHostedCheckout
-                  lineItems={{
-                    collectionLocator: `crossmint:${process.env.NEXT_PUBLIC_CROSSMINT_COLLECTION_ID}`,
-                    callData: {
-                      totalPrice: price.toFixed(2),
-                      quantity: 1,
-                      metadata: {
-                        name: `Mundial 2026 - ${memoryTitle}`,
-                        description: 'Certificado conmemorativo del Mundial 2026',
-                        attributes: [
-                          { trait_type: "Event", value: "Mundial 2026" },
-                          { trait_type: "Type", value: "Commemorative Certificate" },
-                          { trait_type: "User Level", value: userLevel },
-                          { trait_type: "Price Paid", value: `$${price}` }
-                        ]
-                      }
-                    },
-                  }}
-                  payment={{
-                    crypto: { enabled: true },
-                    fiat: { enabled: true },
-                  }}
-                  recipient={{
-                    email: "bcarrillo@instepca.com"
-                  }}
-                />
-              </div>
-            </CrossmintProvider>
+            <Button 
+              onClick={handleCrossmintPayment}
+              disabled={loading || !nftConsent}
+              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+            >
+              {loading ? 'Creando checkout...' : `💳 ${t('nft.certifyButton')} $${price.toFixed(2)} USD`}
+            </Button>
           )}
 
           <div className="text-xs text-gray-500 text-center mt-3">
