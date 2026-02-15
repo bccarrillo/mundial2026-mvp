@@ -89,37 +89,55 @@ export async function POST(request: NextRequest) {
       console.log('📦 Collection ID:', process.env.CROSSMINT_COLLECTION_ID)
       console.log('🌍 Environment:', process.env.CROSSMINT_ENVIRONMENT)
       
+      // Validar variables de entorno
+      if (!process.env.CROSSMINT_API_KEY) {
+        console.error('❌ CROSSMINT_API_KEY not found')
+        return NextResponse.json({ error: 'Configuración de Crossmint incompleta' }, { status: 500 })
+      }
+      
+      if (!process.env.CROSSMINT_COLLECTION_ID) {
+        console.error('❌ CROSSMINT_COLLECTION_ID not found')
+        return NextResponse.json({ error: 'Collection ID no configurado' }, { status: 500 })
+      }
+      
       // MODO PRODUCCIÓN - Mint dinámico directo
       const baseUrl = process.env.CROSSMINT_ENVIRONMENT === 'staging' 
         ? 'https://staging.crossmint.com' 
         : 'https://www.crossmint.com'
       
-      console.log('🔗 Using URL:', `${baseUrl}/api/2022-06-09/collections/${process.env.CROSSMINT_COLLECTION_ID}/nfts`)
+      const mintUrl = `${baseUrl}/api/2022-06-09/collections/${process.env.CROSSMINT_COLLECTION_ID}/nfts`
+      console.log('🔗 Using URL:', mintUrl)
       
-      const mintResponse = await fetch(
-        `${baseUrl}/api/2022-06-09/collections/${process.env.CROSSMINT_COLLECTION_ID}/nfts`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-API-KEY': process.env.CROSSMINT_API_KEY!
-          },
-          body: JSON.stringify({
-            recipient: `email:${user.email}:${process.env.CROSSMINT_ENVIRONMENT === 'staging' ? 'polygon-amoy' : 'polygon'}`,
-            metadata: {
-              name: `Mundial 2026 - ${memory.title}`,
-              description: 'Certificado conmemorativo del Mundial 2026',
-              image: memory.image_url,
-              attributes: [
-                { trait_type: "Event", value: "Mundial 2026" },
-                { trait_type: "User Level", value: userPoints?.level || 1 },
-                { trait_type: "Price Paid", value: `$${price}` },
-                { trait_type: "Memory ID", value: memory_id }
-              ]
-            }
-          })
+      const requestBody = {
+        recipient: `email:${user.email}:${process.env.CROSSMINT_ENVIRONMENT === 'staging' ? 'polygon-amoy' : 'polygon'}`,
+        metadata: {
+          name: `Mundial 2026 - ${memory.title}`,
+          description: 'Certificado conmemorativo del Mundial 2026',
+          image: memory.image_url,
+          attributes: [
+            { trait_type: "Event", value: "Mundial 2026" },
+            { trait_type: "User Level", value: userPoints?.level || 1 },
+            { trait_type: "Price Paid", value: `$${price}` },
+            { trait_type: "Memory ID", value: memory_id }
+          ]
         }
-      );
+      }
+      
+      console.log('📤 Request body:', JSON.stringify(requestBody, null, 2))
+      
+      // MODO PRODUCCIÓN - Mint dinámico directo
+      const baseUrl = process.env.CROSSMINT_ENVIRONMENT === 'staging' 
+        ? 'https://staging.crossmint.com' 
+        : 'https://www.crossmint.com'
+      
+      const mintResponse = await fetch(mintUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-KEY': process.env.CROSSMINT_API_KEY!
+        },
+        body: JSON.stringify(requestBody)
+      });
 
       console.log('📡 Mint response status:', mintResponse.status)
 
