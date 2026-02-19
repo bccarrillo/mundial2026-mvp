@@ -59,6 +59,13 @@ export async function POST(request: NextRequest) {
     console.log("COLLECTION ID:", process.env.CROSSMINT_COLLECTION_ID);
     console.log("CROSSMINT_ENVIRONMENT:", process.env.CROSSMINT_ENVIRONMENT);
     
+    // DEBUG TEMPORAL - Ver todas las variables de Crossmint
+    console.log("🔍 DEBUG - Todas las variables Crossmint:");
+    console.log("CROSSMINT_API_KEY length:", process.env.CROSSMINT_API_KEY?.length);
+    console.log("CROSSMINT_COLLECTION_ID length:", process.env.CROSSMINT_COLLECTION_ID?.length);
+    console.log("CROSSMINT_PROJECT_ID:", process.env.CROSSMINT_PROJECT_ID);
+    console.log("NFT_PAYMENT_MODE:", process.env.NFT_PAYMENT_MODE);
+    
     if (paymentMode === 'test') {
       console.log('🧪 Creating test NFT')
       // MODO TEST - NFT gratis sin pago
@@ -94,15 +101,17 @@ export async function POST(request: NextRequest) {
       console.log('🔑 API Key exists:', !!process.env.CROSSMINT_API_KEY)
       console.log('📦 Collection ID:', process.env.CROSSMINT_COLLECTION_ID)
       
-      // Validar variables de entorno
+      // Validar variables de entorno con logs específicos
       if (!process.env.CROSSMINT_API_KEY) {
         console.error('❌ CROSSMINT_API_KEY not found')
-        return NextResponse.json({ error: 'Configuración de Crossmint incompleta' }, { status: 500 })
+        console.error('🔍 Available env vars:', Object.keys(process.env).filter(key => key.includes('CROSSMINT')))
+        return NextResponse.json({ error: 'CROSSMINT_API_KEY no configurado' }, { status: 500 })
       }
       
       if (!process.env.CROSSMINT_COLLECTION_ID) {
         console.error('❌ CROSSMINT_COLLECTION_ID not found')
-        return NextResponse.json({ error: 'Collection ID no configurado' }, { status: 500 })
+        console.error('🔍 Available env vars:', Object.keys(process.env).filter(key => key.includes('CROSSMINT')))
+        return NextResponse.json({ error: 'CROSSMINT_COLLECTION_ID no configurado' }, { status: 500 })
       }
       
       // Auto-detectar environment basado en API key
